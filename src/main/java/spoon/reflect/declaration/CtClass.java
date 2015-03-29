@@ -31,11 +31,6 @@ import spoon.reflect.reference.CtTypeReference;
 public interface CtClass<T extends Object> extends CtType<T>, CtStatement {
 
 	/**
-	 * Gets the fields defined by this class.
-	 */
-	List<CtField<?>> getFields();
-
-	/**
 	 * Returns the anonymous blocks of this class.
 	 */
 	List<CtAnonymousExecutable> getAnonymousExecutables();

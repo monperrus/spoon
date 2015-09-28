@@ -1,7 +1,18 @@
 package spoon.test.targeted;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static spoon.test.TestUtils.build;
+
+import java.util.List;
+
 import org.junit.Test;
+
 import spoon.reflect.code.CtFieldAccess;
+import spoon.reflect.code.CtFieldRead;
+import spoon.reflect.code.CtFieldWrite;
 import spoon.reflect.code.CtSuperAccess;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
@@ -16,13 +27,6 @@ import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.support.reflect.code.CtThisAccessImpl;
 import spoon.test.targeted.testclasses.Foo;
 import spoon.test.targeted.testclasses.InternalSuperCall;
-
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static spoon.test.TestUtils.build;
 
 public class TargetedExpressionTest {
 	@Test
@@ -78,6 +82,38 @@ public class TargetedExpressionTest {
 		assertNull("Targets is null if there isn't a 'this' explicit.", elements.get(1).getTarget());
 	}
 
+	@Test
+	public void testStaticTargets() throws Exception {
+		CtClass<?> type = build("spoon.test.targeted.testclasses", "Foo");
+		Factory f = type.getFactory();
+		CtMethod<?> constructor = type.getMethods().toArray(new CtMethod<?>[0])[0];
+
+		final List<CtFieldAccess<?>> elements = constructor.getElements(new TypeFilter<CtFieldAccess<?>>(CtFieldAccess.class));
+		assertEquals(6, elements.size());
+		
+		assertTrue(elements.get(0) instanceof CtFieldRead);
+		assertTrue(elements.get(1) instanceof CtFieldRead);
+		assertTrue(elements.get(2) instanceof CtFieldRead);
+		
+		assertTrue(elements.get(3) instanceof CtFieldWrite);//fails
+		assertTrue(elements.get(4) instanceof CtFieldWrite);//fails
+		assertTrue(elements.get(5) instanceof CtFieldWrite);//fails
+
+		// the code is equivalent, it should be modeled equivalently
+		// contract for static calls getTarget() == CtClass
+		assertEquals(type, elements.get(0).getTarget());//fails
+		assertEquals(type, elements.get(1).getTarget());
+		assertEquals(type, elements.get(2).getTarget());
+		
+		// or 
+		
+		// contract for static calls getTarget() == null
+		assertEquals(null, elements.get(0).getTarget());//fails
+		assertEquals(null, elements.get(1).getTarget());
+		assertEquals(null, elements.get(2).getTarget());
+	}
+	
+	
 	@Test
 	public void testNotTargetedExpression() throws Exception {
 		Factory factory = build(Foo.class);

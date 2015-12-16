@@ -1,9 +1,11 @@
 package spoon.test.main;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.Assertion;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+
 import spoon.Launcher;
 import spoon.reflect.code.CtArrayWrite;
 import spoon.reflect.code.CtAssignment;
@@ -12,6 +14,7 @@ import spoon.reflect.code.CtFieldWrite;
 import spoon.reflect.code.CtVariableWrite;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtPackage;
+import spoon.reflect.visitor.CtScanner;
 import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.test.parent.ParentTest;
 
@@ -60,6 +63,45 @@ public class MainTest {
 
 		// assignments
 		checkAssignmentContracts(pack);
+
+		checkContractCtScanner(pack);
+	}
+
+	private void checkContractCtScanner(CtPackage pack) {
+		class Counter {
+			int scan, enter, exit = 0;
+		}
+
+		final Counter counter = new Counter();
+
+		new CtScanner() {
+
+			@Override
+			public void scan(CtElement element) {
+				super.scan(element);
+				if (element != null) {
+					counter.scan++;
+				}
+			}
+
+			@Override
+			public void enter(CtElement element) {
+				super.enter(element);
+				counter.enter++;
+			}
+
+			@Override
+			public void exit(CtElement element) {
+				super.exit(element);
+				counter.exit++;
+			}
+
+		}.visitCtPackage(pack);
+
+		Assert.assertTrue(counter.enter == counter.exit);
+
+		// there is one scan less, because we start with visit
+		Assert.assertTrue(counter.enter == counter.scan - 1);
 	}
 
 	public static void checkAssignmentContracts(CtElement pack) {

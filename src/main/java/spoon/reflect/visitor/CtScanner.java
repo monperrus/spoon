@@ -98,9 +98,14 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 /**
- * This visitor implements a deep-search scan on the metamodel.
+ * This visitor implements a deep-search scan on the model.
+ * 
+ * Ensures that all children nodes are visited once, a visit means three method
+ * calls, one call to "enter", one call to "exit" and one call to scan.
+ * 
+ * Is used by the processing and filtering engine.
  */
-public abstract class CtScanner implements CtVisitor {
+public class CtScanner implements CtVisitor {
 	/**
 	 * Default constructor.
 	 */

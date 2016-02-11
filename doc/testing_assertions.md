@@ -1,25 +1,28 @@
 ---
-title: Assertions
+title: Testing Spoon Transformations
 tags: [assert, assertions]
 keywords: testing, assert, assertion
 last_updated: February 10, 2015
 ---
 
-## Types
+Spoon provides a way to test transformations as follows.
 
-For now, you have two type of assertion from the entry point, `Assert` class:
+```
+import static spoon.testing.Assert.assertThat;
+...
+assertThat('Foo.java').withProcessor(new AProcessor()).isEqualTo('FooTransformed.java');
+```
+
+## Assertion Types
+
+There are two types of assertions:
 
 Assert type | Description
 -------------|------------
 FileAssert | Assertions available on a file.
 CtElementAssert | Assertions available on a `CtElement`.
 
-If you have any idea for an assert type, pull request is welcome on the Github Spoon project!
-
-## Testing transformation
-
-This module has been developed to test your transformations. This feature is available for
-all types of assertions and works with processors (templates will come soon).
+## CtElement assertion example
 
 Let's say that you have a processor which change the name of all fields by the name "j".
 
@@ -32,11 +35,7 @@ class MyProcessor extends AbstractProcessor<CtField<?>> {
 }
 ```
 
-You want to check that the transformation is well done when you apply it on an actual class, 
-you should call the method `withProcessor` with an instance, a class access or its fully 
-qualified name.
-
-A simply example can be the code below where the processor is specified by an instance. 
+To check that the transformation is well done when you apply it on a class, see the following example
 
 ```java
 final SpoonAPI spoon = new Launcher();
@@ -47,4 +46,4 @@ final CtType<Foo> type = spoon.getFactory().Type().get(Foo.class);
 assertThat(type.getField("i")).withProcessor(new MyProcessor()).isEqualTo("public int j;");
 ```
 
-We let you explore all possibilities of our API of this testing module.
+Note that, method `withProcessor` takes as parameter either with a processor  instance, a processor class name, a class object.

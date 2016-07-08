@@ -119,6 +119,7 @@ public class CtTypeParameterReferenceImpl extends CtTypeReferenceImpl<Object> im
 	}
 
 	@Override
+	@UnsettableProperty
 	public boolean removeActualTypeArgument(CtTypeReference<?> actualTypeArgument) {
 		return false;
 	}

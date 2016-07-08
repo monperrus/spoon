@@ -17,6 +17,13 @@
 package spoon.support.reflect.declaration;
 
 import spoon.SpoonException;
+import spoon.diff.AddAction;
+import spoon.diff.DeleteAction;
+import spoon.diff.DeleteAllAction;
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ListContext;
+import spoon.diff.context.ObjectContext;
+import spoon.diff.context.SetContext;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.declaration.CtAnnotation;
 import spoon.reflect.declaration.CtAnnotationType;
@@ -105,6 +112,9 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 		}
 		if (!this.typeMembers.contains(member)) {
 			member.setParent(this);
+			if (getFactory().getEnvironment().buildStackChanges()) {
+				getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.typeMembers, position), member));
+			}
 			this.typeMembers.add(position, member);
 		}
 		return (C) this;
@@ -114,17 +124,29 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 	public boolean removeTypeMember(CtTypeMember member) {
 		if (typeMembers.size() == 1) {
 			if (typeMembers.contains(member)) {
+				if (getFactory().getEnvironment().buildStackChanges()) {
+					getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this.typeMembers, this.typeMembers.indexOf(member)), typeMembers));
+				}
 				typeMembers = emptyList();
 				return true;
 			} else {
 				return false;
 			}
 		}
-		return typeMembers.remove(member);
+		if (typeMembers.contains(member)) {
+			if (getFactory().getEnvironment().buildStackChanges()) {
+				getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this.typeMembers, this.typeMembers.indexOf(member)), typeMembers));
+			}
+			return typeMembers.remove(member);
+		}
+		return false;
 	}
 
 	@Override
 	public <C extends CtType<T>> C setTypeMembers(List<CtTypeMember> members) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(typeMembers), typeMembers));
+		}
 		if (members == null || members.isEmpty()) {
 			this.typeMembers = emptyList();
 			return (C) this;
@@ -153,11 +175,15 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 
 	@Override
 	public <C extends CtType<T>> C setFields(List<CtField<?>> fields) {
+		List<CtField<?>> oldFields = getFields();
 		if (fields == null || fields.isEmpty()) {
-			this.typeMembers.removeAll(getFields());
+			this.typeMembers.removeAll(oldFields);
 			return (C) this;
 		}
-		typeMembers.removeAll(getFields());
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.typeMembers), new ArrayList<>(oldFields)));
+		}
+		typeMembers.removeAll(oldFields);
 		for (CtField<?> field : fields) {
 			addField(field);
 		}
@@ -215,11 +241,15 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 
 	@Override
 	public <C extends CtType<T>> C setNestedTypes(Set<CtType<?>> nestedTypes) {
+		Set<CtType<?>> oldNestedTypes = getNestedTypes();
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(typeMembers), new HashSet<>(oldNestedTypes)));
+		}
 		if (nestedTypes == null || nestedTypes.isEmpty()) {
-			this.typeMembers.removeAll(getNestedTypes());
+			this.typeMembers.removeAll(oldNestedTypes);
 			return (C) this;
 		}
-		typeMembers.removeAll(getNestedTypes());
+		typeMembers.removeAll(oldNestedTypes);
 		for (CtType<?> nestedType : nestedTypes) {
 			addNestedType(nestedType);
 		}
@@ -412,7 +442,13 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 	@Override
 	public <C extends CtModifiable> C setModifiers(Set<ModifierKind> modifiers) {
 		if (modifiers.size() > 0) {
-			this.modifiers = EnumSet.copyOf(modifiers);
+			if (getFactory().getEnvironment().buildStackChanges()) {
+				getFactory().getEnvironment().pushToStack(new DeleteAllAction(new SetContext(this.modifiers), new HashSet<>(this.modifiers)));
+			}
+			this.modifiers.clear();
+			for (ModifierKind modifier : modifiers) {
+				addModifier(modifier);
+			}
 		}
 		return (C) this;
 	}
@@ -422,13 +458,22 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 		if (modifiers == CtElementImpl.<ModifierKind>emptySet()) {
 			this.modifiers = EnumSet.of(modifier);
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new AddAction(new SetContext(this.modifiers), modifier));
+		}
 		modifiers.add(modifier);
 		return (C) this;
 	}
 
 	@Override
 	public boolean removeModifier(ModifierKind modifier) {
-		return modifiers != CtElementImpl.<ModifierKind>emptySet() && modifiers.remove(modifier);
+		if (modifiers == CtElementImpl.<ModifierKind>emptySet()) {
+			return false;
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new SetContext(modifiers), modifier));
+		}
+		return modifiers.remove(modifier);
 	}
 
 	@Override
@@ -540,7 +585,7 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 				if (m.getSignature().equals(method.getSignature())) {
 					// replace old method by new one (based on signature and not equality)
 					// we have to do it by hand
-					typeMembers.remove(m);
+					removeTypeMember(m);
 				} else {
 					// checking contract signature implies equal
 					if (!factory.getEnvironment().checksAreSkipped() && m.equals(method)) {
@@ -566,13 +611,19 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 			interfaces = new QualifiedNameBasedSortedSet<>();
 		}
 		interfac.setParent(this);
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new AddAction(new SetContext(this.interfaces), interfac));
+		}
 		interfaces.add(interfac);
 		return (C) this;
 	}
 
 	@Override
 	public <S> boolean removeSuperInterface(CtTypeReference<S> interfac) {
-		if (interfaces.isEmpty()) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new SetContext(interfaces), interfac));
+		}
+		if (interfaces == CtElementImpl.<CtTypeReference<?>>emptySet()) {
 			return false;
 		} else if (interfaces.size() == 1) {
 			if (interfaces.contains(interfac)) {
@@ -594,6 +645,9 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 
 	@Override
 	public <C extends CtFormalTypeDeclarer> C setFormalCtTypeParameters(List<CtTypeParameter> formalTypeParameters) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(formalCtTypeParameters), formalCtTypeParameters));
+		}
 		if (formalTypeParameters == null || formalTypeParameters.isEmpty()) {
 			this.formalCtTypeParameters = CtElementImpl.emptyList();
 			return (C) this;
@@ -617,13 +671,22 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 			formalCtTypeParameters = new ArrayList<>(TYPE_TYPE_PARAMETERS_CONTAINER_DEFAULT_CAPACITY);
 		}
 		formalTypeParameter.setParent(this);
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.formalCtTypeParameters), formalTypeParameter));
+		}
 		formalCtTypeParameters.add(formalTypeParameter);
 		return (C) this;
 	}
 
 	@Override
 	public boolean removeFormalCtTypeParameter(CtTypeParameter formalTypeParameter) {
-		return formalCtTypeParameters.contains(formalTypeParameter) && formalCtTypeParameters.remove(formalTypeParameter);
+		if (formalCtTypeParameters == CtElementImpl.<CtTypeParameter>emptyList()) {
+			return false;
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(formalCtTypeParameters, formalCtTypeParameters.indexOf(formalTypeParameter)), formalTypeParameter));
+		}
+		return formalCtTypeParameters.remove(formalTypeParameter);
 	}
 
 	@Override
@@ -836,6 +899,9 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 			this.typeMembers.removeAll(getMethods());
 			return (C) this;
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.typeMembers), new ArrayList(getMethods())));
+		}
 		typeMembers.removeAll(getMethods());
 		for (CtMethod<?> meth : methods) {
 			addMethod(meth);
@@ -858,6 +924,9 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 		}
 		if (this.interfaces == CtElementImpl.<CtTypeReference<?>>emptySet()) {
 			this.interfaces = new QualifiedNameBasedSortedSet<>();
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new SetContext(this.interfaces), new HashSet<>(this.interfaces)));
 		}
 		this.interfaces.clear();
 		for (CtTypeReference<?> anInterface : interfaces) {
@@ -916,6 +985,9 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 
 	@Override
 	public <E extends CtShadowable> E setShadow(boolean isShadow) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "isShadow"), isShadow, this.isShadow));
+		}
 		this.isShadow = isShadow;
 		return (E) this;
 	}

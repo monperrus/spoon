@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtAssert;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.visitor.CtVisitor;
@@ -42,6 +44,9 @@ public class CtAssertImpl<T> extends CtStatementImpl implements CtAssert<T> {
 		if (asserted != null) {
 			asserted.setParent(this);
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "asserted"), asserted, this.asserted));
+		}
 		this.asserted = asserted;
 		return (A) this;
 	}
@@ -55,6 +60,9 @@ public class CtAssertImpl<T> extends CtStatementImpl implements CtAssert<T> {
 	public <A extends CtAssert<T>> A setExpression(CtExpression<T> value) {
 		if (value != null) {
 			value.setParent(this);
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "value"), value, this.value));
 		}
 		this.value = value;
 		return (A) this;

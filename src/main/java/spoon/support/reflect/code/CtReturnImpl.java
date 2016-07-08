@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtCodeElement;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtReturn;
@@ -41,6 +43,9 @@ public class CtReturnImpl<R> extends CtStatementImpl implements CtReturn<R> {
 	public <T extends CtReturn<R>> T setReturnedExpression(CtExpression<R> expression) {
 		if (expression != null) {
 			expression.setParent(this);
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "returnedExpression"), expression, this.returnedExpression));
 		}
 		this.returnedExpression = expression;
 		return (T) this;

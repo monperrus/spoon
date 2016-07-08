@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtExecutableReferenceExpression;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.reference.CtExecutableReference;
@@ -38,6 +40,9 @@ public class CtExecutableReferenceExpressionImpl<T, E extends CtExpression<?>> e
 	public <C extends CtExecutableReferenceExpression<T, E>> C setExecutable(CtExecutableReference<T> executable) {
 		if (executable != null) {
 			executable.setParent(this);
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "executable"), executable, this.executable));
 		}
 		this.executable = executable;
 		return (C) this;

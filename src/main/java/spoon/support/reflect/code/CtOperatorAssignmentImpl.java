@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtOperatorAssignment;
 import spoon.reflect.visitor.CtVisitor;
@@ -37,6 +39,9 @@ public class CtOperatorAssignmentImpl<T, A extends T> extends CtAssignmentImpl<T
 
 	@Override
 	public <C extends CtOperatorAssignment<T, A>> C setKind(BinaryOperatorKind kind) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "kind"), kind, this.kind));
+		}
 		this.kind = kind;
 		return (C) this;
 	}

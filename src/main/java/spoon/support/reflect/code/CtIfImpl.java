@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtCodeElement;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtIf;
@@ -59,6 +61,9 @@ public class CtIfImpl extends CtStatementImpl implements CtIf {
 		if (condition != null) {
 			condition.setParent(this);
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "condition"), condition, this.condition));
+		}
 		this.condition = condition;
 		return (T) this;
 	}
@@ -67,6 +72,9 @@ public class CtIfImpl extends CtStatementImpl implements CtIf {
 	public <T extends CtIf> T setElseStatement(CtStatement elseStatement) {
 		if (elseStatement != null) {
 			elseStatement.setParent(this);
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "elseStatement"), elseStatement, this.elseStatement));
 		}
 		this.elseStatement = elseStatement;
 		return (T) this;
@@ -77,6 +85,9 @@ public class CtIfImpl extends CtStatementImpl implements CtIf {
 		// then branch might be null: `if (condition) ;`
 		if (thenStatement != null) {
 			thenStatement.setParent(this);
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "thenStatement"), thenStatement, this.thenStatement));
 		}
 		this.thenStatement = thenStatement;
 		return (T) this;

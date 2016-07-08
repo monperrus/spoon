@@ -19,10 +19,17 @@ package spoon.support.reflect.reference;
 import java.util.ArrayList;
 import java.util.List;
 
+import spoon.diff.AddAction;
+import spoon.diff.DeleteAction;
+import spoon.diff.DeleteAllAction;
+import spoon.diff.context.ListContext;
+import spoon.diff.context.SetContext;
 import spoon.reflect.reference.CtIntersectionTypeReference;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.CtVisitor;
 import spoon.support.reflect.declaration.CtElementImpl;
+
+import java.util.HashSet;
 
 public class CtIntersectionTypeReferenceImpl<T> extends CtTypeReferenceImpl<T> implements CtIntersectionTypeReference<T> {
 	List<CtTypeReference<?>> bounds = CtElementImpl.emptyList();
@@ -46,6 +53,9 @@ public class CtIntersectionTypeReferenceImpl<T> extends CtTypeReferenceImpl<T> i
 		if (this.bounds == CtElementImpl.<CtTypeReference<?>>emptySet()) {
 			this.bounds = new ArrayList<>();
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.bounds), new ArrayList<>(this.bounds)));
+		}
 		this.bounds.clear();
 		for (CtTypeReference<?> bound : bounds) {
 			addBound(bound);
@@ -63,6 +73,9 @@ public class CtIntersectionTypeReferenceImpl<T> extends CtTypeReferenceImpl<T> i
 		}
 		if (!bounds.contains(bound)) {
 			bound.setParent(this);
+			if (getFactory().getEnvironment().buildStackChanges()) {
+				getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.bounds), bound));
+			}
 			bounds.add(bound);
 		}
 		return (C) this;
@@ -70,7 +83,13 @@ public class CtIntersectionTypeReferenceImpl<T> extends CtTypeReferenceImpl<T> i
 
 	@Override
 	public boolean removeBound(CtTypeReference<?> bound) {
-		return bounds != CtElementImpl.<CtTypeReference<?>>emptyList() && bounds.remove(bound);
+		if (bounds == CtElementImpl.<CtTypeReference<?>>emptyList()) {
+			return false;
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(bounds), bound));
+		}
+		return bounds.remove(bound);
 	}
 
 	@Override

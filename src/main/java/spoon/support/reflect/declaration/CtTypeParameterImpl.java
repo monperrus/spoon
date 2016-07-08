@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.declaration;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtFormalTypeDeclarer;
 import spoon.reflect.declaration.CtMethod;
@@ -56,6 +58,9 @@ public class CtTypeParameterImpl extends CtTypeImpl<Object> implements CtTypePar
 	public <C extends CtType<Object>> C setSuperclass(CtTypeReference<?> superClass) {
 		if (superClass != null) {
 			superClass.setParent(this);
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "superClass"), superClass, this.superClass));
 		}
 		this.superClass = superClass;
 		return (C) this;

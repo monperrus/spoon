@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtDo;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.visitor.CtVisitor;
@@ -39,6 +41,9 @@ public class CtDoImpl extends CtLoopImpl implements CtDo {
 	public <T extends CtDo> T setLoopingExpression(CtExpression<Boolean> expression) {
 		if (expression != null) {
 			expression.setParent(this);
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "expression"), expression, this.expression));
 		}
 		this.expression = expression;
 		return (T) this;

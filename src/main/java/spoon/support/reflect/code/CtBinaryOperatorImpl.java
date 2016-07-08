@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtBinaryOperator;
 import spoon.reflect.code.CtExpression;
@@ -50,6 +52,9 @@ public class CtBinaryOperatorImpl<T> extends CtExpressionImpl<T> implements CtBi
 		if (expression != null) {
 			expression.setParent(this);
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "leftHandOperand"), expression, this.leftHandOperand));
+		}
 		leftHandOperand = expression;
 		return (C) this;
 	}
@@ -59,12 +64,18 @@ public class CtBinaryOperatorImpl<T> extends CtExpressionImpl<T> implements CtBi
 		if (expression != null) {
 			expression.setParent(this);
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "rightHandOperand"), expression, this.rightHandOperand));
+		}
 		rightHandOperand = expression;
 		return (C) this;
 	}
 
 	@Override
 	public <C extends CtBinaryOperator<T>> C setKind(BinaryOperatorKind kind) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "kind"), kind, this.kind));
+		}
 		this.kind = kind;
 		return (C) this;
 	}

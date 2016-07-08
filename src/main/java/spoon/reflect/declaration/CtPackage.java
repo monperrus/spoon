@@ -102,7 +102,7 @@ public interface CtPackage extends CtNamedElement, CtShadowable {
 	/**
 	 * Removes a type from this package.
 	 */
-	void removeType(CtType<?> type);
+	boolean removeType(CtType<?> type);
 
 	/**
 	 * Sets the children defined in this package

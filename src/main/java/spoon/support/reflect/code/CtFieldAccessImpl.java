@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtFieldAccess;
 import spoon.reflect.code.CtTargetedExpression;
@@ -32,10 +34,12 @@ public abstract class CtFieldAccessImpl<T> extends CtVariableAccessImpl<T> imple
 	}
 
 	@Override
-	public <C extends CtTargetedExpression<T, CtExpression<?>>> C setTarget(
-			CtExpression<?> target) {
+	public <C extends CtTargetedExpression<T, CtExpression<?>>> C setTarget(CtExpression<?> target) {
 		if (target != null) {
 			target.setParent(this);
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "target"), target, this.target));
 		}
 		this.target = target;
 		return null;

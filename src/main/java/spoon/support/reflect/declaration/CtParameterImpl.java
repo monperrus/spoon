@@ -16,6 +16,12 @@
  */
 package spoon.support.reflect.declaration;
 
+import spoon.diff.AddAction;
+import spoon.diff.DeleteAction;
+import spoon.diff.DeleteAllAction;
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
+import spoon.diff.context.SetContext;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtModifiable;
@@ -30,6 +36,7 @@ import spoon.reflect.visitor.CtVisitor;
 import spoon.support.UnsettableProperty;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -82,6 +89,9 @@ public class CtParameterImpl<T> extends CtNamedElementImpl implements CtParamete
 		if (type != null) {
 			type.setParent(this);
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "type"), type, this.type));
+		}
 		this.type = type;
 		return (C) this;
 	}
@@ -93,6 +103,9 @@ public class CtParameterImpl<T> extends CtNamedElementImpl implements CtParamete
 
 	@Override
 	public <C extends CtParameter<T>> C setVarArgs(boolean varArgs) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "varArgs"), varArgs, this.varArgs));
+		}
 		this.varArgs = varArgs;
 		return (C) this;
 	}
@@ -110,7 +123,13 @@ public class CtParameterImpl<T> extends CtNamedElementImpl implements CtParamete
 	@Override
 	public <C extends CtModifiable> C setModifiers(Set<ModifierKind> modifiers) {
 		if (modifiers.size() > 0) {
-			this.modifiers = EnumSet.copyOf(modifiers);
+			if (getFactory().getEnvironment().buildStackChanges()) {
+				getFactory().getEnvironment().pushToStack(new DeleteAllAction(new SetContext(this.modifiers), new HashSet<>(this.modifiers)));
+			}
+			this.modifiers.clear();
+			for (ModifierKind modifier : modifiers) {
+				addModifier(modifier);
+			}
 		}
 		return (C) this;
 	}
@@ -120,12 +139,21 @@ public class CtParameterImpl<T> extends CtNamedElementImpl implements CtParamete
 		if (modifiers == CtElementImpl.<ModifierKind>emptySet()) {
 			this.modifiers = EnumSet.noneOf(ModifierKind.class);
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new AddAction(new SetContext(this.modifiers), modifier));
+		}
 		modifiers.add(modifier);
 		return (C) this;
 	}
 
 	@Override
 	public boolean removeModifier(ModifierKind modifier) {
+		if (modifiers == CtElementImpl.<ModifierKind>emptySet()) {
+			return false;
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new SetContext(modifiers), modifier));
+		}
 		return modifiers.remove(modifier);
 	}
 
@@ -169,6 +197,9 @@ public class CtParameterImpl<T> extends CtNamedElementImpl implements CtParamete
 
 	@Override
 	public <E extends CtShadowable> E setShadow(boolean isShadow) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "isShadow"), isShadow, this.isShadow));
+		}
 		this.isShadow = isShadow;
 		return (E) this;
 	}

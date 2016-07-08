@@ -16,6 +16,10 @@
  */
 package spoon.support.reflect.declaration;
 
+import spoon.diff.AddAction;
+import spoon.diff.DeleteAction;
+import spoon.diff.DeleteAllAction;
+import spoon.diff.context.SetContext;
 import spoon.reflect.declaration.CtAnonymousExecutable;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtModifiable;
@@ -28,6 +32,7 @@ import spoon.reflect.visitor.CtVisitor;
 import spoon.support.UnsettableProperty;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -46,13 +51,22 @@ public class CtAnonymousExecutableImpl extends CtExecutableImpl<Void> implements
 		if (modifiers == CtElementImpl.<ModifierKind>emptySet()) {
 			modifiers = EnumSet.noneOf(ModifierKind.class);
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new AddAction(new SetContext(this.modifiers), modifier));
+		}
 		modifiers.add(modifier);
 		return (T) this;
 	}
 
 	@Override
 	public boolean removeModifier(ModifierKind modifier) {
-		return !modifiers.isEmpty() && modifiers.remove(modifier);
+		if (modifiers == CtElementImpl.<ModifierKind>emptySet()) {
+			return false;
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new SetContext(modifiers), modifier));
+		}
+		return modifiers.remove(modifier);
 	}
 
 	@Override
@@ -82,7 +96,13 @@ public class CtAnonymousExecutableImpl extends CtExecutableImpl<Void> implements
 	@Override
 	public <T extends CtModifiable> T setModifiers(Set<ModifierKind> modifiers) {
 		if (modifiers.size() > 0) {
-			this.modifiers = EnumSet.copyOf(modifiers);
+			if (getFactory().getEnvironment().buildStackChanges()) {
+				getFactory().getEnvironment().pushToStack(new DeleteAllAction(new SetContext(this.modifiers), new HashSet<>(this.modifiers)));
+			}
+			this.modifiers.clear();
+			for (ModifierKind modifier : modifiers) {
+				addModifier(modifier);
+			}
 		}
 		return (T) this;
 	}

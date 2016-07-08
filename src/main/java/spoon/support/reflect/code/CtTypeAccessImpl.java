@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtTypeAccess;
 import spoon.reflect.declaration.CtTypedElement;
 import spoon.reflect.reference.CtTypeReference;
@@ -40,6 +42,9 @@ public class CtTypeAccessImpl<A> extends CtExpressionImpl<Void> implements CtTyp
 	public <C extends CtTypeAccess<A>> C setAccessedType(CtTypeReference<A> accessedType) {
 		if (accessedType != null) {
 			accessedType.setParent(this);
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "type"), accessedType, this.type));
 		}
 		type = accessedType;
 		return (C) this;

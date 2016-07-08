@@ -16,6 +16,10 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.AddAction;
+import spoon.diff.DeleteAction;
+import spoon.diff.DeleteAllAction;
+import spoon.diff.context.ListContext;
 import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.code.CtTryWithResource;
 import spoon.reflect.visitor.CtVisitor;
@@ -47,6 +51,9 @@ public class CtTryWithResourceImpl extends CtTryImpl implements CtTryWithResourc
 			this.resources = CtElementImpl.emptyList();
 			return (T) this;
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.resources), new ArrayList<>(this.resources)));
+		}
 		this.resources.clear();
 		for (CtLocalVariable<?> l : resources) {
 			addResource(l);
@@ -63,13 +70,22 @@ public class CtTryWithResourceImpl extends CtTryImpl implements CtTryWithResourc
 			resources = new ArrayList<>(RESOURCES_CONTAINER_DEFAULT_CAPACITY);
 		}
 		resource.setParent(this);
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.resources), resource));
+		}
 		resources.add(resource);
 		return (T) this;
 	}
 
 	@Override
 	public boolean removeResource(CtLocalVariable<?> resource) {
-		return resources != CtElementImpl.<CtLocalVariable<?>>emptyList() && resources.remove(resource);
+		if (resources == CtElementImpl.<CtLocalVariable<?>>emptyList()) {
+			return false;
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(resources, resources.indexOf(resource)), resource));
+		}
+		return resources.remove(resource);
 	}
 
 	@Override

@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtBodyHolder;
 import spoon.reflect.code.CtCatch;
@@ -47,6 +49,9 @@ public class CtCatchImpl extends CtCodeElementImpl implements CtCatch {
 
 	@Override
 	public <T extends CtBodyHolder> T setBody(CtStatement statement) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "body"), body, this.body));
+		}
 		if (statement != null) {
 			CtBlock<?> body = getFactory().Code().getOrCreateCtBlock(statement);
 			if (body != null) {
@@ -64,6 +69,9 @@ public class CtCatchImpl extends CtCodeElementImpl implements CtCatch {
 	public <T extends CtCatch> T setParameter(CtCatchVariable<? extends Throwable> parameter) {
 		if (parameter != null) {
 			parameter.setParent(this);
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "parameter"), parameter, this.parameter));
 		}
 		this.parameter = parameter;
 		return (T) this;

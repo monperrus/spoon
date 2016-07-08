@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtCodeSnippetStatement;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtCodeSnippet;
@@ -38,6 +40,9 @@ public class CtCodeSnippetStatementImpl extends CtStatementImpl implements CtCod
 	}
 
 	public <C extends CtCodeSnippet> C setValue(String value) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "value"), value, this.value));
+		}
 		this.value = value;
 		return (C) this;
 	}

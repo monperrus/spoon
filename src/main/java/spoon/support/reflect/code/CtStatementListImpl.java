@@ -16,6 +16,10 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.AddAction;
+import spoon.diff.DeleteAction;
+import spoon.diff.DeleteAllAction;
+import spoon.diff.context.ListContext;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.code.CtStatementList;
 import spoon.reflect.cu.SourcePosition;
@@ -51,6 +55,9 @@ public class CtStatementListImpl<R> extends CtCodeElementImpl implements CtState
 			this.statements = CtElementImpl.emptyList();
 			return (T) this;
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.statements), new ArrayList<>(this.statements)));
+		}
 		this.statements.clear();
 		for (CtStatement stmt : stmts) {
 			addStatement(stmt);
@@ -67,15 +74,22 @@ public class CtStatementListImpl<R> extends CtCodeElementImpl implements CtState
 			this.statements = new ArrayList<>(BLOCK_STATEMENTS_CONTAINER_DEFAULT_CAPACITY);
 		}
 		statement.setParent(this);
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.statements), statement));
+		}
 		this.statements.add(statement);
 		return (T) this;
 	}
 
 	@Override
 	public void removeStatement(CtStatement statement) {
-		if (this.statements != CtElementImpl.<CtStatement>emptyList()) {
-			this.statements.remove(statement);
+		if (this.statements == CtElementImpl.<CtStatement>emptyList()) {
+			return ;
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(statements, statements.indexOf(statement)), statement));
+		}
+		statements.remove(statement);
 	}
 
 	@Override

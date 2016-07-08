@@ -16,6 +16,12 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.AddAction;
+import spoon.diff.DeleteAction;
+import spoon.diff.DeleteAllAction;
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ListContext;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtBodyHolder;
 import spoon.reflect.code.CtCatch;
@@ -56,6 +62,9 @@ public class CtTryImpl extends CtStatementImpl implements CtTry {
 			this.catchers = CtElementImpl.emptyList();
 			return (T) this;
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.catchers), new ArrayList<>(this.catchers)));
+		}
 		this.catchers.clear();
 		for (CtCatch c : catchers) {
 			addCatcher(c);
@@ -72,13 +81,22 @@ public class CtTryImpl extends CtStatementImpl implements CtTry {
 			catchers = new ArrayList<>(CATCH_CASES_CONTAINER_DEFAULT_CAPACITY);
 		}
 		catcher.setParent(this);
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.catchers), catcher));
+		}
 		catchers.add(catcher);
 		return (T) this;
 	}
 
 	@Override
 	public boolean removeCatcher(CtCatch catcher) {
-		return catchers != CtElementImpl.<CtCatch>emptyList() && catchers.remove(catcher);
+		if (catchers == CtElementImpl.<CtCatch>emptyList()) {
+			return false;
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(catchers, catchers.indexOf(catcher)), catcher));
+		}
+		return catchers.remove(catcher);
 	}
 
 	@Override
@@ -91,6 +109,9 @@ public class CtTryImpl extends CtStatementImpl implements CtTry {
 		if (finalizer != null) {
 			finalizer.setParent(this);
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "finalizer"), finalizer, this.finalizer));
+		}
 		this.finalizer = finalizer;
 		return (T) this;
 	}
@@ -102,6 +123,9 @@ public class CtTryImpl extends CtStatementImpl implements CtTry {
 
 	@Override
 	public <T extends CtBodyHolder> T setBody(CtStatement statement) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "body"), body, this.body));
+		}
 		if (statement != null) {
 			CtBlock<?> body = getFactory().Code().getOrCreateCtBlock(statement);
 			if (body != null) {

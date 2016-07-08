@@ -16,6 +16,8 @@
  */
 package spoon.support.reflect.declaration;
 
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.declaration.CtAnnotationMethod;
 import spoon.reflect.visitor.CtVisitor;
@@ -40,6 +42,9 @@ public class CtAnnotationMethodImpl<T> extends CtMethodImpl<T> implements CtAnno
 	public <C extends CtAnnotationMethod<T>> C setDefaultExpression(CtExpression<T> assignedExpression) {
 		if (assignedExpression != null) {
 			assignedExpression.setParent(this);
+		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "defaultExpression"), assignedExpression, this.defaultExpression));
 		}
 		this.defaultExpression = assignedExpression;
 		return (C) this;

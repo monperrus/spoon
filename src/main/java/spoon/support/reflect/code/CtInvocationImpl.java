@@ -16,6 +16,12 @@
  */
 package spoon.support.reflect.code;
 
+import spoon.diff.AddAction;
+import spoon.diff.DeleteAction;
+import spoon.diff.DeleteAllAction;
+import spoon.diff.UpdateAction;
+import spoon.diff.context.ListContext;
+import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtAbstractInvocation;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtInvocation;
@@ -62,15 +68,22 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 			arguments = new ArrayList<>(PARAMETERS_CONTAINER_DEFAULT_CAPACITY);
 		}
 		argument.setParent(this);
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.arguments), argument));
+		}
 		arguments.add(argument);
 		return (C) this;
 	}
 
 	@Override
-	public void removeArgument(CtExpression<?> argument) {
-		if (arguments != CtElementImpl.<CtExpression<?>>emptyList()) {
-			arguments.remove(argument);
+	public boolean removeArgument(CtExpression<?> argument) {
+		if (arguments == CtElementImpl.<CtExpression<?>>emptyList()) {
+			return false;
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(arguments, arguments.indexOf(argument)), argument));
+		}
+		return arguments.remove(argument);
 	}
 
 	@Override
@@ -115,6 +128,9 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 		if (this.arguments == CtElementImpl.<CtExpression<?>>emptyList()) {
 			this.arguments = new ArrayList<>(PARAMETERS_CONTAINER_DEFAULT_CAPACITY);
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.arguments), new ArrayList<>(this.arguments)));
+		}
 		this.arguments.clear();
 		for (CtExpression<?> expr : arguments) {
 			addArgument(expr);
@@ -127,6 +143,9 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 		if (executable != null) {
 			executable.setParent(this);
 		}
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "executable"), executable, this.executable));
+		}
 		this.executable = executable;
 		return (C) this;
 	}
@@ -138,6 +157,9 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 
 	@Override
 	public <C extends CtStatement> C setLabel(String label) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "label"), label, this.label));
+		}
 		this.label = label;
 		return (C) this;
 	}
@@ -186,7 +208,10 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 
 	@Override
 	public boolean removeActualTypeArgument(CtTypeReference<?> actualTypeArgument) {
-		return getExecutable() != null && getExecutable().removeActualTypeArgument(actualTypeArgument);
+		if (getExecutable() != null) {
+			return getExecutable().removeActualTypeArgument(actualTypeArgument);
+		}
+		return false;
 	}
 
 	@Override

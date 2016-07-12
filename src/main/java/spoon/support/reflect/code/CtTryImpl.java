@@ -63,7 +63,8 @@ public class CtTryImpl extends CtStatementImpl implements CtTry {
 			return (T) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.catchers), new ArrayList<>(this.catchers)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.catchers), new ArrayList<>(this.catchers)));
 		}
 		this.catchers.clear();
 		for (CtCatch c : catchers) {
@@ -82,7 +83,8 @@ public class CtTryImpl extends CtStatementImpl implements CtTry {
 		}
 		catcher.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.catchers), catcher));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.catchers), catcher));
 		}
 		catchers.add(catcher);
 		return (T) this;
@@ -94,7 +96,8 @@ public class CtTryImpl extends CtStatementImpl implements CtTry {
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(catchers, catchers.indexOf(catcher)), catcher));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, catchers, catchers.indexOf(catcher)), catcher));
 		}
 		return catchers.remove(catcher);
 	}

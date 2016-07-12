@@ -74,7 +74,8 @@ public class CtEnumImpl<T extends Enum<?>> extends CtClassImpl<T> implements CtE
 		if (!enumValues.contains(enumValue)) {
 			enumValue.setParent(this);
 			if (getFactory().getEnvironment().buildStackChanges()) {
-				getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.enumValues), enumValue));
+				getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+						this, this.enumValues), enumValue));
 			}
 			enumValues.add(enumValue);
 		}
@@ -89,7 +90,8 @@ public class CtEnumImpl<T extends Enum<?>> extends CtClassImpl<T> implements CtE
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(enumValues, enumValues.indexOf(enumValue)), enumValue));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, enumValues, enumValues.indexOf(enumValue)), enumValue));
 		}
 		return enumValues.remove(enumValue);
 	}
@@ -112,7 +114,7 @@ public class CtEnumImpl<T extends Enum<?>> extends CtClassImpl<T> implements CtE
 	@Override
 	public <C extends CtEnum<T>> C setEnumValues(List<CtEnumValue<?>> enumValues) {
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(enumValues), enumValues));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, enumValues), enumValues));
 		}
 		if (enumValues == null || enumValues.isEmpty()) {
 			this.enumValues = emptyList();

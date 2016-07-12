@@ -120,7 +120,7 @@ public class CtClassImpl<T extends Object> extends CtTypeImpl<T> implements CtCl
 		e.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
 			List<CtAnonymousExecutable> anonymousExecutables = getAnonymousExecutables();
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(anonymousExecutables, anonymousExecutables.size()), e));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this, anonymousExecutables, anonymousExecutables.size()), e));
 		}
 		return addTypeMember(e);
 	}
@@ -129,7 +129,7 @@ public class CtClassImpl<T extends Object> extends CtTypeImpl<T> implements CtCl
 	public boolean removeAnonymousExecutable(CtAnonymousExecutable e) {
 		if (getFactory().getEnvironment().buildStackChanges()) {
 			List<CtAnonymousExecutable> anonymousExecutables = getAnonymousExecutables();
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(anonymousExecutables, anonymousExecutables.indexOf(e)), e));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, anonymousExecutables, anonymousExecutables.indexOf(e)), e));
 		}
 		return removeTypeMember(e);
 	}
@@ -142,7 +142,7 @@ public class CtClassImpl<T extends Object> extends CtTypeImpl<T> implements CtCl
 	@Override
 	public <C extends CtClass<T>> C setAnonymousExecutables(List<CtAnonymousExecutable> anonymousExecutables) {
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(typeMembers), new ArrayList<>(getAnonymousExecutables())));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, typeMembers), new ArrayList<>(getAnonymousExecutables())));
 		}
 		if (anonymousExecutables == null || anonymousExecutables.isEmpty()) {
 			this.typeMembers.removeAll(getAnonymousExecutables());
@@ -159,7 +159,7 @@ public class CtClassImpl<T extends Object> extends CtTypeImpl<T> implements CtCl
 	public <C extends CtClass<T>> C setConstructors(Set<CtConstructor<T>> constructors) {
 		Set<CtConstructor<T>> oldConstructor = getConstructors();
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(typeMembers), new HashSet<>(oldConstructor)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, typeMembers), new HashSet<>(oldConstructor)));
 		}
 		if (constructors == null || constructors.isEmpty()) {
 			this.typeMembers.removeAll(oldConstructor);
@@ -175,7 +175,7 @@ public class CtClassImpl<T extends Object> extends CtTypeImpl<T> implements CtCl
 	@Override
 	public <C extends CtClass<T>> C addConstructor(CtConstructor<T> constructor) {
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(typeMembers), constructor));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this, typeMembers), constructor));
 		}
 		return addTypeMember(constructor);
 	}

@@ -80,7 +80,8 @@ public class CtForImpl extends CtLoopImpl implements CtFor {
 		}
 		statement.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.forInit), statement));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.forInit), statement));
 		}
 		forInit.add(statement);
 		return (T) this;
@@ -93,7 +94,8 @@ public class CtForImpl extends CtLoopImpl implements CtFor {
 			return (T) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.forInit), new ArrayList<>(this.forInit)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.forInit), new ArrayList<>(this.forInit)));
 		}
 		this.forInit.clear();
 		for (CtStatement stmt : statements) {
@@ -108,7 +110,8 @@ public class CtForImpl extends CtLoopImpl implements CtFor {
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(forInit, forInit.indexOf(statement)), statement));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, forInit, forInit.indexOf(statement)), statement));
 		}
 		return forInit.remove(statement);
 	}
@@ -128,7 +131,8 @@ public class CtForImpl extends CtLoopImpl implements CtFor {
 		}
 		statement.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.forUpdate), statement));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.forUpdate), statement));
 		}
 		forUpdate.add(statement);
 		return (T) this;
@@ -141,7 +145,8 @@ public class CtForImpl extends CtLoopImpl implements CtFor {
 			return (T) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.forUpdate), new ArrayList<>(this.forUpdate)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.forUpdate), new ArrayList<>(this.forUpdate)));
 		}
 		this.forUpdate.clear();
 		for (CtStatement stmt : statements) {
@@ -156,7 +161,8 @@ public class CtForImpl extends CtLoopImpl implements CtFor {
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(forUpdate, forUpdate.indexOf(statement)), statement));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, forUpdate, forUpdate.indexOf(statement)), statement));
 		}
 		return forUpdate.remove(statement);
 	}

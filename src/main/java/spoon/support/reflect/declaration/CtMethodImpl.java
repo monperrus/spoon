@@ -107,7 +107,7 @@ public class CtMethodImpl<T> extends CtExecutableImpl<T> implements CtMethod<T> 
 	@Override
 	public <C extends CtFormalTypeDeclarer> C setFormalCtTypeParameters(List<CtTypeParameter> formalTypeParameters) {
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.formalCtTypeParameters), new ArrayList<>(this.formalCtTypeParameters)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, this.formalCtTypeParameters), new ArrayList<>(this.formalCtTypeParameters)));
 		}
 		if (formalTypeParameters == null || formalTypeParameters.isEmpty()) {
 			this.formalCtTypeParameters = CtElementImpl.emptyList();
@@ -132,7 +132,7 @@ public class CtMethodImpl<T> extends CtExecutableImpl<T> implements CtMethod<T> 
 			formalCtTypeParameters = new ArrayList<>(TYPE_TYPE_PARAMETERS_CONTAINER_DEFAULT_CAPACITY);
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.formalCtTypeParameters), formalTypeParameter));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this, this.formalCtTypeParameters), formalTypeParameter));
 		}
 		formalTypeParameter.setParent(this);
 		formalCtTypeParameters.add(formalTypeParameter);
@@ -145,7 +145,7 @@ public class CtMethodImpl<T> extends CtExecutableImpl<T> implements CtMethod<T> 
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(formalCtTypeParameters, formalCtTypeParameters.indexOf(formalTypeParameter)), formalTypeParameter));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, formalCtTypeParameters, formalCtTypeParameters.indexOf(formalTypeParameter)), formalTypeParameter));
 		}
 		return formalCtTypeParameters.remove(formalTypeParameter);
 	}
@@ -164,7 +164,7 @@ public class CtMethodImpl<T> extends CtExecutableImpl<T> implements CtMethod<T> 
 	public <C extends CtModifiable> C setModifiers(Set<ModifierKind> modifiers) {
 		if (modifiers.size() > 0) {
 			if (getFactory().getEnvironment().buildStackChanges()) {
-				getFactory().getEnvironment().pushToStack(new DeleteAllAction(new SetContext(this.modifiers), new HashSet<>(this.modifiers)));
+				getFactory().getEnvironment().pushToStack(new DeleteAllAction(new SetContext(this, this.modifiers), new HashSet<>(this.modifiers)));
 			}
 			this.modifiers.clear();
 			for (ModifierKind modifier : modifiers) {
@@ -180,7 +180,8 @@ public class CtMethodImpl<T> extends CtExecutableImpl<T> implements CtMethod<T> 
 			this.modifiers = EnumSet.noneOf(ModifierKind.class);
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new SetContext(this.modifiers), modifier));
+			getFactory().getEnvironment().pushToStack(new AddAction(new SetContext(
+					this, this.modifiers), modifier));
 		}
 		modifiers.add(modifier);
 		return (C) this;
@@ -192,7 +193,8 @@ public class CtMethodImpl<T> extends CtExecutableImpl<T> implements CtMethod<T> 
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new SetContext(modifiers), modifier));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new SetContext(
+					this, modifiers), modifier));
 		}
 		return modifiers.remove(modifier);
 	}

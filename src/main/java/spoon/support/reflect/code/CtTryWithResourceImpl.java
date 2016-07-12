@@ -52,7 +52,8 @@ public class CtTryWithResourceImpl extends CtTryImpl implements CtTryWithResourc
 			return (T) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.resources), new ArrayList<>(this.resources)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.resources), new ArrayList<>(this.resources)));
 		}
 		this.resources.clear();
 		for (CtLocalVariable<?> l : resources) {
@@ -71,7 +72,8 @@ public class CtTryWithResourceImpl extends CtTryImpl implements CtTryWithResourc
 		}
 		resource.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.resources), resource));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.resources), resource));
 		}
 		resources.add(resource);
 		return (T) this;
@@ -83,7 +85,8 @@ public class CtTryWithResourceImpl extends CtTryImpl implements CtTryWithResourc
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(resources, resources.indexOf(resource)), resource));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, resources, resources.indexOf(resource)), resource));
 		}
 		return resources.remove(resource);
 	}

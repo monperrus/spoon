@@ -16,12 +16,15 @@
  */
 package spoon.diff.context;
 
+import spoon.reflect.declaration.CtElement;
+
 import java.util.Map;
 
 public class MapContext extends Context {
 	private final Map<?, ?> map;
 
-	public MapContext(Map<?, ?> map) {
+	public MapContext(CtElement element, Map<?, ?> map) {
+		super(element);
 		this.map = map;
 	}
 

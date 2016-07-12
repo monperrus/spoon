@@ -80,7 +80,8 @@ public class CtPackageImpl extends CtNamedElementImpl implements CtPackage {
 
 		pack.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new SetContext(this.packs), pack));
+			getFactory().getEnvironment().pushToStack(new AddAction(new SetContext(
+					this, this.packs), pack));
 		}
 		this.packs.add(pack);
 
@@ -120,7 +121,8 @@ public class CtPackageImpl extends CtNamedElementImpl implements CtPackage {
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new SetContext(packs), pack));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new SetContext(
+					this, packs), pack));
 		}
 		return packs.remove(pack);
 	}
@@ -181,7 +183,8 @@ public class CtPackageImpl extends CtNamedElementImpl implements CtPackage {
 			return (T) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new SetContext(this.packs), new HashSet<>(this.packs)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new SetContext(
+					this, this.packs), new HashSet<>(this.packs)));
 		}
 		this.packs.clear();
 		for (CtPackage p : packs) {
@@ -197,7 +200,8 @@ public class CtPackageImpl extends CtNamedElementImpl implements CtPackage {
 			return (T) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new SetContext(this.types), new HashSet<>(this.types)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new SetContext(
+					this, this.types), new HashSet<>(this.types)));
 		}
 		this.types.clear();
 		for (CtType<?> t : types) {
@@ -221,7 +225,8 @@ public class CtPackageImpl extends CtNamedElementImpl implements CtPackage {
 		}
 		type.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new SetContext(this.types), type));
+			getFactory().getEnvironment().pushToStack(new AddAction(new SetContext(
+					this, this.types), type));
 		}
 		types.add(type);
 		return (T) this;
@@ -233,7 +238,8 @@ public class CtPackageImpl extends CtNamedElementImpl implements CtPackage {
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new SetContext(types), type));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new SetContext(
+					this, types), type));
 		}
 		return types.remove(type);
 	}

@@ -60,7 +60,8 @@ public class CtNewArrayImpl<T> extends CtExpressionImpl<T> implements CtNewArray
 			return (C) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.dimensionExpressions), new HashSet<>(this.dimensionExpressions)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.dimensionExpressions), new HashSet<>(this.dimensionExpressions)));
 		}
 		this.dimensionExpressions.clear();
 		for (CtExpression<Integer> expr : dimensionExpressions) {
@@ -79,7 +80,8 @@ public class CtNewArrayImpl<T> extends CtExpressionImpl<T> implements CtNewArray
 		}
 		dimension.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.dimensionExpressions), dimension));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.dimensionExpressions), dimension));
 		}
 		dimensionExpressions.add(dimension);
 		return (C) this;
@@ -91,7 +93,8 @@ public class CtNewArrayImpl<T> extends CtExpressionImpl<T> implements CtNewArray
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(dimensionExpressions, dimensionExpressions.indexOf(dimension)), dimension));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, dimensionExpressions, dimensionExpressions.indexOf(dimension)), dimension));
 		}
 		return dimensionExpressions.remove(dimension);
 	}
@@ -103,7 +106,8 @@ public class CtNewArrayImpl<T> extends CtExpressionImpl<T> implements CtNewArray
 			return (C) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.expressions), new ArrayList<>(this.expressions)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.expressions), new ArrayList<>(this.expressions)));
 		}
 		this.expressions.clear();
 		for (CtExpression<?> expr : expressions) {
@@ -122,7 +126,8 @@ public class CtNewArrayImpl<T> extends CtExpressionImpl<T> implements CtNewArray
 		}
 		expression.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.expressions), expression));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.expressions), expression));
 		}
 		expressions.add(expression);
 		return (C) this;
@@ -134,7 +139,8 @@ public class CtNewArrayImpl<T> extends CtExpressionImpl<T> implements CtNewArray
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(expressions, expressions.indexOf(expression)), expression));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, expressions, expressions.indexOf(expression)), expression));
 		}
 		return expressions.remove(expression);
 	}

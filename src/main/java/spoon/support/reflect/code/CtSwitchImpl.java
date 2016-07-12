@@ -62,7 +62,8 @@ public class CtSwitchImpl<S> extends CtStatementImpl implements CtSwitch<S> {
 			return (T) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.cases), new ArrayList<>(this.cases)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.cases), new ArrayList<>(this.cases)));
 		}
 		this.cases.clear();
 		for (CtCase<? super S> aCase : cases) {
@@ -93,7 +94,8 @@ public class CtSwitchImpl<S> extends CtStatementImpl implements CtSwitch<S> {
 		}
 		c.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.cases), c));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.cases), c));
 		}
 		cases.add(c);
 		return (T) this;
@@ -105,7 +107,8 @@ public class CtSwitchImpl<S> extends CtStatementImpl implements CtSwitch<S> {
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(cases, cases.indexOf(c)), c));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, cases, cases.indexOf(c)), c));
 		}
 		return cases.remove(c);
 	}

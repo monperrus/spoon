@@ -170,7 +170,8 @@ public abstract class CtElementImpl implements CtElement, Serializable {
 			return (E) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.annotations), new ArrayList<>(this.annotations)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.annotations), new ArrayList<>(this.annotations)));
 		}
 		this.annotations.clear();
 		for (CtAnnotation<? extends Annotation> annot : annotations) {
@@ -193,7 +194,8 @@ public abstract class CtElementImpl implements CtElement, Serializable {
 		}
 		annotation.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.annotations), annotation));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.annotations), annotation));
 		}
 		this.annotations.add(annotation);
 		return (E) this;
@@ -204,7 +206,8 @@ public abstract class CtElementImpl implements CtElement, Serializable {
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(annotations, annotations.indexOf(annotation)), annotation));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, annotations, annotations.indexOf(annotation)), annotation));
 		}
 		return this.annotations.remove(annotation);
 	}
@@ -440,7 +443,8 @@ public abstract class CtElementImpl implements CtElement, Serializable {
 		}
 		comment.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.comments), comment));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.comments), comment));
 		}
 		comments.add(comment);
 		return (E) this;
@@ -453,7 +457,8 @@ public abstract class CtElementImpl implements CtElement, Serializable {
 			return (E) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(comments, comments.indexOf(comment)), comment));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, comments, comments.indexOf(comment)), comment));
 		}
 		this.comments.remove(comment);
 		return (E) this;
@@ -466,7 +471,8 @@ public abstract class CtElementImpl implements CtElement, Serializable {
 			return (E) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.comments), new ArrayList<>(this.comments)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.comments), new ArrayList<>(this.comments)));
 		}
 		this.comments.clear();
 		for (CtComment comment : comments) {

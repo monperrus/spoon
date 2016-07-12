@@ -56,7 +56,8 @@ public class CtStatementListImpl<R> extends CtCodeElementImpl implements CtState
 			return (T) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.statements), new ArrayList<>(this.statements)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.statements), new ArrayList<>(this.statements)));
 		}
 		this.statements.clear();
 		for (CtStatement stmt : stmts) {
@@ -75,7 +76,8 @@ public class CtStatementListImpl<R> extends CtCodeElementImpl implements CtState
 		}
 		statement.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.statements), statement));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.statements), statement));
 		}
 		this.statements.add(statement);
 		return (T) this;
@@ -87,7 +89,8 @@ public class CtStatementListImpl<R> extends CtCodeElementImpl implements CtState
 			return ;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(statements, statements.indexOf(statement)), statement));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, statements, statements.indexOf(statement)), statement));
 		}
 		statements.remove(statement);
 	}

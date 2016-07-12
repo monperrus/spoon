@@ -70,7 +70,8 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 		}
 		argument.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.arguments), argument));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.arguments), argument));
 		}
 		arguments.add(argument);
 		return (C) this;
@@ -82,7 +83,8 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(arguments, arguments.indexOf(argument)), argument));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, arguments, arguments.indexOf(argument)), argument));
 		}
 		return arguments.remove(argument);
 	}
@@ -130,7 +132,8 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 			this.arguments = new ArrayList<>(PARAMETERS_CONTAINER_DEFAULT_CAPACITY);
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.arguments), new ArrayList<>(this.arguments)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.arguments), new ArrayList<>(this.arguments)));
 		}
 		this.arguments.clear();
 		for (CtExpression<?> expr : arguments) {

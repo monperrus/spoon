@@ -69,7 +69,8 @@ public abstract class CtExpressionImpl<T> extends CtCodeElementImpl implements C
 			this.typeCasts = new ArrayList<>(CASTS_CONTAINER_DEFAULT_CAPACITY);
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.typeCasts), new ArrayList<>(this.typeCasts)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.typeCasts), new ArrayList<>(this.typeCasts)));
 		}
 		this.typeCasts.clear();
 		for (CtTypeReference<?> cast : casts) {
@@ -88,7 +89,8 @@ public abstract class CtExpressionImpl<T> extends CtCodeElementImpl implements C
 		}
 		type.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.typeCasts), type));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.typeCasts), type));
 		}
 		typeCasts.add(type);
 		return (C) this;

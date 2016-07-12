@@ -259,7 +259,8 @@ public class CtTypeReferenceImpl<T> extends CtReferenceImpl implements CtTypeRef
 			this.actualTypeArguments = new ArrayList<>(TYPE_TYPE_PARAMETERS_CONTAINER_DEFAULT_CAPACITY);
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this.actualTypeArguments), new ArrayList<>(this.actualTypeArguments)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
+					this, this.actualTypeArguments), new ArrayList<>(this.actualTypeArguments)));
 		}
 		this.actualTypeArguments.clear();
 		for (CtTypeReference<?> actualTypeArgument : actualTypeArguments) {
@@ -573,7 +574,8 @@ public class CtTypeReferenceImpl<T> extends CtReferenceImpl implements CtTypeRef
 		}
 		actualTypeArgument.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this.actualTypeArguments), actualTypeArgument));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
+					this, this.actualTypeArguments), actualTypeArgument));
 		}
 		actualTypeArguments.add(actualTypeArgument);
 		return (C) this;
@@ -585,7 +587,8 @@ public class CtTypeReferenceImpl<T> extends CtReferenceImpl implements CtTypeRef
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(actualTypeArguments, actualTypeArguments.indexOf(actualTypeArgument)), actualTypeArgument));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
+					this, actualTypeArguments, actualTypeArguments.indexOf(actualTypeArgument)), actualTypeArgument));
 		}
 		return actualTypeArguments.remove(actualTypeArgument);
 	}

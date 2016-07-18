@@ -25,6 +25,7 @@ import spoon.compiler.InvalidClassPathException;
 import spoon.compiler.SpoonFile;
 import spoon.compiler.SpoonFolder;
 import spoon.diff.Action;
+import spoon.diff.UpdateAction;
 import spoon.processing.FileGenerator;
 import spoon.processing.ProblemFixer;
 import spoon.processing.ProcessingManager;
@@ -168,6 +169,11 @@ public class StandardEnvironment implements Serializable, Environment {
 
 	@Override
 	public void pushToStack(Action action) {
+		if (action instanceof UpdateAction) {
+			if (((UpdateAction) action).getOldValue() == action.getNewValue()) {
+				return;
+			}
+		}
 		actions.push(action);
 	}
 

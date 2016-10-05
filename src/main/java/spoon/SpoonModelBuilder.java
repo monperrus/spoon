@@ -76,22 +76,24 @@ public interface SpoonModelBuilder {
 	 */
 	boolean build(JDTBuilder builder);
 
+	/** The types of compilable elements */
+	enum InputType {
+		FILES, CTTYPES
+	}
+
+
 	/**
 	 * Generates the bytecode associated to the classes stored in this
 	 * compiler's factory. The bytecode is generated in the directory given by
 	 * {@link #getBinaryOutputDirectory()}.
 	 *
-	 * @see #getSourceClasspath()
-	 */
-	boolean compile();
-
-	/**
-	 * Generates the bytecode by compiling the input sources. The bytecode is
-	 * generated in the directory given by {@link #getBinaryOutputDirectory()}.
+	 * The array of types must be of size 0 or 1. If it's empty,
+	 * the types of the factory are compiled.
+	 * If it's InputType.FILES, the files given as input are compiled.
 	 *
 	 * @see #getSourceClasspath()
 	 */
-	boolean compileInputSources();
+	boolean compile(InputType... types);
 
 	/**
 	 * Takes a list of fully qualified name processors and instantiates them to process
@@ -233,10 +235,6 @@ public interface SpoonModelBuilder {
 
 	/**
 	 * Gets the classpath that is used to build/compile the input sources.
-	 *
-	 * @see #compileInputSources()
-	 * @see #build()
-	 * @see #compile()
 	 */
 	String[] getSourceClasspath();
 

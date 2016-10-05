@@ -1,7 +1,15 @@
 package spoon.test.compilation;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+
 import org.junit.Assert;
 import org.junit.Test;
+
 import spoon.Launcher;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtBinaryOperator;
@@ -13,16 +21,38 @@ import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.factory.CodeFactory;
 import spoon.reflect.factory.CoreFactory;
 import spoon.reflect.factory.Factory;
-
-import java.io.File;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
+import spoon.reflect.visitor.filter.TypeFilter;
 
 public class CompilationTest {
 
 	@Test
+	public void compileCommandLineTest() throws Exception {
+		// the --compile option works, shouldCompile is set
+
+		String sourceFile = "./src/test/resources/noclasspath/Simple.java";
+		String compiledFile = "./spooned-classes/Simple.class";
+
+		// ensuring clean state
+		new File(compiledFile).delete();
+
+		Launcher launcher = new Launcher();
+
+		launcher.run(new String[] {
+				"-i", sourceFile,
+				"-o", "target/spooned",
+				"--compile",
+				"--compliance", "7",
+				"--level", "OFF"
+		});
+
+		assertEquals(true, launcher.getEnvironment().shouldCompile());
+
+		assertEquals(true, new File(compiledFile).exists());
+	}
+
+	@Test
 	public void compileTest() throws Exception {
+		// contract: the modified version of classes is the one that is compiled to binary code
 		final Launcher launcher = new Launcher();
 		launcher.addInputResource("./src/test/resources/noclasspath/Simple.java");
 		File outputBinDirectory = new File("./target/class-simple");
@@ -67,4 +97,26 @@ public class CompilationTest {
 		Method m = aClass.getMethod("m");
 		Assert.assertEquals(42, m.invoke(aClass.newInstance()));
 	}
+
+	@Test
+	public void testNewInstance() throws Exception {
+		// contract: a ctclass can be instantiated, and each modification results in a new valid object
+		Factory factory = new Launcher().getFactory();
+		CtClass<Ifoo> c = factory.Code().createCodeSnippetStatement(
+							"class X implements spoon.test.compilation.Ifoo { public int foo() {int i=0; return i;} }").compile();
+		c.addModifier(ModifierKind.PUBLIC); // required otherwise java.lang.IllegalAccessException at runtime when instantiating
+
+		CtBlock body = c.getElements(new TypeFilter<>(CtBlock.class)).get(1);
+		Ifoo o = c.newInstance();
+		assertEquals(0, o.foo());
+		for (int i=1; i<=10; i++) {
+			body.getStatement(0).replace(factory.Code().createCodeSnippetStatement("int i = "+i+";"));
+			o = c.newInstance();
+			// each time this is a new class
+			// each time the behavior has changed!
+			assertEquals(i, o.foo());
+		}
+
+	}
+
 }

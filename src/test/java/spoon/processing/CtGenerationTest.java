@@ -66,6 +66,7 @@ public class CtGenerationTest {
 		launcher.setOutputFilter(new RegexFilter("spoon.reflect.visitor.CtBiScannerDefault"));
 		launcher.run();
 
+		// cp ./target/generated/spoon/reflect/visitor/CtBiScannerDefault.java ./src/main/java/spoon/reflect/visitor/CtBiScannerDefault.java
 		assertThat(build(new File("./src/main/java/spoon/reflect/visitor/CtBiScannerDefault.java")).Class().get(CtBiScannerDefault.class))
 				.isEqualTo(build(new File("./target/generated/spoon/reflect/visitor/CtBiScannerDefault.java")).Class().get(CtBiScannerDefault.class));
 	}
@@ -90,6 +91,7 @@ public class CtGenerationTest {
 		launcher.setOutputFilter(new RegexFilter("spoon.support.visitor.equals.EqualsVisitor"));
 		launcher.run();
 
+		// cp ./target/generated/spoon/support/visitor/equals/EqualsVisitor.java  ./src/main/java/spoon/support/visitor/equals/EqualsVisitor.java
 		CtClass<Object> actual = build(new File("./src/main/java/spoon/support/visitor/equals/EqualsVisitor.java")).Class().get(EqualsVisitor.class);
 		CtClass<Object> expected = build(new File("./target/generated/spoon/support/visitor/equals/EqualsVisitor.java")).Class().get(EqualsVisitor.class);
 		assertThat(actual)

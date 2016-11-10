@@ -22,6 +22,7 @@ import spoon.reflect.declaration.CtAnnotation;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtPackage;
+import spoon.reflect.declaration.CtTypeMember;
 import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.reference.CtTypeReference;
@@ -33,6 +34,11 @@ import spoon.support.visitor.equals.IgnoredByEquals;
 
 import java.util.List;
 
+import static javafx.scene.input.KeyCode.T;
+
+/** Generates EqualsVisitor, taking CtBiScanner as a specification of the metamodel properties to be taken into account for equality.
+ * CtBiScanner is itself generated out of CtScanner.
+ */
 public class EqualsVisitorGenerator extends AbstractManualProcessor {
 	private static final String TARGET_EQUALS_PACKAGE = "spoon.support.visitor.equals";
 	private static final String GENERATING_EQUALS_PACKAGE = "spoon.generating.equals";
@@ -41,32 +47,33 @@ public class EqualsVisitorGenerator extends AbstractManualProcessor {
 	@Override
 	public void process() {
 		final CtClass<Object> target = createEqualsVisitor();
-		new CtScanner() {
-			@Override
-			public <T> void visitCtMethod(CtMethod<T> element) {
-				if (!element.getSimpleName().startsWith("visitCt")) {
-					return;
-				}
-
-				Factory factory = element.getFactory();
-				CtMethod<T> clone = factory.Core().clone(element);
-
-				final CtAnnotation<?> ignoredAnnotation = factory.Core().createAnnotation();
-				ignoredAnnotation.setAnnotationType(factory.Type().createReference(IgnoredByEquals.class));
-
-				for (int i = 2; i < clone.getBody().getStatements().size() - 1; i++) {
-					final CtInvocation targetInvocation = (CtInvocation) ((CtInvocation) clone.getBody().getStatement(i)).getArguments().get(0);
-					if (targetInvocation.getExecutable().getExecutableDeclaration().getAnnotations().contains(ignoredAnnotation)) {
-						clone.getBody().getStatement(i--).delete();
-						continue;
-					}
-					CtInvocation replace = (CtInvocation) factory.Core().clone(clone.getBody().getStatement(i));
-					clone.getBody().getStatement(i).replace(replace);
-				}
-
-				target.addMethod(clone);
+		for(CtTypeMember member : getFactory().Class().get(CtBiScannerDefault.class).getTypeMembers()) {
+			if (! (member instanceof CtMethod)) {
+				continue;
 			}
-		}.scan(getFactory().Class().get(CtBiScannerDefault.class));
+			CtMethod<?> element = (CtMethod<?>) member;
+			if (!element.getSimpleName().startsWith("visitCt")) {
+				return;
+			}
+
+			Factory factory = element.getFactory();
+			CtMethod<?> clone = factory.Core().clone(element);
+
+			final CtAnnotation<?> ignoredAnnotation = factory.Core().createAnnotation();
+			ignoredAnnotation.setAnnotationType(factory.Type().createReference(IgnoredByEquals.class));
+
+			for (int i = 2; i < clone.getBody().getStatements().size() - 1; i++) {
+				final CtInvocation targetInvocation = (CtInvocation) ((CtInvocation) clone.getBody().getStatement(i)).getArguments().get(0);
+				if (targetInvocation.getExecutable().getExecutableDeclaration().getAnnotations().contains(ignoredAnnotation)) {
+					clone.getBody().getStatement(i--).delete();
+					continue;
+				}
+				CtInvocation replace = (CtInvocation) factory.Core().clone(clone.getBody().getStatement(i));
+				clone.getBody().getStatement(i).replace(replace);
+			}
+
+			target.addMethod(clone);
+		};
 	}
 
 	private CtClass<Object> createEqualsVisitor() {

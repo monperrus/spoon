@@ -16,7 +16,6 @@
  */
 package spoon.support.reflect.declaration;
 
-import static spoon.reflect.ModelElementContainerDefaultCapacities.PARAMETERS_CONTAINER_DEFAULT_CAPACITY;
 import spoon.diff.AddAction;
 import spoon.diff.DeleteAction;
 import spoon.diff.DeleteAllAction;
@@ -25,10 +24,14 @@ import spoon.diff.context.ListContext;
 import spoon.diff.context.ObjectContext;
 import spoon.diff.context.SetContext;
 import spoon.reflect.code.CtBlock;
+import spoon.reflect.code.CtBodyHolder;
+import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtTypeReference;
+import spoon.support.util.QualifiedNameBasedSortedSet;
+import spoon.support.visitor.SignaturePrinter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,10 +44,9 @@ import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.declaration.CtType;
-import spoon.reflect.reference.CtExecutableReference;
-import spoon.reflect.reference.CtTypeReference;
-import spoon.support.util.QualifiedNameBasedSortedSet;
-import spoon.support.visitor.SignaturePrinter;
+
+import static spoon.reflect.ModelElementContainerDefaultCapacities.PARAMETERS_CONTAINER_DEFAULT_CAPACITY;
+
 
 /**
  * The implementation for {@link spoon.reflect.declaration.CtExecutable}.

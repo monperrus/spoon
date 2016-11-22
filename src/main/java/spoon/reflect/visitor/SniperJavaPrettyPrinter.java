@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2006-2015 INRIA and contributors
+ * Copyright (C) 2006-2016 INRIA and contributors
  * Spoon - http://spoon.gforge.inria.fr/
  *
  * This software is governed by the CeCILL-C License under French law and
@@ -85,7 +85,7 @@ public class SniperJavaPrettyPrinter extends CtScanner implements PrettyPrinter 
 		Deque<Action> actionOnTypes = new ArrayDeque();
 		for (int i = 0; i < types.size(); i++) {
 			CtType<?> ctType = types.get(i);
-			for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext(); ) {
+			for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext();) {
 				Action action = iterator.next();
 				CtElement element = action.getContext().getElement();
 				try {
@@ -133,13 +133,13 @@ public class SniperJavaPrettyPrinter extends CtScanner implements PrettyPrinter 
 	class SniperWriter extends CtInheritanceScanner {
 		private Deque<Action> actions;
 
-		public SniperWriter(Deque<Action> actions) {
+		SniperWriter(Deque<Action> actions) {
 			this.actions = actions;
 		}
 
 		@Override
 		public <T> void scanCtType(CtType<T> type) {
-			for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext(); ) {
+			for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext();) {
 				Action action = iterator.next();
 				if (action instanceof AddAction) {
 					int position = 0;
@@ -154,7 +154,7 @@ public class SniperJavaPrettyPrinter extends CtScanner implements PrettyPrinter 
 					} else if (action.getNewElement() instanceof CtMethod) {
 						for (Iterator<CtMethod<?>> actionIterator = type
 								.getMethods()
-								.iterator(); actionIterator.hasNext(); ) {
+								.iterator(); actionIterator.hasNext();) {
 							CtMethod<?> method = actionIterator.next();
 							if (method.getPosition() != null) {
 								position = method.getPosition().getSourceEnd() + 2;
@@ -180,7 +180,7 @@ public class SniperJavaPrettyPrinter extends CtScanner implements PrettyPrinter 
 
 		@Override
 		public void scanCtNamedElement(CtNamedElement e) {
-			for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext(); ) {
+			for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext();) {
 				Action action = iterator.next();
 				if (action instanceof UpdateAction) {
 					CtElement element = action.getContext().getElement();
@@ -195,7 +195,7 @@ public class SniperJavaPrettyPrinter extends CtScanner implements PrettyPrinter 
 
 		@Override
 		public void scanCtModifiable(CtModifiable m) {
-			for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext(); ) {
+			for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext();) {
 				Action action = iterator.next();
 				if (action instanceof UpdateAction) {
 					if (action.getNewValue() instanceof ModifierKind) {

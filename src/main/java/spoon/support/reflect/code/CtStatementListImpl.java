@@ -86,7 +86,7 @@ public class CtStatementListImpl<R> extends CtCodeElementImpl implements CtState
 	@Override
 	public void removeStatement(CtStatement statement) {
 		if (this.statements == CtElementImpl.<CtStatement>emptyList()) {
-			return ;
+			return;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
 			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(

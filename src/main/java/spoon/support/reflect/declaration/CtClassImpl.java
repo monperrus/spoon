@@ -24,7 +24,6 @@ import spoon.diff.DeleteAllAction;
 import spoon.diff.UpdateAction;
 import spoon.diff.context.ListContext;
 import spoon.diff.context.ObjectContext;
-import spoon.diff.context.SetContext;
 import spoon.reflect.code.CtCodeElement;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.code.CtStatementList;

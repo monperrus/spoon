@@ -16,20 +16,18 @@
  */
 package spoon.support.reflect.reference;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import spoon.diff.AddAction;
 import spoon.diff.DeleteAction;
 import spoon.diff.DeleteAllAction;
 import spoon.diff.context.ListContext;
-import spoon.diff.context.SetContext;
 import spoon.reflect.reference.CtIntersectionTypeReference;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.CtVisitor;
 import spoon.support.reflect.declaration.CtElementImpl;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class CtIntersectionTypeReferenceImpl<T> extends CtTypeReferenceImpl<T> implements CtIntersectionTypeReference<T> {
 	List<CtTypeReference<?>> bounds = CtElementImpl.emptyList();

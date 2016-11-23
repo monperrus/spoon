@@ -151,6 +151,8 @@ public class AstCheckerTest {
 					"CtBlockImpl#removeStatement", //
 					"CtAnnotationTypeImpl#addMethod", //
 					"CtClassImpl#removeConstructor", //
+					"CtConstructorCallImpl#addArgument", //
+					"CtInvocationImpl#addArgument", //
 					"CtTypeParameterReferenceImpl#addBound", //
 					"CtTypeParameterReferenceImpl#removeBound", //
 					"CtTypeParameterReferenceImpl#setBounds", //
@@ -178,9 +180,13 @@ public class AstCheckerTest {
 					&& !isNotCandidate(candidate) //
 					&& !isDelegateMethod(candidate) //
 					&& !isUnsupported(candidate.getBody()) //
-					&& !hasPushToStackInvocation(candidate.getBody());
+					&& !hasPushToStackInvocation(candidate.getBody())
+					&& isSettable(candidate);
 		}
 
+		private boolean isSettable(CtMethod<?> candidate) {
+			return candidate.getAnnotation(UnsettableProperty.class) == null;
+		}
 		private boolean isNotCandidate(CtMethod<?> candidate) {
 			return "setVisibility".equals(candidate.getSimpleName()) || notCandidates.contains(candidate.getDeclaringType().getSimpleName() + "#" + candidate.getSimpleName());
 		}

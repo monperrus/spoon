@@ -148,7 +148,7 @@ public class CtCatchVariableImpl<T> extends CtCodeElementImpl implements CtCatch
 	@Override
 	public <T extends CtMultiTypedElement> T setMultiTypes(List<CtTypeReference<?>> types) {
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, types), types));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, this.types), new ArrayList<>(this.types)));
 		}
 		if (types == null || types.isEmpty()) {
 			this.types = CtElementImpl.emptyList();

@@ -91,6 +91,9 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 
 	@Override
 	public List<CtTypeMember> getTypeMembers() {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			return Collections.unmodifiableList(typeMembers);
+		}
 		return typeMembers;
 	}
 
@@ -145,7 +148,7 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 	@Override
 	public <C extends CtType<T>> C setTypeMembers(List<CtTypeMember> members) {
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, typeMembers), typeMembers));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, typeMembers), new ArrayList<>(typeMembers)));
 		}
 		if (members == null || members.isEmpty()) {
 			this.typeMembers = emptyList();
@@ -649,7 +652,7 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 	@Override
 	public <C extends CtFormalTypeDeclarer> C setFormalCtTypeParameters(List<CtTypeParameter> formalTypeParameters) {
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, formalCtTypeParameters), formalCtTypeParameters));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, formalCtTypeParameters), new ArrayList<>(formalCtTypeParameters)));
 		}
 		if (formalTypeParameters == null || formalTypeParameters.isEmpty()) {
 			this.formalCtTypeParameters = CtElementImpl.emptyList();

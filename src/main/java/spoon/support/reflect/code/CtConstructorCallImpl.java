@@ -116,7 +116,7 @@ public class CtConstructorCallImpl<T> extends CtTargetedExpressionImpl<T, CtExpr
 	}
 
 	@Override
-	public <C extends CtAbstractInvocation<T>> C addArgument(CtExpression<?> argument) {
+	public <C extends CtAbstractInvocation<T>> C addArgument(int position, CtExpression<?> argument) {
 		if (argument == null) {
 			return (C) this;
 		}
@@ -125,11 +125,15 @@ public class CtConstructorCallImpl<T> extends CtTargetedExpressionImpl<T, CtExpr
 		}
 		argument.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
-					this, this.arguments), argument));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this, this.arguments, position), argument));
 		}
-		arguments.add(argument);
+		arguments.add(position, argument);
 		return (C) this;
+	}
+
+	@Override
+	public <C extends CtAbstractInvocation<T>> C addArgument(CtExpression<?> argument) {
+		return addArgument(arguments.size(), argument);
 	}
 
 	@Override

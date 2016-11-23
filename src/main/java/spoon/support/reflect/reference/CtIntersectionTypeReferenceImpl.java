@@ -26,6 +26,7 @@ import spoon.reflect.visitor.CtVisitor;
 import spoon.support.reflect.declaration.CtElementImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -39,6 +40,9 @@ public class CtIntersectionTypeReferenceImpl<T> extends CtTypeReferenceImpl<T> i
 
 	@Override
 	public List<CtTypeReference<?>> getBounds() {
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			return Collections.unmodifiableList(bounds);
+		}
 		return bounds;
 	}
 

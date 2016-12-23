@@ -123,7 +123,7 @@ public class SpoonModelTree extends JFrame implements KeyListener,
 		return jTree;
 	}
 
-	private JPopupMenu getMenu() {
+	public JPopupMenu getMenu() {
 		if (menu == null) {
 			menu = new JPopupMenu();
 

@@ -13,6 +13,9 @@ install:
   - mvn dependency:resolve
   - pip install --user CommonMark requests
   - sudo apt-get install xmlstarlet
+  - "export DISPLAY=:99.0" # for gui testing
+  - "sh -e /etc/init.d/xvfb start" # for gui testing
+  - sleep 3 # give xvfb some time to start
   
 script: |
   # compiles and install

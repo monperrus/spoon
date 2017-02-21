@@ -18,11 +18,8 @@ package spoon.reflect.visitor.filter;
 
 import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.declaration.CtElement;
-import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.CtLocalVariableReference;
-import spoon.reflect.visitor.Filter;
-import spoon.reflect.visitor.chain.CtConsumableFunction;
-import spoon.reflect.visitor.chain.CtConsumer;
+import spoon.reflect.visitor.chain.CtQuery;
 
 /**
  * This Query expects a {@link CtLocalVariable} as input
@@ -37,41 +34,24 @@ import spoon.reflect.visitor.chain.CtConsumer;
  * }
  * </pre>
  */
-public class LocalVariableReferenceFunction implements CtConsumableFunction<CtLocalVariable<?>> {
+public class LocalVariableReferenceFunction extends AbstractVariableReferenceFunction {
 
 	public LocalVariableReferenceFunction() {
+		super(CtLocalVariable.class, CtLocalVariableReference.class);
+	}
+
+	/**
+	 * This constructor allows to define input local variable - the one for which this function will search for.
+	 * In such case the input of mapping function represents the scope
+	 * where this local variable is searched for.
+	 * @param localVariable - the local variable declaration which is searched in scope of input element of this mapping function.
+	 */
+	public LocalVariableReferenceFunction(CtLocalVariable<?> localVariable) {
+		super(CtLocalVariable.class, CtLocalVariableReference.class, localVariable);
 	}
 
 	@Override
-	public void apply(final CtLocalVariable<?> localVariable, CtConsumer<Object> outputConsumer) {
-		final String simpleName = localVariable.getSimpleName();
-		class Context {
-			boolean hasLocalType = false;
-		}
-		final Context context = new Context();
-		localVariable
-			.map(new LocalVariableScopeFunction())
-			.select(new Filter<CtElement>() {
-				@Override
-				public boolean matches(CtElement element) {
-					if (element instanceof CtType) {
-						context.hasLocalType = true;
-					} else if (element instanceof CtLocalVariableReference<?>) {
-						CtLocalVariableReference<?> localVarRef = (CtLocalVariableReference<?>) element;
-						if (simpleName.equals(localVarRef.getSimpleName())) {
-							//we have found a variable reference in visibility scope of localVariable
-							if (context.hasLocalType) {
-								//there exists a local type in visibility scope of this variable declaration
-								//the variable declarations in scope of this local class may shadow input localVariable
-								//so finally check that there is no other localVariable, which shadows the input localVariable
-								return localVariable == localVarRef.getDeclaration();
-							}
-							return true;
-						}
-					}
-					return false;
-				}
-			})
-			.forEach(outputConsumer);
+	protected CtQuery createScopeQuery(CtElement scope, Context context) {
+		return scope.map(new LocalVariableScopeFunction(context));
 	}
 }

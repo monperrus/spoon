@@ -16,10 +16,10 @@
  */
 package spoon.reflect.visitor.filter;
 
+import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.reference.CtParameterReference;
-import spoon.reflect.visitor.chain.CtConsumableFunction;
-import spoon.reflect.visitor.chain.CtConsumer;
+import spoon.reflect.visitor.chain.CtQuery;
 
 /**
  * This Query expects a {@link CtParameter} as input
@@ -34,16 +34,23 @@ import spoon.reflect.visitor.chain.CtConsumer;
  * }
  * </pre>
  */
-public class ParameterReferenceFunction implements CtConsumableFunction<CtParameter<?>> {
+public class ParameterReferenceFunction extends AbstractVariableReferenceFunction {
 
 	public ParameterReferenceFunction() {
+		super(CtParameter.class, CtParameterReference.class);
+	}
+
+	/**
+	 * This constructor allows to define target parameter - the one for which this function will search for.
+	 * In such case the input of mapping function represents the searching scope
+	 * @param parameter - the parameter declaration which is searched in scope of input element
+	 */
+	public ParameterReferenceFunction(CtParameter<?> parameter) {
+		super(CtParameter.class, CtParameterReference.class, parameter);
 	}
 
 	@Override
-	public void apply(CtParameter<?> parameter, CtConsumer<Object> outputConsumer) {
-		parameter
-			.map(new ParameterScopeFunction())
-			.select(new DirectReferenceFilter<CtParameterReference<?>>(parameter.getReference()))
-			.forEach(outputConsumer);
+	protected CtQuery createScopeQuery(CtElement scope, Context context) {
+		return scope.map(new ParameterScopeFunction(context));
 	}
 }

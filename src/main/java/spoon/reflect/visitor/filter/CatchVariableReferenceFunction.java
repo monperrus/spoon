@@ -17,9 +17,9 @@
 package spoon.reflect.visitor.filter;
 
 import spoon.reflect.code.CtCatchVariable;
+import spoon.reflect.declaration.CtElement;
 import spoon.reflect.reference.CtCatchVariableReference;
-import spoon.reflect.visitor.chain.CtConsumableFunction;
-import spoon.reflect.visitor.chain.CtConsumer;
+import spoon.reflect.visitor.chain.CtQuery;
 
 /**
  * This Query expects a {@link CtCatchVariable} as input
@@ -34,16 +34,18 @@ import spoon.reflect.visitor.chain.CtConsumer;
  * }
  * </pre>
  */
-public class CatchVariableReferenceFunction implements CtConsumableFunction<CtCatchVariable<?>> {
+public class CatchVariableReferenceFunction extends AbstractVariableReferenceFunction {
 
 	public CatchVariableReferenceFunction() {
+		super(CtCatchVariable.class, CtCatchVariableReference.class);
+	}
+
+	public CatchVariableReferenceFunction(CtCatchVariable<?> catchVariable) {
+		super(CtCatchVariable.class, CtCatchVariableReference.class, catchVariable);
 	}
 
 	@Override
-	public void apply(CtCatchVariable<?> localVariable, CtConsumer<Object> outputConsumer) {
-		localVariable
-			.map(new CatchVariableScopeFunction())
-			.select(new DirectReferenceFilter<CtCatchVariableReference<?>>(localVariable.getReference()))
-			.forEach(outputConsumer);
+	protected CtQuery createScopeQuery(CtElement scope, Context context) {
+		return scope.map(new CatchVariableScopeFunction(context));
 	}
 }

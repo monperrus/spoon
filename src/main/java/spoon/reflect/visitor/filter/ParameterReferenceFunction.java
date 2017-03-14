@@ -20,7 +20,6 @@ import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.reference.CtParameterReference;
 import spoon.reflect.visitor.chain.CtQuery;
-import spoon.reflect.visitor.chain.CtScannerListener;
 
 /**
  * This Query expects a {@link CtParameter} as input
@@ -51,7 +50,7 @@ public class ParameterReferenceFunction extends AbstractVariableReferenceFunctio
 	}
 
 	@Override
-	protected CtQuery createScopeQuery(CtVariable<?> scope, CtScannerListener scannerListener) {
-		return scope.map(new ParameterScopeFunction(scannerListener));
+	protected CtQuery createScopeQuery(CtVariable<?> scope) {
+		return scope.map(new ParameterScopeFunction());
 	}
 }

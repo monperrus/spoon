@@ -20,7 +20,6 @@ import spoon.reflect.code.CtCatchVariable;
 import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.reference.CtCatchVariableReference;
 import spoon.reflect.visitor.chain.CtQuery;
-import spoon.reflect.visitor.chain.CtScannerListener;
 
 /**
  * This Query expects a {@link CtCatchVariable} as input
@@ -46,7 +45,7 @@ public class CatchVariableReferenceFunction extends AbstractVariableReferenceFun
 	}
 
 	@Override
-	protected CtQuery createScopeQuery(CtVariable<?> scope, CtScannerListener scannerListener) {
-		return scope.map(new CatchVariableScopeFunction(scannerListener));
+	protected CtQuery createScopeQuery(CtVariable<?> scope) {
+		return scope.map(new CatchVariableScopeFunction());
 	}
 }

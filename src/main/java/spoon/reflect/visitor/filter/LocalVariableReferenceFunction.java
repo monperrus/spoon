@@ -20,7 +20,6 @@ import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.reference.CtLocalVariableReference;
 import spoon.reflect.visitor.chain.CtQuery;
-import spoon.reflect.visitor.chain.CtScannerListener;
 
 /**
  * This Query expects a {@link CtLocalVariable} as input
@@ -52,7 +51,7 @@ public class LocalVariableReferenceFunction extends AbstractVariableReferenceFun
 	}
 
 	@Override
-	protected CtQuery createScopeQuery(CtVariable<?> scope, CtScannerListener scannerListener) {
-		return scope.map(new LocalVariableScopeFunction(scannerListener));
+	protected CtQuery createScopeQuery(CtVariable<?> scope) {
+		return scope.map(new LocalVariableScopeFunction());
 	}
 }

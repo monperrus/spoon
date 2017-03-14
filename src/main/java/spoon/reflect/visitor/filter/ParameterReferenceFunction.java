@@ -16,10 +16,11 @@
  */
 package spoon.reflect.visitor.filter;
 
-import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtParameter;
+import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.reference.CtParameterReference;
 import spoon.reflect.visitor.chain.CtQuery;
+import spoon.reflect.visitor.chain.CtScannerListener;
 
 /**
  * This Query expects a {@link CtParameter} as input
@@ -50,7 +51,7 @@ public class ParameterReferenceFunction extends AbstractVariableReferenceFunctio
 	}
 
 	@Override
-	protected CtQuery createScopeQuery(CtElement scope, Context context) {
-		return scope.map(new ParameterScopeFunction(context));
+	protected CtQuery createScopeQuery(CtVariable<?> scope, CtScannerListener scannerListener) {
+		return scope.map(new ParameterScopeFunction(scannerListener));
 	}
 }

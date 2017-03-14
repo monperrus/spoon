@@ -17,9 +17,10 @@
 package spoon.reflect.visitor.filter;
 
 import spoon.reflect.code.CtLocalVariable;
-import spoon.reflect.declaration.CtElement;
+import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.reference.CtLocalVariableReference;
 import spoon.reflect.visitor.chain.CtQuery;
+import spoon.reflect.visitor.chain.CtScannerListener;
 
 /**
  * This Query expects a {@link CtLocalVariable} as input
@@ -51,7 +52,7 @@ public class LocalVariableReferenceFunction extends AbstractVariableReferenceFun
 	}
 
 	@Override
-	protected CtQuery createScopeQuery(CtElement scope, Context context) {
-		return scope.map(new LocalVariableScopeFunction(context));
+	protected CtQuery createScopeQuery(CtVariable<?> scope, CtScannerListener scannerListener) {
+		return scope.map(new LocalVariableScopeFunction(scannerListener));
 	}
 }

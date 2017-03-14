@@ -73,7 +73,7 @@ abstract class AbstractVariableReferenceFunction implements CtConsumableFunction
 		CtQuery scopeQuery;
 		if (scope == variable) {
 			//we are starting search from local variable declaration
-			scopeQuery = createScopeQuery(scope, context);
+			scopeQuery = createScopeQuery(variable, context);
 		} else {
 			//we are starting search later, somewhere deep in scope of variable declaration
 			final CtElement variableParent = variable.getParent();
@@ -121,7 +121,7 @@ abstract class AbstractVariableReferenceFunction implements CtConsumableFunction
 			.forEach(outputConsumer);
 	}
 
-	protected static class Context implements CtScannerListener {
+	private static class Context implements CtScannerListener {
 		int nrTypes = 0;
 
 		@Override
@@ -143,5 +143,11 @@ abstract class AbstractVariableReferenceFunction implements CtConsumableFunction
 		}
 	}
 
-	protected abstract CtQuery createScopeQuery(CtElement scope, Context context);
+	/**
+	 * @param scope a {@link CtVariable}, where searching should start
+	 * @param scannerListener {@link CtScannerListener}, which has to be called by used mapping function
+	 * @return a query, which visits all the elements, which are in visibility scope of the `scope` {@link CtVariable}.
+	 * Depending on the type of the variable the appropriate scope mapping function has to be used.
+	 */
+	protected abstract CtQuery createScopeQuery(CtVariable<?> scope, CtScannerListener scannerListener);
 }

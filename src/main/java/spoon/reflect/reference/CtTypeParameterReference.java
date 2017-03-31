@@ -72,10 +72,26 @@ public interface CtTypeParameterReference extends CtTypeReference<Object> {
 	 */
 	<T extends CtTypeParameterReference> T setBoundingType(CtTypeReference<?> superType);
 
-	// overriding the return type
+	/**
+	 * Returns the {@link CtTypeParameter}, a {@link CtTypeParameter}, that declares the type parameter
+	 * referenced or <code>null</code> if the reference is not in a context where such type parameter is declared.
+	 * See also {@link #getTypeParameterDeclaration()} which has a different semantic.
+	 */
 	@Override
 	@DerivedProperty
 	CtTypeParameter getDeclaration();
+
+	/**
+	 * Returns the declaration in the target type. In the following example, getTypeParameterDeclaration of T in Dog&lt;T&gt; returns the type parameter definition "X" (while {@link #getDeclaration()} returns the "T" of Cat).
+	 * <pre>
+	 * class Dog&lt;X&gt;{}
+	 * class Cat&lt;T&gt; {
+	 * Dog&lt;T&gt; dog;
+	 * }
+	 * </pre>
+	 */
+	@DerivedProperty
+	CtTypeParameter getTypeParameterDeclaration();
 
 	// overriding the return type
 	@Override

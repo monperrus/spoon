@@ -186,24 +186,31 @@ public class CtTypeParameterReferenceImpl extends CtTypeReferenceImpl<Object> im
 				return result;
 			}
 		}
+		return null;
+	}
+
+	@Override
+	public CtTypeParameter getTypeParameterDeclaration() {
 
 		CtElement parent = this.getParent();
 
-		// case 2: this is an actual type argument of a type reference eg List<E>
+		// case 1: this is an actual type argument of a type reference eg List<E>
 		if (parent instanceof CtTypeReference) {
 			CtType t = ((CtTypeReference) parent).getTypeDeclaration();
-			return findTypeParamDeclaration(t, this.getSimpleName());
+			return findTypeParamDeclarationByPosition(t, ((CtTypeReference) parent).getActualTypeArguments().indexOf(this));
 		}
 
-		// case 3: this is an actual type argument of a method/constructor reference
+		// case 2: this is an actual type argument of a method/constructor reference
 		if (parent instanceof CtExecutableReference) {
 			CtExecutable<?> exec = ((CtExecutableReference<?>) parent).getExecutableDeclaration();
 			if (exec instanceof CtMethod || exec instanceof CtConstructor) {
-				return findTypeParamDeclaration((CtFormalTypeDeclarer) exec, this.getSimpleName());
+				return findTypeParamDeclarationByPosition((CtFormalTypeDeclarer) exec, ((CtTypeReference) parent).getActualTypeArguments().indexOf(this));
 			}
 		}
+
 		return null;
 	}
+
 
 	private CtTypeParameter findTypeParamDeclaration(CtFormalTypeDeclarer type, String refName) {
 		for (CtTypeParameter typeParam : type.getFormalCtTypeParameters()) {
@@ -212,6 +219,10 @@ public class CtTypeParameterReferenceImpl extends CtTypeReferenceImpl<Object> im
 			}
 		}
 		return null;
+	}
+
+	private CtTypeParameter findTypeParamDeclarationByPosition(CtFormalTypeDeclarer type, int position) {
+		return type.getFormalCtTypeParameters().get(position);
 	}
 
 	@Override

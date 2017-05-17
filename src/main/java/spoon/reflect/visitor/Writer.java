@@ -16,6 +16,7 @@
  */
 package spoon.reflect.visitor;
 
+import spoon.reflect.code.CtStatement;
 import spoon.reflect.cu.SourcePosition;
 import spoon.reflect.declaration.CtElement;
 
@@ -37,7 +38,11 @@ public class Writer {
 	}
 
 	public Writer write(CtElement element, int position) {
-		this.content.insert(position, element.toString());
+		String content = element.toString();
+		if (element instanceof CtStatement && !content.endsWith("\n")) {
+			content += "\n";
+		}
+		this.content.insert(position, content);
 		return this;
 	}
 

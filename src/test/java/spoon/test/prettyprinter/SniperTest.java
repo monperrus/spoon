@@ -36,6 +36,9 @@ public class SniperTest {
 		aClass.addMethod(method);
 
 		aClass.setSimpleName("Blabla");
+		aClass.removeModifier(ModifierKind.PUBLIC);
+		aClass.addModifier(ModifierKind.PRIVATE);
+		aClass.addComment(factory.createInlineComment("blabla"));
 
 		SniperJavaPrettyPrinter sniper = new SniperJavaPrettyPrinter(spoon.getEnvironment());
 		sniper.calculate(aClass.getPosition().getCompilationUnit(), Arrays.asList(aClass));

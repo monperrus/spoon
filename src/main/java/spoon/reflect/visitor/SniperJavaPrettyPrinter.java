@@ -17,13 +17,16 @@
 package spoon.reflect.visitor;
 
 import org.apache.commons.io.FileUtils;
+import spoon.SpoonException;
 import spoon.compiler.Environment;
 import spoon.diff.Action;
 import spoon.diff.AddAction;
 import spoon.diff.DeleteAction;
 import spoon.diff.DeleteAllAction;
 import spoon.diff.UpdateAction;
+import spoon.reflect.code.CtComment;
 import spoon.reflect.cu.CompilationUnit;
+import spoon.reflect.cu.position.BodyHolderSourcePosition;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtMethod;
@@ -37,7 +40,6 @@ import spoon.reflect.declaration.ParentNotInitializedException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -83,10 +85,8 @@ public class SniperJavaPrettyPrinter extends CtScanner implements PrettyPrinter 
 	public void calculate(CompilationUnit sourceCompilationUnit, List<CtType<?>> types) {
 		actionsOnElement = new HashMap();
 		Deque<Action> actionOnTypes = new ArrayDeque();
-		for (int i = 0; i < types.size(); i++) {
-			CtType<?> ctType = types.get(i);
-			for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext();) {
-				Action action = iterator.next();
+		for (CtType<?> ctType : types) {
+			for (Action action : actions) {
 				CtElement element = action.getContext().getElement();
 				try {
 					if (element.hasParent(ctType) || ctType.equals(element)) {
@@ -101,8 +101,23 @@ public class SniperJavaPrettyPrinter extends CtScanner implements PrettyPrinter 
 					e.printStackTrace();
 				}
 			}
+			for (CtElement ctElement : actionsOnElement.keySet()) {
+				removeMultiModifiersActions(actionsOnElement.get(ctElement));
+			}
 			writer = new Writer(getFileContent(ctType.getPosition().getFile()));
 			scan(ctType);
+		}
+	}
+
+	private void removeMultiModifiersActions(Deque<Action> actions) {
+		boolean isModifiersAlreadyPresent = false;
+		for (Action action : new ArrayDeque<Action>(actions)) {
+			if (action.getNewValue() instanceof ModifierKind) {
+				if (isModifiersAlreadyPresent) {
+					actions.remove(action);
+				}
+				isModifiersAlreadyPresent = true;
+			}
 		}
 	}
 
@@ -161,9 +176,12 @@ public class SniperJavaPrettyPrinter extends CtScanner implements PrettyPrinter 
 								break;
 							}
 						}
-
+					} else if (action.getNewElement() instanceof CtComment) {
+						position = action.getNewElement().getParent().getPosition().getSourceStart();
+					} else if (action.getNewValue() instanceof ModifierKind) {
+						continue;
 					} else {
-						throw new RuntimeException("balbal");
+						throw new RuntimeException("Action Type not handled " + action.getNewElement());
 					}
 					if (position == 0) {
 						position = type.getPosition().getSourceEnd() - 2;
@@ -185,8 +203,8 @@ public class SniperJavaPrettyPrinter extends CtScanner implements PrettyPrinter 
 				if (action instanceof UpdateAction) {
 					CtElement element = action.getContext().getElement();
 					if (element instanceof CtType) {
-						String firstLine = element.clone().setComments(Collections.EMPTY_LIST).toString().split("\n")[0];
-						writer.replace(element.getPosition().getSourceStart(), element.getPosition().getSourceStart() + 1, firstLine);
+						BodyHolderSourcePosition position = (BodyHolderSourcePosition) element.getPosition();
+						writer.replace(position.getNameStart(), position.getNameEnd(), action.getNewValue() + "");
 					}
 				}
 			}
@@ -197,21 +215,13 @@ public class SniperJavaPrettyPrinter extends CtScanner implements PrettyPrinter 
 		public void scanCtModifiable(CtModifiable m) {
 			for (Iterator<Action> iterator = actions.iterator(); iterator.hasNext();) {
 				Action action = iterator.next();
-				if (action instanceof UpdateAction) {
-					if (action.getNewValue() instanceof ModifierKind) {
-						// TODO
-					}
-				} else if (action instanceof DeleteAllAction) {
-					if (action.getNewValue() instanceof ModifierKind) {
-						// TODO
-					}
-				} else if (action instanceof DeleteAction) {
-					if (action.getNewValue() instanceof ModifierKind) {
-						// TODO
-					}
-				} else if (action instanceof AddAction) {
-					if (action.getNewValue() instanceof ModifierKind) {
-						// TODO
+				if (action.getNewValue() instanceof ModifierKind) {
+					CtElement element = action.getContext().getElement();
+					if (element.getPosition() instanceof BodyHolderSourcePosition) {
+						BodyHolderSourcePosition position = (BodyHolderSourcePosition) element.getPosition();
+						writer.replace(position.getModifierSourceStart(), position.getModifierSourceEnd(), ((CtModifiable) element).getModifiers() + "");
+					} else {
+						new SpoonException("Position is not correct");
 					}
 				}
 			}

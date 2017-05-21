@@ -3,6 +3,7 @@ package spoon.test.refactoring;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -68,6 +69,8 @@ public class MethodsRefactoringTest {
 	}
 
 	private void checkContainsOnly(List<String> foundNames, String... expectedNames) {
+		// copying the result, in case the list is immutable
+		foundNames = new ArrayList<>(foundNames);
 		for (String name : expectedNames) {
 			assertTrue("The "+name+" not found", foundNames.remove(name));
 		}

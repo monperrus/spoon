@@ -107,7 +107,7 @@ public class CtQueryImpl implements CtQuery {
 				}
 			}
 		});
-		return list;
+		return Collections.unmodifiableList(list);
 	}
 	@SuppressWarnings("unchecked")
 	@Override

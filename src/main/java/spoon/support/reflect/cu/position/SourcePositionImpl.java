@@ -62,7 +62,7 @@ public class SourcePositionImpl implements SourcePosition, Serializable {
 	/**
 	 * Search the column number
 	 */
-	private int searchColumnNumber(int position) {
+	protected int searchColumnNumber(int position) {
 		if (lineSeparatorPositions == null) {
 			return -1;
 		}
@@ -90,7 +90,7 @@ public class SourcePositionImpl implements SourcePosition, Serializable {
 		return (position - lineSeparatorPositions[i]) - tabCount + (tabCount * tabSize);
 	}
 
-	/** The position of the first byte of this element (incl. documentation and modifiers) */
+	/** The position of the first byte of this element (for methods and classes, it's the first byte of the name */
 	private int sourceStart = -1;
 
 	/** The position of the last byte of this element */

@@ -59,7 +59,12 @@ public interface SourcePosition extends Serializable {
 	int getEndLine();
 
 	/**
-	 * Gets the column in the source file (1 indexed). This method is slow
+	 * Gets the column in the source file (1 indexed).
+	 *
+	 * For methods and classes, it refers to the absolute indentation level, as defined by
+	 * the first byte of the first line Javadoc or the first byte of the first modifier (if no javadoc).
+	 *
+	 * This method is slow
 	 * because it has to calculate the column number depending on
 	 * {@link Environment#getTabulationSize()} and
 	 * {@link CompilationUnit#getOriginalSourceCode()}. Prefer {@link #getSourceStart()}.

@@ -31,6 +31,7 @@ public class DeclarationSourcePositionImpl extends SourcePositionImpl
 	private static final long serialVersionUID = 1L;
 	private int modifierSourceEnd;
 	private int modifierSourceStart;
+	/** The position of the first byte of this element (incl. documentation and modifiers) */
 	private int declarationSourceStart;
 	private int declarationSourceEnd;
 
@@ -38,7 +39,8 @@ public class DeclarationSourcePositionImpl extends SourcePositionImpl
 			int modifierSourceStart, int modifierSourceEnd, int declarationSourceStart, int declarationSourceEnd,
 			int[] lineSeparatorPositions) {
 		super(compilationUnit,
-				sourceStart, sourceEnd,
+				sourceStart, // the start of the identifier
+				sourceEnd,
 				lineSeparatorPositions);
 		this.modifierSourceStart = modifierSourceStart;
 		this.declarationSourceStart = declarationSourceStart;
@@ -83,7 +85,13 @@ public class DeclarationSourcePositionImpl extends SourcePositionImpl
 		return modifierSourceEnd;
 	}
 
+	@Override
 	public int getEndLine() {
 		return searchLineNumber(declarationSourceEnd);
+	}
+
+	@Override
+	public int getColumn() {
+		return super.searchColumnNumber(declarationSourceStart);
 	}
 }

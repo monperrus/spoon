@@ -28,6 +28,7 @@ import spoon.reflect.code.CtBodyHolder;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtParameter;
+import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.support.util.QualifiedNameBasedSortedSet;
@@ -37,13 +38,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import spoon.reflect.code.CtBlock;
-import spoon.reflect.code.CtBodyHolder;
-import spoon.reflect.code.CtStatement;
-import spoon.reflect.declaration.CtExecutable;
-import spoon.reflect.declaration.CtParameter;
-import spoon.reflect.declaration.CtType;
 
 import static spoon.reflect.ModelElementContainerDefaultCapacities.PARAMETERS_CONTAINER_DEFAULT_CAPACITY;
 

@@ -1,6 +1,5 @@
 package spoon.test.prettyprinter;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +10,6 @@ import spoon.reflect.code.CtInvocation;
 import spoon.reflect.code.CtLiteral;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.code.CtThisAccess;
-import spoon.reflect.code.CtTypeAccess;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
@@ -23,7 +21,6 @@ import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter;
 import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.support.reflect.code.CtFieldAccessImpl;
-import spoon.support.reflect.reference.CtFieldReferenceImpl;
 import spoon.test.delete.testclasses.Adobada;
 import spoon.test.prettyprinter.testclasses.QualifiedThisRef;
 
@@ -32,10 +29,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static javax.swing.text.html.HTML.Tag.HEAD;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static spoon.testing.utils.ModelUtils.build;
 
@@ -113,7 +108,7 @@ public class QualifiedThisRefTest {
 		CtTypeReference tmp = param.getType();
 
 		CtExpression arg = null;
-		CtFieldReference ctfe = new CtFieldReferenceImpl();
+		CtFieldReference ctfe = factory.createFieldReference();
 		ctfe.setSimpleName("class");
 		ctfe.setDeclaringType(tmp.box());
 		arg = factory.Core().createFieldRead();

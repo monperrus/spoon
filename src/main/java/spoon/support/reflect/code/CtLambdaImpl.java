@@ -83,11 +83,11 @@ public class CtLambdaImpl<T> extends CtExpressionImpl<T> implements CtLambda<T> 
 
 	@Override
 	public <C extends CtBodyHolder> C setBody(CtStatement statement) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "body"), body, this.body));
-		}
 		if (statement != null) {
 			CtBlock<?> body = getFactory().Code().getOrCreateCtBlock(statement);
+			if (getFactory().getEnvironment().buildStackChanges()) {
+				getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "body"), body, this.body));
+			}
 			if (expression != null && body != null) {
 				throw new SpoonException("A lambda can't have two bodys.");
 			}
@@ -96,6 +96,9 @@ public class CtLambdaImpl<T> extends CtExpressionImpl<T> implements CtLambda<T> 
 			}
 			this.body = body;
 		} else {
+			if (getFactory().getEnvironment().buildStackChanges()) {
+				getFactory().getEnvironment().pushToStack(new DeleteAction(new ObjectContext(this, "body"), this.body));
+			}
 			this.body = null;
 		}
 

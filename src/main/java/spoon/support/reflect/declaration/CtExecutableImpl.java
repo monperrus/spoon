@@ -76,16 +76,19 @@ public abstract class CtExecutableImpl<R> extends CtNamedElementImpl implements 
 
 	@Override
 	public <T extends CtBodyHolder> T setBody(CtStatement statement) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "body"), body, this.body));
-		}
 		if (statement != null) {
 			CtBlock<?> body = getFactory().Code().getOrCreateCtBlock(statement);
+			if (getFactory().getEnvironment().buildStackChanges()) {
+				getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "body"), body, this.body));
+			}
 			if (body != null) {
 				body.setParent(this);
 			}
 			this.body = body;
 		} else {
+			if (getFactory().getEnvironment().buildStackChanges()) {
+				getFactory().getEnvironment().pushToStack(new DeleteAction(new ObjectContext(this, "body"), this.body));
+			}
 			this.body = null;
 		}
 		return (T) this;

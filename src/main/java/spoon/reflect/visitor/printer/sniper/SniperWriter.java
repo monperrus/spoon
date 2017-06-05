@@ -70,12 +70,19 @@ public class SniperWriter {
 	}
 
 	public SniperWriter write(CtElement element, int position) {
+		return write(element, position, false);
+	}
+
+	public SniperWriter write(CtElement element, int position, boolean isNewLine) {
 		int realPosition = getPosition(position);
+		if (isNewLine) {
+			realPosition += getPositionNewLine(position);
+		}
 
 		printer.getPrinter().setTabCount(getIndentation(realPosition));
 		printer.getPrinter().writeTabs();
 		printer.scan(element);
-		String content = printer.getResult();
+		String content = printer.getResult().replaceAll("\\s+$", "");
 		printer.reset();
 
 		ImportScanner importScanner = new ImportScannerImpl();
@@ -83,8 +90,8 @@ public class SniperWriter {
 		List<String> missingImports = computeMissingImports(imports);
 		printImports(missingImports);
 
-		if (element instanceof CtStatement && !content.endsWith("\n") && this.content.charAt(position + 1) != '\n') {
-			content += "\n";
+		if (element instanceof CtStatement && !content.endsWith("\n") && this.content.charAt(realPosition + 1) != '\n') {
+			content += ";\n";
 		}
 
 		element.setPosition(element.getFactory().createSourcePosition(null, position, position, null));
@@ -98,7 +105,21 @@ public class SniperWriter {
 		if (position == null) {
 			return this;
 		}
-		return remove(position.getSourceStart(), position.getSourceEnd());
+		int start = getPosition(element.getPosition().getSourceStart());
+		int oldStart = start;
+		while (content.charAt(start - 1) == ' ' || content.charAt(start - 1) == '\t') {
+			start--;
+		}
+		if (content.charAt(start - 1) != '\n') {
+			start = oldStart;
+		}
+		int end = getPosition(element.getPosition().getSourceEnd());
+		if (content.charAt(end + 1) == '\n') {
+			end++;
+		}
+		this.content.delete(start, end + 1);
+		addOffset(start, start - end - 1);
+		return this;
 	}
 
 	public SniperWriter remove(int start, int end) {
@@ -136,7 +157,11 @@ public class SniperWriter {
 
 	private void addOffset(int start, int length) {
 		if (length != 0) {
-			offset.put(start, length);
+			if (offset.containsKey(start)) {
+				offset.put(start, offset.get(start) + length);
+			} else {
+				offset.put(start, length);
+			}
 		}
 	}
 
@@ -171,6 +196,7 @@ public class SniperWriter {
 
 	private int getIndentation(int position) {
 		int output = 0;
+		boolean isSpace = false;
 		String[] lines = this.content.substring(position).split("\n");
 		for (int i = 0; i < lines.length; i++) {
 			String line = lines[i];
@@ -179,6 +205,7 @@ public class SniperWriter {
 			}
 			for (int j = 0; j < line.length(); j++) {
 				if (line.charAt(j) == ' ' || line.charAt(j) == '\t') {
+					isSpace = line.charAt(j) == ' ';
 					output++;
 				} else {
 					break;
@@ -186,7 +213,7 @@ public class SniperWriter {
 			}
 			break;
 		}
-		return output;
+		return isSpace ? output / 4 : output;
 	}
 
 	@Override

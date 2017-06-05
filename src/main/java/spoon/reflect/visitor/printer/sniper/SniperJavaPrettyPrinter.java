@@ -43,6 +43,7 @@ import spoon.reflect.visitor.PrettyPrinter;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -113,12 +114,53 @@ public class SniperJavaPrettyPrinter extends CtScanner
 				if (ctElement.getPosition() == null || ctElement.getPosition() instanceof NoSourcePosition) {
 					actionsOnElement.remove(ctElement);
 				} else {
+					cleanDeleteAll(actionsOnElement.get(ctElement));
 					removeMultiModifiersActions(actionsOnElement.get(ctElement));
 				}
 			}
 
 			writer = new spoon.reflect.visitor.printer.sniper.SniperWriter(sourceCompilationUnit.getOriginalSourceCode(), env);
 			scan(ctType);
+		}
+	}
+
+	private void cleanDeleteAll(Deque<Action> actions) {
+		DeleteAllAction currentDeleteAllAction = null;
+		for (Action action : new ArrayDeque<>(actions)) {
+			if (action instanceof DeleteAllAction) {
+				currentDeleteAllAction = (DeleteAllAction) action;
+				continue;
+			}
+			if (currentDeleteAllAction != null && action instanceof AddAction) {
+				Object oldContent = currentDeleteAllAction.getOldContent();
+				if (oldContent instanceof List) {
+					List<?> list = (List) oldContent;
+					if (list.contains(action.getNewElement())) {
+						List<?> elementToRemove = new ArrayList<>(list);
+						List<Action> addToDelete = new ArrayList<>();
+						for (Object o : list) {
+							for (Action a : new ArrayDeque<>(actions)) {
+								if (o.equals(a.getNewElement())) {
+									elementToRemove.remove(o);
+									addToDelete.add(a);
+								}
+							}
+						}
+						actions.removeFirstOccurrence(currentDeleteAllAction);
+						for (Object o : elementToRemove) {
+							if (o instanceof CtElement) {
+								actions.addFirst(new DeleteAction(currentDeleteAllAction.getContext(), (CtElement) o));
+							} else {
+								actions.addFirst(new DeleteAction(currentDeleteAllAction.getContext(), o));
+							}
+						}
+						for (Action action1 : addToDelete) {
+							actions.removeFirstOccurrence(action1);
+						}
+						break;
+					}
+				}
+			}
 		}
 	}
 

@@ -44,16 +44,15 @@ public class SniperCtBlock extends AbstractSniper<CtBlock> {
 		} else {
 			position = block.getStatement(index - 1).getPosition().getSourceEnd();
 		}
-		position += getWriter().getPositionNewLine(position);
 
-		getWriter().write(element, position);
+		getWriter().write(element, position, true);
 		return null;
 	}
 
 	@Override
 	public DeleteAction onDelete(DeleteAction action) {
 		CtElement statement = action.getNewElement();
-		getWriter().remove(statement.getPosition().getSourceStart(), statement.getPosition().getSourceEnd());
+		getWriter().remove(statement);
 		return null;
 	}
 

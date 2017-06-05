@@ -22,13 +22,23 @@ import java.util.Map;
 
 public class MapContext extends Context {
 	private final Map<?, ?> map;
+	private Object key;
 
 	public MapContext(CtElement element, Map<?, ?> map) {
 		super(element);
 		this.map = map;
 	}
 
+	public MapContext(CtElement element, Map<?, ?> map, Object key) {
+		this(element, map);
+		this.key = key;
+	}
+
 	public Map<?, ?> getMap() {
 		return map;
+	}
+
+	public Object getKey() {
+		return key;
 	}
 }

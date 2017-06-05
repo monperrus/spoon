@@ -191,7 +191,7 @@ public class CtAnnotationImpl<A extends Annotation> extends CtExpressionImpl<A> 
 			// Add the new value.
 			expression.setParent(this);
 			if (getFactory().getEnvironment().buildStackChanges()) {
-				getFactory().getEnvironment().pushToStack(new AddAction(new MapContext(this, this.elementValues), expression));
+				getFactory().getEnvironment().pushToStack(new AddAction(new MapContext(this, this.elementValues, elementName), expression));
 			}
 			elementValues.put(elementName, expression);
 		}

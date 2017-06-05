@@ -18,11 +18,6 @@ package spoon.support.reflect.declaration;
 
 import spoon.Launcher;
 import spoon.SpoonException;
-import spoon.diff.AddAction;
-import spoon.diff.DeleteAllAction;
-import spoon.diff.UpdateAction;
-import spoon.diff.context.MapContext;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtCodeElement;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtFieldAccess;
@@ -67,6 +62,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.IS_SHADOW;
+import static spoon.reflect.factory.ChangeFactory.FieldName.TYPE;
+import static spoon.reflect.factory.ChangeFactory.FieldName.VALUES;
 
 /**
  * The implementation for {@link spoon.reflect.declaration.CtAnnotation}.
@@ -190,9 +189,7 @@ public class CtAnnotationImpl<A extends Annotation> extends CtExpressionImpl<A> 
 		} else {
 			// Add the new value.
 			expression.setParent(this);
-			if (getFactory().getEnvironment().buildStackChanges()) {
-				getFactory().getEnvironment().pushToStack(new AddAction(new MapContext(this, this.elementValues, elementName), expression));
-			}
+			getFactory().Change().onMapAdd(this, VALUES, this.elementValues, elementName, expression);
 			elementValues.put(elementName, expression);
 		}
 		return (T) this;
@@ -388,19 +385,14 @@ public class CtAnnotationImpl<A extends Annotation> extends CtExpressionImpl<A> 
 		if (annotationType != null) {
 			annotationType.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "annotationType"), annotationType, this.annotationType));
-		}
+		getFactory().Change().onObjectUpdate(this, TYPE, "annotationType", annotationType, this.annotationType);
 		this.annotationType = (CtTypeReference<A>) annotationType;
 		return (T) this;
 	}
 
 	@Override
 	public <T extends CtAnnotation<A>> T setElementValues(Map<String, Object> values) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new MapContext(
-					this, this.elementValues), new HashMap<>(elementValues)));
-		}
+		getFactory().Change().onMapDeleteAll(this, VALUES, this.elementValues, new HashMap<>(elementValues));
 		this.elementValues.clear();
 		for (Entry<String, Object> e : values.entrySet()) {
 			addValue(e.getKey(), e.getValue());
@@ -410,10 +402,7 @@ public class CtAnnotationImpl<A extends Annotation> extends CtExpressionImpl<A> 
 
 	@Override
 	public <T extends CtAnnotation<A>> T setValues(Map<String, CtExpression> values) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new MapContext(
-					this, this.elementValues), new HashMap<>(elementValues)));
-		}
+		getFactory().Change().onMapDeleteAll(this, VALUES, this.elementValues, new HashMap<>(elementValues));
 		this.elementValues.clear();
 		for (Entry<String, CtExpression> e : values.entrySet()) {
 			addValue(e.getKey(), e.getValue());
@@ -508,9 +497,7 @@ public class CtAnnotationImpl<A extends Annotation> extends CtExpressionImpl<A> 
 
 	@Override
 	public <E extends CtShadowable> E setShadow(boolean isShadow) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "isShadow"), isShadow, this.isShadow));
-		}
+		getFactory().Change().onObjectUpdate(this, IS_SHADOW, "isShadow", isShadow, this.isShadow);
 		this.isShadow = isShadow;
 		return (E) this;
 	}

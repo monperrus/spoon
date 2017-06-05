@@ -16,11 +16,12 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtAssert;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.visitor.CtVisitor;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.CONDITION;
+import static spoon.reflect.factory.ChangeFactory.FieldName.EXPRESSION;
 
 public class CtAssertImpl<T> extends CtStatementImpl implements CtAssert<T> {
 	private static final long serialVersionUID = 1L;
@@ -44,9 +45,7 @@ public class CtAssertImpl<T> extends CtStatementImpl implements CtAssert<T> {
 		if (asserted != null) {
 			asserted.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "asserted"), asserted, this.asserted));
-		}
+		getFactory().Change().onObjectUpdate(this, CONDITION, "asserted", asserted, this.asserted);
 		this.asserted = asserted;
 		return (A) this;
 	}
@@ -61,9 +60,7 @@ public class CtAssertImpl<T> extends CtStatementImpl implements CtAssert<T> {
 		if (value != null) {
 			value.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "value"), value, this.value));
-		}
+		getFactory().Change().onObjectUpdate(this, EXPRESSION, "value", value, this.value);
 		this.value = value;
 		return (A) this;
 	}

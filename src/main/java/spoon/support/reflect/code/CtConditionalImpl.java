@@ -16,11 +16,13 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtConditional;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.visitor.CtVisitor;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.CONDITION;
+import static spoon.reflect.factory.ChangeFactory.FieldName.ELSE;
+import static spoon.reflect.factory.ChangeFactory.FieldName.THEN;
 
 public class CtConditionalImpl<T> extends CtExpressionImpl<T> implements CtConditional<T> {
 	private static final long serialVersionUID = 1L;
@@ -56,9 +58,7 @@ public class CtConditionalImpl<T> extends CtExpressionImpl<T> implements CtCondi
 		if (elseExpression != null) {
 			elseExpression.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "elseExpression"), elseExpression, this.elseExpression));
-		}
+		getFactory().Change().onObjectUpdate(this, ELSE, "elseExpression", elseExpression, this.elseExpression);
 		this.elseExpression = elseExpression;
 		return (C) this;
 	}
@@ -68,9 +68,7 @@ public class CtConditionalImpl<T> extends CtExpressionImpl<T> implements CtCondi
 		if (condition != null) {
 			condition.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "condition"), condition, this.condition));
-		}
+		getFactory().Change().onObjectUpdate(this, CONDITION, "condition", condition, this.condition);
 		this.condition = condition;
 		return (C) this;
 	}
@@ -80,9 +78,7 @@ public class CtConditionalImpl<T> extends CtExpressionImpl<T> implements CtCondi
 		if (thenExpression != null) {
 			thenExpression.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "thenExpression"), thenExpression, this.thenExpression));
-		}
+		getFactory().Change().onObjectUpdate(this, THEN, "thenExpression", thenExpression, this.thenExpression);
 		this.thenExpression = thenExpression;
 		return (C) this;
 	}

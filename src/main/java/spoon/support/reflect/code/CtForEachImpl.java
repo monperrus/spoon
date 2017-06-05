@@ -16,12 +16,13 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtForEach;
 import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.visitor.CtVisitor;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.EXPRESSION;
+import static spoon.reflect.factory.ChangeFactory.FieldName.VARIABLE;
 
 public class CtForEachImpl extends CtLoopImpl implements CtForEach {
 	private static final long serialVersionUID = 1L;
@@ -50,9 +51,7 @@ public class CtForEachImpl extends CtLoopImpl implements CtForEach {
 		if (expression != null) {
 			expression.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "expression"), expression, this.expression));
-		}
+		getFactory().Change().onObjectUpdate(this, EXPRESSION, "expression", expression, this.expression);
 		this.expression = expression;
 		return (T) this;
 	}
@@ -62,9 +61,7 @@ public class CtForEachImpl extends CtLoopImpl implements CtForEach {
 		if (variable != null) {
 			variable.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "variable"), variable, this.variable));
-		}
+		getFactory().Change().onObjectUpdate(this, VARIABLE, "variable", variable, this.variable);
 		this.variable = variable;
 		return (T) this;
 	}

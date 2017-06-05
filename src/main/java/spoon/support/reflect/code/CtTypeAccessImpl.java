@@ -16,13 +16,13 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtTypeAccess;
 import spoon.reflect.declaration.CtTypedElement;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.CtVisitor;
 import spoon.support.UnsettableProperty;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.TYPE;
 
 public class CtTypeAccessImpl<A> extends CtExpressionImpl<Void> implements CtTypeAccess<A> {
 	private CtTypeReference<Void> voidType;
@@ -43,9 +43,7 @@ public class CtTypeAccessImpl<A> extends CtExpressionImpl<Void> implements CtTyp
 		if (accessedType != null) {
 			accessedType.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "type"), accessedType, this.type));
-		}
+		getFactory().Change().onObjectUpdate(this, TYPE, "type", accessedType, this.type);
 		type = accessedType;
 		return (C) this;
 	}

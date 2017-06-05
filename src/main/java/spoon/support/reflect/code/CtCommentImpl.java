@@ -16,10 +16,11 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtComment;
 import spoon.reflect.visitor.CtVisitor;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.CONTENT;
+import static spoon.reflect.factory.ChangeFactory.FieldName.TYPE;
 
 public class CtCommentImpl extends CtStatementImpl implements CtComment {
 	private static final long serialVersionUID = 1L;
@@ -42,9 +43,7 @@ public class CtCommentImpl extends CtStatementImpl implements CtComment {
 
 	@Override
 	public <E extends CtComment> E setContent(String content) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "content"), content, this.content));
-		}
+		getFactory().Change().onObjectUpdate(this, CONTENT, "content", content, this.content);
 		this.content = content;
 		return (E) this;
 	}
@@ -56,9 +55,7 @@ public class CtCommentImpl extends CtStatementImpl implements CtComment {
 
 	@Override
 	public <E extends CtComment> E setCommentType(CommentType commentType) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "type"), commentType, this.type));
-		}
+		getFactory().Change().onObjectUpdate(this, TYPE, "type", commentType, this.type);
 		type = commentType;
 		return (E) this;
 	}

@@ -16,10 +16,6 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.AddAction;
-import spoon.diff.DeleteAction;
-import spoon.diff.DeleteAllAction;
-import spoon.diff.context.ListContext;
 import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.code.CtTryWithResource;
 import spoon.reflect.visitor.CtVisitor;
@@ -29,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static spoon.reflect.ModelElementContainerDefaultCapacities.RESOURCES_CONTAINER_DEFAULT_CAPACITY;
+import static spoon.reflect.factory.ChangeFactory.FieldName.RESOURCES;
 
 public class CtTryWithResourceImpl extends CtTryImpl implements CtTryWithResource {
 	private static final long serialVersionUID = 1L;
@@ -51,10 +48,7 @@ public class CtTryWithResourceImpl extends CtTryImpl implements CtTryWithResourc
 			this.resources = CtElementImpl.emptyList();
 			return (T) this;
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
-					this, this.resources), new ArrayList<>(this.resources)));
-		}
+		getFactory().Change().onListDeleteAll(this, RESOURCES, this.resources, new ArrayList<>(this.resources));
 		this.resources.clear();
 		for (CtLocalVariable<?> l : resources) {
 			addResource(l);
@@ -71,10 +65,7 @@ public class CtTryWithResourceImpl extends CtTryImpl implements CtTryWithResourc
 			resources = new ArrayList<>(RESOURCES_CONTAINER_DEFAULT_CAPACITY);
 		}
 		resource.setParent(this);
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
-					this, this.resources), resource));
-		}
+		getFactory().Change().onListAdd(this, RESOURCES, this.resources, resource);
 		resources.add(resource);
 		return (T) this;
 	}
@@ -84,10 +75,7 @@ public class CtTryWithResourceImpl extends CtTryImpl implements CtTryWithResourc
 		if (resources == CtElementImpl.<CtLocalVariable<?>>emptyList()) {
 			return false;
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
-					this, resources, resources.indexOf(resource)), resource));
-		}
+		getFactory().Change().onListDelete(this, RESOURCES, resources, resources.indexOf(resource), resource);
 		return resources.remove(resource);
 	}
 

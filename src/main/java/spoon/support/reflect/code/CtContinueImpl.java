@@ -16,11 +16,12 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtContinue;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.visitor.CtVisitor;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.LABEL;
+import static spoon.reflect.factory.ChangeFactory.FieldName.TARGET_LABEL;
 
 public class CtContinueImpl extends CtStatementImpl implements CtContinue {
 	private static final long serialVersionUID = 1L;
@@ -44,9 +45,7 @@ public class CtContinueImpl extends CtStatementImpl implements CtContinue {
 		if (labelledStatement != null) {
 			labelledStatement.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "labelledStatement"), labelledStatement, this.labelledStatement));
-		}
+		getFactory().Change().onObjectUpdate(this, LABEL, "labelledStatement", labelledStatement, this.labelledStatement);
 		this.labelledStatement = labelledStatement;
 		return (T) this;
 	}
@@ -58,9 +57,7 @@ public class CtContinueImpl extends CtStatementImpl implements CtContinue {
 
 	@Override
 	public <T extends CtContinue> T setTargetLabel(String targetLabel) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "targetLabel"), targetLabel, this.targetLabel));
-		}
+		getFactory().Change().onObjectUpdate(this, TARGET_LABEL, "targetLabel", targetLabel, this.targetLabel);
 		this.targetLabel = targetLabel;
 		return (T) this;
 	}

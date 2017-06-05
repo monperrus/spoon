@@ -16,13 +16,13 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtCodeElement;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtReturn;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.CtVisitor;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.EXPRESSION;
 
 public class CtReturnImpl<R> extends CtStatementImpl implements CtReturn<R> {
 	private static final long serialVersionUID = 1L;
@@ -44,9 +44,7 @@ public class CtReturnImpl<R> extends CtStatementImpl implements CtReturn<R> {
 		if (expression != null) {
 			expression.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "returnedExpression"), expression, this.returnedExpression));
-		}
+		getFactory().Change().onObjectUpdate(this, EXPRESSION, "returnedExpression", expression, this.returnedExpression);
 		this.returnedExpression = expression;
 		return (T) this;
 	}

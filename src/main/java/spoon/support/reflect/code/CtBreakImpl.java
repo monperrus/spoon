@@ -16,10 +16,10 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtBreak;
 import spoon.reflect.visitor.CtVisitor;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.TARGET_LABEL;
 
 public class CtBreakImpl extends CtStatementImpl implements CtBreak {
 	private static final long serialVersionUID = 1L;
@@ -38,9 +38,7 @@ public class CtBreakImpl extends CtStatementImpl implements CtBreak {
 
 	@Override
 	public <T extends CtBreak> T setTargetLabel(String targetLabel) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "targetLabel"), targetLabel, this.targetLabel));
-		}
+		getFactory().Change().onObjectUpdate(this, TARGET_LABEL, "targetLabel", targetLabel, this.targetLabel);
 		this.targetLabel = targetLabel;
 		return (T) this;
 	}

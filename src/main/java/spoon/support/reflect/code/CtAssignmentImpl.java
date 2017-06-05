@@ -16,11 +16,6 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.AddAction;
-import spoon.diff.DeleteAllAction;
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ListContext;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtAssignment;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtRHSReceiver;
@@ -34,6 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static spoon.reflect.ModelElementContainerDefaultCapacities.CASTS_CONTAINER_DEFAULT_CAPACITY;
+import static spoon.reflect.factory.ChangeFactory.FieldName.ASSIGNED;
+import static spoon.reflect.factory.ChangeFactory.FieldName.ASSIGNMENT;
+import static spoon.reflect.factory.ChangeFactory.FieldName.CASTS;
+import static spoon.reflect.factory.ChangeFactory.FieldName.TYPE;
 
 public class CtAssignmentImpl<T, A extends T> extends CtStatementImpl implements CtAssignment<T, A> {
 	private static final long serialVersionUID = 1L;
@@ -76,9 +75,7 @@ public class CtAssignmentImpl<T, A extends T> extends CtStatementImpl implements
 		if (assigned != null) {
 			assigned.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "assigned"), assigned, this.assigned));
-		}
+		getFactory().Change().onObjectUpdate(this, ASSIGNED, "assigned", assigned, this.assigned);
 		this.assigned = assigned;
 		return (C) this;
 	}
@@ -88,9 +85,7 @@ public class CtAssignmentImpl<T, A extends T> extends CtStatementImpl implements
 		if (assignment != null) {
 			assignment.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "assignment"), assignment, this.assignment));
-		}
+		getFactory().Change().onObjectUpdate(this, ASSIGNMENT, "assignment", assignment, this.assignment);
 		this.assignment = assignment;
 		return (C) this;
 	}
@@ -100,9 +95,7 @@ public class CtAssignmentImpl<T, A extends T> extends CtStatementImpl implements
 		if (type != null) {
 			type.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "type"), type, this.type));
-		}
+		getFactory().Change().onObjectUpdate(this, TYPE, "type", type, this.type);
 		this.type = type;
 		return (C) this;
 	}
@@ -116,10 +109,7 @@ public class CtAssignmentImpl<T, A extends T> extends CtStatementImpl implements
 		if (this.typeCasts == CtElementImpl.<CtTypeReference<?>>emptyList()) {
 			this.typeCasts = new ArrayList<>(CASTS_CONTAINER_DEFAULT_CAPACITY);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
-					this, this.typeCasts), new ArrayList<>(this.typeCasts)));
-		}
+		getFactory().Change().onListDeleteAll(this, CASTS, this.typeCasts, new ArrayList<>(this.typeCasts));
 		this.typeCasts.clear();
 		for (CtTypeReference<?> cast : casts) {
 			addTypeCast(cast);
@@ -136,10 +126,7 @@ public class CtAssignmentImpl<T, A extends T> extends CtStatementImpl implements
 			typeCasts = new ArrayList<>(CASTS_CONTAINER_DEFAULT_CAPACITY);
 		}
 		type.setParent(this);
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
-					this, typeCasts), type));
-		}
+		getFactory().Change().onListAdd(this, CASTS, typeCasts, type);
 		typeCasts.add(type);
 		return (C) this;
 	}

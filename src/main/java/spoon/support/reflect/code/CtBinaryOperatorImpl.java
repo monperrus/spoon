@@ -16,12 +16,14 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.BinaryOperatorKind;
 import spoon.reflect.code.CtBinaryOperator;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.visitor.CtVisitor;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.KIND;
+import static spoon.reflect.factory.ChangeFactory.FieldName.LEFT_OPERAND;
+import static spoon.reflect.factory.ChangeFactory.FieldName.RIGHT_OPERAND;
 
 public class CtBinaryOperatorImpl<T> extends CtExpressionImpl<T> implements CtBinaryOperator<T> {
 	private static final long serialVersionUID = 1L;
@@ -52,9 +54,7 @@ public class CtBinaryOperatorImpl<T> extends CtExpressionImpl<T> implements CtBi
 		if (expression != null) {
 			expression.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "leftHandOperand"), expression, this.leftHandOperand));
-		}
+		getFactory().Change().onObjectUpdate(this, LEFT_OPERAND, "leftHandOperand", expression, this.leftHandOperand);
 		leftHandOperand = expression;
 		return (C) this;
 	}
@@ -64,18 +64,14 @@ public class CtBinaryOperatorImpl<T> extends CtExpressionImpl<T> implements CtBi
 		if (expression != null) {
 			expression.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "rightHandOperand"), expression, this.rightHandOperand));
-		}
+		getFactory().Change().onObjectUpdate(this, RIGHT_OPERAND, "rightHandOperand", expression, this.rightHandOperand);
 		rightHandOperand = expression;
 		return (C) this;
 	}
 
 	@Override
 	public <C extends CtBinaryOperator<T>> C setKind(BinaryOperatorKind kind) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "kind"), kind, this.kind));
-		}
+		getFactory().Change().onObjectUpdate(this, KIND, "kind", kind, this.kind);
 		this.kind = kind;
 		return (C) this;
 	}

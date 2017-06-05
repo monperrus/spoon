@@ -16,12 +16,6 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.AddAction;
-import spoon.diff.DeleteAction;
-import spoon.diff.DeleteAllAction;
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ListContext;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtAbstractInvocation;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtInvocation;
@@ -40,6 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static spoon.reflect.ModelElementContainerDefaultCapacities.PARAMETERS_CONTAINER_DEFAULT_CAPACITY;
+import static spoon.reflect.factory.ChangeFactory.FieldName.ARGUMENTS;
+import static spoon.reflect.factory.ChangeFactory.FieldName.EXECUTABLE;
+import static spoon.reflect.factory.ChangeFactory.FieldName.LABEL;
 
 public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpression<?>> implements CtInvocation<T> {
 	private static final long serialVersionUID = 1L;
@@ -69,10 +66,7 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 			arguments = new ArrayList<>(PARAMETERS_CONTAINER_DEFAULT_CAPACITY);
 		}
 		argument.setParent(this);
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
-					this, this.arguments, position), argument));
-		}
+		getFactory().Change().onListAdd(this, ARGUMENTS, this.arguments, position, argument);
 		arguments.add(position, argument);
 		return (C) this;
 	}
@@ -87,10 +81,7 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 		if (arguments == CtElementImpl.<CtExpression<?>>emptyList()) {
 			return false;
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
-					this, arguments, arguments.indexOf(argument)), argument));
-		}
+		getFactory().Change().onListDelete(this, ARGUMENTS, arguments, arguments.indexOf(argument), argument);
 		return arguments.remove(argument);
 	}
 
@@ -136,10 +127,7 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 		if (this.arguments == CtElementImpl.<CtExpression<?>>emptyList()) {
 			this.arguments = new ArrayList<>(PARAMETERS_CONTAINER_DEFAULT_CAPACITY);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
-					this, this.arguments), new ArrayList<>(this.arguments)));
-		}
+		getFactory().Change().onListDeleteAll(this, ARGUMENTS, this.arguments, new ArrayList<>(this.arguments));
 		this.arguments.clear();
 		for (CtExpression<?> expr : arguments) {
 			addArgument(expr);
@@ -152,9 +140,7 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 		if (executable != null) {
 			executable.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "executable"), executable, this.executable));
-		}
+		getFactory().Change().onObjectUpdate(this, EXECUTABLE, "executable", executable, this.executable);
 		this.executable = executable;
 		return (C) this;
 	}
@@ -166,9 +152,7 @@ public class CtInvocationImpl<T> extends CtTargetedExpressionImpl<T, CtExpressio
 
 	@Override
 	public <C extends CtStatement> C setLabel(String label) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "label"), label, this.label));
-		}
+		getFactory().Change().onObjectUpdate(this, LABEL, "label", label, this.label);
 		this.label = label;
 		return (C) this;
 	}

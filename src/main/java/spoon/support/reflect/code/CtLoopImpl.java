@@ -16,15 +16,14 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.DeleteAction;
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtBodyHolder;
 import spoon.reflect.code.CtCodeElement;
 import spoon.reflect.code.CtLoop;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtType;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.BODY;
 
 public abstract class CtLoopImpl extends CtStatementImpl implements CtLoop {
 	private static final long serialVersionUID = 1L;
@@ -41,17 +40,13 @@ public abstract class CtLoopImpl extends CtStatementImpl implements CtLoop {
 	public <T extends CtBodyHolder> T setBody(CtStatement statement) {
 		if (statement != null) {
 			CtBlock<?> body = getFactory().Code().getOrCreateCtBlock(statement);
-			if (getFactory().getEnvironment().buildStackChanges()) {
-				getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "body"), body, this.body));
-			}
+			getFactory().Change().onObjectUpdate(this, BODY, "body", body, this.body);
 			if (body != null) {
 				body.setParent(this);
 			}
 			this.body = body;
 		} else {
-			if (getFactory().getEnvironment().buildStackChanges()) {
-				getFactory().getEnvironment().pushToStack(new DeleteAction(new ObjectContext(this, "body"), this.body));
-			}
+			getFactory().Change().onObjectDelete(this, BODY, "body", this.body);
 			this.body = null;
 		}
 		return (T) this;

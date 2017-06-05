@@ -16,14 +16,14 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtCodeSnippetStatement;
 import spoon.reflect.code.CtStatement;
 import spoon.reflect.declaration.CtCodeSnippet;
 import spoon.reflect.visitor.CtVisitor;
 import spoon.support.compiler.SnippetCompilationError;
 import spoon.support.compiler.SnippetCompilationHelper;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.EXPRESSION;
 
 public class CtCodeSnippetStatementImpl extends CtStatementImpl implements CtCodeSnippetStatement {
 
@@ -40,9 +40,7 @@ public class CtCodeSnippetStatementImpl extends CtStatementImpl implements CtCod
 	}
 
 	public <C extends CtCodeSnippet> C setValue(String value) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "value"), value, this.value));
-		}
+		getFactory().Change().onObjectUpdate(this, EXPRESSION, "value", value, this.value);
 		this.value = value;
 		return (C) this;
 	}

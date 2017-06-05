@@ -16,12 +16,12 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtSuperAccess;
 import spoon.reflect.code.CtTargetedExpression;
 import spoon.reflect.visitor.CtVisitor;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.TARGET;
 
 public class CtSuperAccessImpl<T> extends CtVariableReadImpl<T> implements CtSuperAccess<T> {
 
@@ -44,9 +44,7 @@ public class CtSuperAccessImpl<T> extends CtVariableReadImpl<T> implements CtSup
 		if (target != null) {
 			target.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "target"), target, this.target));
-		}
+		getFactory().Change().onObjectUpdate(this, TARGET, "target", target, this.target);
 		this.target = target;
 		return null;
 	}

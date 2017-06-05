@@ -16,10 +16,10 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtTargetedExpression;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.TARGET;
 
 public abstract class CtTargetedExpressionImpl<E, T extends CtExpression<?>> extends CtExpressionImpl<E> implements CtTargetedExpression<E, T> {
 	private static final long serialVersionUID = 1L;
@@ -36,9 +36,7 @@ public abstract class CtTargetedExpressionImpl<E, T extends CtExpression<?>> ext
 		if (target != null) {
 			target.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "target"), target, this.target));
-		}
+		getFactory().Change().onObjectUpdate(this, TARGET, "target", target, this.target);
 		this.target = target;
 		return (C) this;
 	}

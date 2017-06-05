@@ -16,12 +16,6 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.AddAction;
-import spoon.diff.DeleteAction;
-import spoon.diff.DeleteAllAction;
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ListContext;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtBodyHolder;
 import spoon.reflect.code.CtCatch;
@@ -36,6 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static spoon.reflect.ModelElementContainerDefaultCapacities.CATCH_CASES_CONTAINER_DEFAULT_CAPACITY;
+import static spoon.reflect.factory.ChangeFactory.FieldName.BODY;
+import static spoon.reflect.factory.ChangeFactory.FieldName.CATCHERS;
+import static spoon.reflect.factory.ChangeFactory.FieldName.FINALIZER;
 
 public class CtTryImpl extends CtStatementImpl implements CtTry {
 	private static final long serialVersionUID = 1L;
@@ -62,10 +59,7 @@ public class CtTryImpl extends CtStatementImpl implements CtTry {
 			this.catchers = CtElementImpl.emptyList();
 			return (T) this;
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
-					this, this.catchers), new ArrayList<>(this.catchers)));
-		}
+		getFactory().Change().onListDeleteAll(this, CATCHERS, this.catchers, new ArrayList<>(this.catchers));
 		this.catchers.clear();
 		for (CtCatch c : catchers) {
 			addCatcher(c);
@@ -82,10 +76,7 @@ public class CtTryImpl extends CtStatementImpl implements CtTry {
 			catchers = new ArrayList<>(CATCH_CASES_CONTAINER_DEFAULT_CAPACITY);
 		}
 		catcher.setParent(this);
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(
-					this, this.catchers), catcher));
-		}
+		getFactory().Change().onListAdd(this, CATCHERS, this.catchers, catcher);
 		catchers.add(catcher);
 		return (T) this;
 	}
@@ -95,10 +86,7 @@ public class CtTryImpl extends CtStatementImpl implements CtTry {
 		if (catchers == CtElementImpl.<CtCatch>emptyList()) {
 			return false;
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
-					this, catchers, catchers.indexOf(catcher)), catcher));
-		}
+		getFactory().Change().onListDelete(this, CATCHERS, catchers, catchers.indexOf(catcher), catcher);
 		return catchers.remove(catcher);
 	}
 
@@ -112,9 +100,7 @@ public class CtTryImpl extends CtStatementImpl implements CtTry {
 		if (finalizer != null) {
 			finalizer.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "finalizer"), finalizer, this.finalizer));
-		}
+		getFactory().Change().onObjectUpdate(this, FINALIZER, "finalizer", finalizer, this.finalizer);
 		this.finalizer = finalizer;
 		return (T) this;
 	}
@@ -128,17 +114,13 @@ public class CtTryImpl extends CtStatementImpl implements CtTry {
 	public <T extends CtBodyHolder> T setBody(CtStatement statement) {
 		if (statement != null) {
 			CtBlock<?> body = getFactory().Code().getOrCreateCtBlock(statement);
-			if (getFactory().getEnvironment().buildStackChanges()) {
-				getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "body"), body, this.body));
-			}
+			getFactory().Change().onObjectUpdate(this, BODY, "body", body, this.body);
 			if (body != null) {
 				body.setParent(this);
 			}
 			this.body = body;
 		} else {
-			if (getFactory().getEnvironment().buildStackChanges()) {
-				getFactory().getEnvironment().pushToStack(new DeleteAction(new ObjectContext(this, "body"), this.body));
-			}
+			getFactory().Change().onObjectDelete(this, BODY, "body", this.body);
 			this.body = null;
 		}
 

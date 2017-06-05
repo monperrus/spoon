@@ -16,16 +16,14 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.AddAction;
-import spoon.diff.DeleteAction;
-import spoon.diff.DeleteAllAction;
-import spoon.diff.context.ListContext;
 import spoon.reflect.code.CtJavaDoc;
 import spoon.reflect.code.CtJavaDocTag;
 import spoon.reflect.visitor.CtVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.TAGS;
 
 public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 
@@ -45,9 +43,7 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 		if (tags == null) {
 			return (E) this;
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction<>(new ListContext(this, this.tags), new ArrayList<>(this.tags)));
-		}
+		getFactory().Change().onListDeleteAll(this, TAGS, this.tags, new ArrayList<>(this.tags));
 		this.tags = new ArrayList<>();
 		for (CtJavaDocTag tag : tags) {
 			this.addTag(tag);
@@ -59,9 +55,7 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 	public <E extends CtJavaDoc> E addTag(CtJavaDocTag tag) {
 		if (tag != null) {
 			tag.setParent(this);
-			if (getFactory().getEnvironment().buildStackChanges()) {
-				getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this, tags), tag));
-			}
+			getFactory().Change().onListAdd(this, TAGS, tags, tag);
 			tags.add(tag);
 		}
 		return (E) this;
@@ -70,27 +64,21 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 	@Override
 	public <E extends CtJavaDoc> E addTag(int index, CtJavaDocTag tag) {
 		tag.setParent(this);
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this, tags, index), tag));
-		}
+		getFactory().Change().onListAdd(this, TAGS, tags, index, tag);
 		tags.add(index, tag);
 		return (E) this;
 	}
 
 	@Override
 	public <E extends CtJavaDoc> E removeTag(int index) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, tags, index), tags.get(index)));
-		}
+		getFactory().Change().onListDelete(this, TAGS, tags, index, tags.get(index));
 		tags.remove(index);
 		return (E) this;
 	}
 
 	@Override
 	public <E extends CtJavaDoc> E removeTag(CtJavaDocTag tag) {
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, tags, tags.indexOf(tag)), tag));
-		}
+		getFactory().Change().onListDelete(this, TAGS, tags, tags.indexOf(tag), tag);
 		tags.remove(tag);
 		return (E) this;
 	}

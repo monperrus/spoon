@@ -16,13 +16,13 @@
  */
 package spoon.support.reflect.code;
 
-import spoon.diff.UpdateAction;
-import spoon.diff.context.ObjectContext;
 import spoon.reflect.code.CtCodeElement;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtThrow;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.visitor.CtVisitor;
+
+import static spoon.reflect.factory.ChangeFactory.FieldName.THROW;
 
 public class CtThrowImpl extends CtStatementImpl implements CtThrow {
 	private static final long serialVersionUID = 1L;
@@ -44,9 +44,7 @@ public class CtThrowImpl extends CtStatementImpl implements CtThrow {
 		if (expression != null) {
 			expression.setParent(this);
 		}
-		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "throwExpression"), expression, this.throwExpression));
-		}
+		getFactory().Change().onObjectUpdate(this, THROW, "throwExpression", expression, this.throwExpression);
 		this.throwExpression = expression;
 		return (T) this;
 	}

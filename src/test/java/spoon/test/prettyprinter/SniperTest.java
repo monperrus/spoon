@@ -83,6 +83,8 @@ public class SniperTest {
 
 		CtStatement statement = aClass.getMethod("aMethodWithGeneric").getBody().getStatement(0);
 		statement.replace(aClass.getFactory().Code().createCodeSnippetStatement("System.out.println(\"test\")"));
+		CtFieldRead ctFieldRead = readEnumValue(factory, ChangeFactory.FieldName.class, ChangeFactory.FieldName.LABEL.name());
+		aClass.getMethod("aMethodWithGeneric").getBody().addStatement(factory.createLocalVariable(factory.createCtTypeReference(ChangeFactory.FieldName.class), "d", ctFieldRead));
 
 		//aClass.getMethod("aMethodWithGeneric").getBody().addStatement(statement);
 
@@ -201,6 +203,11 @@ public class SniperTest {
 					fieldName = ((CtLiteral) field).getValue().toString();
 				}
 				ChangeFactory.FieldName name = ChangeFactory.FieldName.fromString(fieldName);
+				if (name == null) {
+					System.out.println(field);
+					System.out.println(fieldName);
+					return;
+				}
 				CtFieldRead ctFieldRead = readEnumValue(getFactory(), ChangeFactory.FieldName.class, name.name());
 				fields.add(fieldName);
 				arguments.add(contextCreation.getArguments().get(0));

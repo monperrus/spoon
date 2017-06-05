@@ -21,18 +21,18 @@ import spoon.reflect.code.CtStatement;
 import spoon.reflect.cu.SourcePosition;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtModifiable;
-import spoon.reflect.reference.CtTypeReference;
+import spoon.reflect.declaration.CtType;
+import spoon.reflect.reference.CtReference;
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter;
-import spoon.reflect.visitor.ImportScanner;
-import spoon.reflect.visitor.ImportScannerImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SniperWriter {
 	private StringBuilder content = new StringBuilder();
@@ -81,20 +81,30 @@ public class SniperWriter {
 
 		printer.getPrinter().setTabCount(getIndentation(realPosition));
 		printer.getPrinter().writeTabs();
+		Collection<CtReference> imports = printer.computeImports(element.getParent(CtType.class));
 		printer.scan(element);
 		String content = printer.getResult().replaceAll("\\s+$", "");
 		printer.reset();
 
-		ImportScanner importScanner = new ImportScannerImpl();
-		Collection<CtTypeReference<?>> imports = importScanner.computeImports(element);
-		List<String> missingImports = computeMissingImports(imports);
-		printImports(missingImports);
 
 		if (element instanceof CtStatement && !content.endsWith("\n") && this.content.charAt(realPosition + 1) != '\n') {
 			content += ";\n";
 		}
 
 		element.setPosition(element.getFactory().createSourcePosition(null, position, position, null));
+		write(content, position, isNewLine);
+
+		Set<String> missingImports = computeMissingImports(imports);
+		printImports(missingImports);
+
+		return this;
+	}
+
+	public SniperWriter write(String content, int position, boolean isNewLine) {
+		int realPosition = getPosition(position);
+		if (isNewLine) {
+			realPosition += getPositionNewLine(position);
+		}
 		this.content.insert(realPosition, content);
 		addOffset(realPosition, content.length());
 		return this;
@@ -165,15 +175,25 @@ public class SniperWriter {
 		}
 	}
 
-	private void printImports(List<String> missingImports) {
-
+	private void printImports(Set<String> missingImports) {
+		int positionImport = content.indexOf("import");
+		for (String imp : missingImports) {
+			this.imports.add(imp.replace("import ", "").replace("static ", ""));
+			String content = imp + ";\n";
+			this.content.insert(positionImport, content);
+			addOffset(positionImport, content.length());
+		}
 	}
 
-	private List<String> computeMissingImports(Collection<CtTypeReference<?>> neededImports) {
-		List<String> imports = new ArrayList<>();
-		for (Iterator<CtTypeReference<?>> iterator = neededImports.iterator(); iterator.hasNext();) {
-			String neededImport = iterator.next().toString();
-			//System.out.println(neededImport);
+	private Set<String> computeMissingImports(Collection<CtReference> neededImports) {
+		Set<String> imports = new HashSet<>();
+		for (CtReference neededImport1 : neededImports) {
+			String neededImport = printer.getElementPrinterHelper().printImport(neededImport1);
+
+			if (!"".equals(neededImport)
+					&& !this.imports.contains(neededImport.replace("import ", "").replace("static ", ""))) {
+				imports.add(neededImport);
+			}
 		}
 		return imports;
 	}

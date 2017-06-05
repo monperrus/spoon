@@ -246,7 +246,9 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 	public <C extends CtType<T>> C setNestedTypes(Set<CtType<?>> nestedTypes) {
 		Set<CtType<?>> oldNestedTypes = getNestedTypes();
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, typeMembers), new HashSet<>(oldNestedTypes)));
+			for (CtType<?> oldNestedType : oldNestedTypes) {
+				getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, typeMembers), oldNestedType));
+			}
 		}
 		if (nestedTypes == null || nestedTypes.isEmpty()) {
 			this.typeMembers.removeAll(oldNestedTypes);

@@ -42,7 +42,7 @@ public class CtCommentImpl extends CtStatementImpl implements CtComment {
 
 	@Override
 	public <E extends CtComment> E setContent(String content) {
-		if (getFactory().getEnvironment() != null && getFactory().getEnvironment().buildStackChanges()) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
 			getFactory().getEnvironment().pushToStack(new UpdateAction(new ObjectContext(this, "content"), content, this.content));
 		}
 		this.content = content;

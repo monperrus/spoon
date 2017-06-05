@@ -33,7 +33,6 @@ import spoon.reflect.declaration.CtTypeParameter;
 import spoon.reflect.declaration.CtTypedElement;
 import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.reference.CtExecutableReference;
-import spoon.reflect.reference.CtTypeParameterReference;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.CtVisitor;
 import spoon.support.DerivedProperty;
@@ -49,8 +48,6 @@ import static spoon.reflect.ModelElementContainerDefaultCapacities.TYPE_TYPE_PAR
 
 public class CtConstructorImpl<T> extends CtExecutableImpl<T> implements CtConstructor<T> {
 	private static final long serialVersionUID = 1L;
-
-	List<CtTypeParameterReference> formalTypeParameters = emptyList();
 
 	List<CtTypeParameter> formalCtTypeParameters = emptyList();
 
@@ -109,7 +106,7 @@ public class CtConstructorImpl<T> extends CtExecutableImpl<T> implements CtConst
 			this.formalCtTypeParameters = new ArrayList<>(TYPE_TYPE_PARAMETERS_CONTAINER_DEFAULT_CAPACITY);
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, this.formalTypeParameters), new ArrayList<>(this.formalTypeParameters)));
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, this.formalCtTypeParameters), new ArrayList<>(this.formalCtTypeParameters)));
 		}
 		this.formalCtTypeParameters.clear();
 		for (CtTypeParameter formalTypeParameter : formalTypeParameters) {
@@ -124,7 +121,7 @@ public class CtConstructorImpl<T> extends CtExecutableImpl<T> implements CtConst
 			return (C) this;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this, this.formalTypeParameters), formalTypeParameter));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this, this.formalCtTypeParameters), formalTypeParameter));
 		}
 		if (formalCtTypeParameters == CtElementImpl.<CtTypeParameter>emptyList()) {
 			formalCtTypeParameters = new ArrayList<>(TYPE_TYPE_PARAMETERS_CONTAINER_DEFAULT_CAPACITY);
@@ -141,7 +138,7 @@ public class CtConstructorImpl<T> extends CtExecutableImpl<T> implements CtConst
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
 			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(
-					this, formalTypeParameters), formalTypeParameter));
+					this, formalCtTypeParameters, formalCtTypeParameters.indexOf(formalTypeParameter)), formalTypeParameter));
 		}
 		return formalCtTypeParameters.remove(formalTypeParameter);
 	}

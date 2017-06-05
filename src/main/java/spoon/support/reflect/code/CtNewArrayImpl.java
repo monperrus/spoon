@@ -26,7 +26,6 @@ import spoon.reflect.visitor.CtVisitor;
 import spoon.support.reflect.declaration.CtElementImpl;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import static spoon.reflect.ModelElementContainerDefaultCapacities.NEW_ARRAY_DEFAULT_EXPRESSIONS_CONTAINER_DEFAULT_CAPACITY;
@@ -61,7 +60,7 @@ public class CtNewArrayImpl<T> extends CtExpressionImpl<T> implements CtNewArray
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
 			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(
-					this, this.dimensionExpressions), new HashSet<>(this.dimensionExpressions)));
+					this, this.dimensionExpressions), new ArrayList<>(this.dimensionExpressions)));
 		}
 		this.dimensionExpressions.clear();
 		for (CtExpression<Integer> expr : dimensionExpressions) {

@@ -89,7 +89,7 @@ public class CtIntersectionTypeReferenceImpl<T> extends CtTypeReferenceImpl<T> i
 			return false;
 		}
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, bounds), bound));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, bounds, bounds.indexOf(bound)), bound));
 
 		}
 		return bounds.remove(bound);

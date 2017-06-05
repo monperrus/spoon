@@ -45,8 +45,8 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 		if (tags == null) {
 			return (E) this;
 		}
-		if (getFactory().getEnvironment() != null && getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction<>(new ListContext(this, tags), new ArrayList<>(this.tags)));
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAllAction<>(new ListContext(this, this.tags), new ArrayList<>(this.tags)));
 		}
 		this.tags = new ArrayList<>();
 		for (CtJavaDocTag tag : tags) {
@@ -59,7 +59,7 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 	public <E extends CtJavaDoc> E addTag(CtJavaDocTag tag) {
 		if (tag != null) {
 			tag.setParent(this);
-			if (getFactory().getEnvironment() != null && getFactory().getEnvironment().buildStackChanges()) {
+			if (getFactory().getEnvironment().buildStackChanges()) {
 				getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this, tags), tag));
 			}
 			tags.add(tag);
@@ -70,7 +70,7 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 	@Override
 	public <E extends CtJavaDoc> E addTag(int index, CtJavaDocTag tag) {
 		tag.setParent(this);
-		if (getFactory().getEnvironment() != null && getFactory().getEnvironment().buildStackChanges()) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
 			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this, tags, index), tag));
 		}
 		tags.add(index, tag);
@@ -79,7 +79,7 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 
 	@Override
 	public <E extends CtJavaDoc> E removeTag(int index) {
-		if (getFactory().getEnvironment() != null && getFactory().getEnvironment().buildStackChanges()) {
+		if (getFactory().getEnvironment().buildStackChanges()) {
 			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, tags, index), tags.get(index)));
 		}
 		tags.remove(index);
@@ -88,8 +88,8 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 
 	@Override
 	public <E extends CtJavaDoc> E removeTag(CtJavaDocTag tag) {
-		if (getFactory().getEnvironment() != null && getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, tags), tag));
+		if (getFactory().getEnvironment().buildStackChanges()) {
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, tags, tags.indexOf(tag)), tag));
 		}
 		tags.remove(tag);
 		return (E) this;

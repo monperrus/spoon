@@ -50,7 +50,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -118,8 +117,7 @@ public class CtClassImpl<T extends Object> extends CtTypeImpl<T> implements CtCl
 		}
 		e.setParent(this);
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			List<CtAnonymousExecutable> anonymousExecutables = getAnonymousExecutables();
-			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this, anonymousExecutables, anonymousExecutables.size()), e));
+			getFactory().getEnvironment().pushToStack(new AddAction(new ListContext(this, typeMembers), e));
 		}
 		return addTypeMember(e);
 	}
@@ -127,8 +125,7 @@ public class CtClassImpl<T extends Object> extends CtTypeImpl<T> implements CtCl
 	@Override
 	public boolean removeAnonymousExecutable(CtAnonymousExecutable e) {
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			List<CtAnonymousExecutable> anonymousExecutables = getAnonymousExecutables();
-			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, anonymousExecutables, anonymousExecutables.indexOf(e)), e));
+			getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, typeMembers, typeMembers.indexOf(e)), e));
 		}
 		return removeTypeMember(e);
 	}
@@ -158,7 +155,9 @@ public class CtClassImpl<T extends Object> extends CtTypeImpl<T> implements CtCl
 	public <C extends CtClass<T>> C setConstructors(Set<CtConstructor<T>> constructors) {
 		Set<CtConstructor<T>> oldConstructor = getConstructors();
 		if (getFactory().getEnvironment().buildStackChanges()) {
-			getFactory().getEnvironment().pushToStack(new DeleteAllAction(new ListContext(this, typeMembers), new HashSet<>(oldConstructor)));
+			for (CtConstructor<?> constructor : oldConstructor) {
+				getFactory().getEnvironment().pushToStack(new DeleteAction(new ListContext(this, typeMembers), constructor));
+			}
 		}
 		if (constructors == null || constructors.isEmpty()) {
 			this.typeMembers.removeAll(oldConstructor);

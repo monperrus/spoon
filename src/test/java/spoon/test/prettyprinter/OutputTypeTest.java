@@ -1,4 +1,4 @@
-package spoon.test;
+package spoon.test.prettyprinter;
 
 import org.junit.Assert;
 import org.junit.Test;

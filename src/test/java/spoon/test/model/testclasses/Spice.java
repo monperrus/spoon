@@ -15,7 +15,7 @@
  * knowledge of the CeCILL-C license and that you accept its terms.
  */
 
-package spoon.test.type.testclasses;
+package spoon.test.model.testclasses;
 
 public @interface Spice {
 	Class<?> klass();

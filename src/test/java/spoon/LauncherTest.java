@@ -5,9 +5,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import spoon.compiler.Environment;
+import spoon.reflect.factory.FactoryImpl;
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter;
 import spoon.support.JavaOutputProcessor;
+import spoon.support.gui.SpoonModelTree;
 
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -90,6 +93,16 @@ public class LauncherTest {
 		} finally {
 			System.setProperty("user.dir", oldUserDir);
 		}
+	}
+
+	@Test
+	public void testGUI() throws Exception {
+		Launcher spoon = new Launcher();
+		spoon.addInputResource("src/test/resources/spoon/test/api");
+		spoon.buildModel();
+		SpoonModelTree gui = new SpoonModelTree(spoon.getFactory());
+		Thread.sleep(2000);
+
 	}
 
 }

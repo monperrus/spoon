@@ -70,7 +70,8 @@ abstract class AbstractTypingContext implements GenericTypeAdapter {
 		if ((typeParamRef instanceof CtWildcardReference)) {
 			return adaptTypeParameterReferenceBoundingType(typeParamRef, typeParamRef.getBoundingType());
 		}
-		CtTypeReference<?> typeRefAdapted = adaptTypeParameter(typeParamRef.getDeclaration());
+		//CtTypeReference<?> typeRefAdapted = adaptTypeParameter(typeParamRef.getDeclaration());
+		CtTypeReference<?> typeRefAdapted = typeParamRef.getDeclaration().getReference();
 		return typeRefAdapted;
 	}
 

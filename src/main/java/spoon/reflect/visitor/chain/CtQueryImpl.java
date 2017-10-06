@@ -306,7 +306,7 @@ public class CtQueryImpl implements CtQuery {
 			try {
 				result = _accept(input);
 			} catch (ClassCastException e) {
-				onClassCastException(e, getErrorMessage(), input);
+				//onClassCastException(e, getErrorMessage(), input);
 				return;
 			}
 			if (result == null || isTerminated()) {

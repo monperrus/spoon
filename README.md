@@ -29,7 +29,7 @@ The mission of Spoon is to provide a high-quality library for analyzing and tran
 The official website is available [here](http://spoon.gforge.inria.fr/).
 
 # Design Philosophy
-
+s
 
 R1) The Spoon metamodel is as close as possible to the language concepts.
 

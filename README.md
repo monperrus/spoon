@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/INRIA/spoon/badge.png)](https://coveralls.io/r/INRIA/spoon)
 
 # Spoon
-
+s
 Spoon is an open-source library for analyzing and transforming Java source code. External contributions as pull requests are welcome!
 
 The mission of Spoon is to provide a high-quality library for analyzing and transforming Java source code.
@@ -29,8 +29,8 @@ The mission of Spoon is to provide a high-quality library for analyzing and tran
 The official website is available [here](http://spoon.gforge.inria.fr/).
 
 # Design Philosophy
-
-
+s
+s
 R1) The Spoon metamodel is as close as possible to the language concepts.
 
 R2) The Spoon model of a program is complete and sound.

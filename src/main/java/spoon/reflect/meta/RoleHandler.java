@@ -34,7 +34,7 @@ public interface RoleHandler {
 	// the main methods, responsible to get and set the field corresponding to this role
 	/**
 	 * @param element a element from which the value will be get for this role
-	 * @return a value of the element on the role defined by {@link #getRole()}
+	 * @return a value of the element on the role defined by {@link #getRole()}, can be single value (eg a CtElement), List, Set or Map depending on the role underlying this handler.
 	 */
 	<T, U> U getValue(T element);
 	/**

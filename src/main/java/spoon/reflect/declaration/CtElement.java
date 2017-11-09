@@ -328,7 +328,7 @@ public interface CtElement extends FactoryAccessor, CtVisitable, Cloneable, CtQu
 
 	/**
 	 * Sets a field according to a role.
-	 * @param the role of the field to be set
+	 * @param the role of the field to be set, can be a single value (eg a CtElement), List, Set or Map depending on the role
 	 * @param value to be assigned to this field.
 	 */
 	<E extends CtElement, T> E  setValueByRole(CtRole role, T value);

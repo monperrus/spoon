@@ -72,6 +72,13 @@ public class CtScannerTest {
 		launcher.buildModel();
 
 		launcher.getModel().processWith(new CheckScannerTestProcessor());
+
+		// bug in getOverridingExecutable: sometimes the overridden method is not found
+		for (CtMethod m : launcher.getFactory().Type().get(CtScanner.class).getMethods()) {
+			if (m.hasAnnotation(Override.class)) {
+				assertNotNull("cannot find the overridden method: " + m.getSimpleName(), m.getReference().getOverridingExecutable());
+			}
+		}
 	}
 
 	class SimpleSignature extends CtScanner {

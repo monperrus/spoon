@@ -960,7 +960,7 @@ public abstract class CtTypeImpl<T> extends CtNamedElementImpl implements CtType
 			public void accept(CtMethod<?> currentMethod) {
 				for (CtMethod<?> alreadyVisitedMethod : l) {
 					if (ctc.isSameSignature(currentMethod, alreadyVisitedMethod)) {
-						return;
+						//return;
 					}
 				}
 

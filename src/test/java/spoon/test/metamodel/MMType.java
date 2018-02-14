@@ -19,6 +19,7 @@ package spoon.test.metamodel;
 import static spoon.test.metamodel.SpoonMetaModel.addUniqueObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -181,5 +182,15 @@ public class MMType {
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	public Collection<MMMethod> getMethods() {
+		List<MMMethod> result = new ArrayList<>();
+		if (modelInterface != null) {
+			for (CtMethod m : modelInterface.getMethods()) {
+				result.add(new MMMethod(m));
+			}
+		}
+		return result;
 	}
 }

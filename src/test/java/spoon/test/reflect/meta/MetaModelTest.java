@@ -9,8 +9,10 @@ import spoon.reflect.declaration.CtAnnotation;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtField;
+import spoon.reflect.declaration.CtParameter;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeMember;
+import spoon.reflect.declaration.CtTypeParameter;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.meta.ContainerKind;
 import spoon.reflect.meta.RoleHandler;
@@ -19,6 +21,8 @@ import spoon.reflect.path.CtRole;
 import spoon.reflect.reference.CtPackageReference;
 import spoon.reflect.reference.CtReference;
 import spoon.reflect.reference.CtTypeReference;
+import spoon.reflect.visitor.Filter;
+import spoon.reflect.visitor.filter.AbstractReferenceFilter;
 import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.template.Parameter;
 import spoon.test.metamodel.MMMethodKind;
@@ -69,7 +73,36 @@ public class MetaModelTest {
 				
 				mmField.forEachUnhandledMethod(ctMethod -> problems.add("Unhandled method signature: " + ctMethod.getDeclaringType().getSimpleName() + "#" + ctMethod.getSignature()));
 			});
-		});
+
+			mmType.getMethods().forEach((mmMethod) -> {
+				for (CtTypeParameter typeParam : mmMethod.getMethod().getFormalCtTypeParameters()) {
+					// enumerating the usages of this formal type parameter
+					int n=0;
+					for (CtParameter x : mmMethod.getMethod().getParameters()) {
+						if (x.filterChildren(new Filter<CtReference>() {
+							@Override
+							public boolean matches(CtReference element) {
+								boolean isMatching = typeParam.equals(element.getDeclaration());
+								if (isMatching) {
+									//System.out.println(element + " " + element.getParent().getClass() + " " + element.getPosition());
+								}
+								return isMatching;
+							}
+						}).list().size() != 0) {
+							// we have one usage
+							n++;
+						}
+					}
+
+					if (n==0) {
+						// if we have no usage
+						System.out.println("============"+mmMethod.getSignature());
+					} else {
+						//System.out.println("xxxxxxxxxxxx"+mmMethod.getSignature());
+					}
+				}
+			});
+			});
 		
 		unhandledRoles.forEach(it -> problems.add("Unused CtRole." + it.name()));
 		/*

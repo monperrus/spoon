@@ -32,7 +32,7 @@ import spoon.support.visitor.MethodTypingContext;
  * Each MMMethod belongs to one MMField
  */
 public class MMMethod {
-	private final MMField ownerField;
+	private MMField ownerField;
 	private final CtMethod<?> method;
 	private final List<CtMethod<?>> ownMethods = new ArrayList<>();
 	private final List<MMMethod> superMethods = new ArrayList<>();
@@ -49,6 +49,12 @@ public class MMMethod {
 		//adapt method to scope of field.ownType
 		MethodTypingContext mtc = new MethodTypingContext().setClassTypingContext(field.getOwnerType().getTypeContext()).setMethod(method);
 		this.method = (CtMethod<?>) mtc.getAdaptationScope();
+		signature = this.method.getSignature();
+		methodKind = MMMethodKind.valueOf(this.method);
+	}
+
+	MMMethod(CtMethod<?> method) {
+		this.method = method;
 		signature = this.method.getSignature();
 		methodKind = MMMethodKind.valueOf(this.method);
 	}

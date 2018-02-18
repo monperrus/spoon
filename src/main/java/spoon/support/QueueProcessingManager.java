@@ -16,12 +16,15 @@
  */
 package spoon.support;
 
+import org.apache.log4j.Level;
 import spoon.SpoonException;
 import spoon.processing.ProcessInterruption;
 import spoon.processing.ProcessingManager;
 import spoon.processing.Processor;
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.declaration.CtNamedElement;
 import spoon.reflect.factory.Factory;
+import spoon.support.util.Timer;
 import spoon.support.visitor.ProcessingVisitor;
 
 import java.util.ArrayList;
@@ -41,7 +44,7 @@ public class QueueProcessingManager implements ProcessingManager {
 
 	Factory factory;
 
-	Queue<Processor<?>> processors;
+	List<Processor<?>> processors;
 
 	ProcessingVisitor visitor;
 
@@ -61,9 +64,11 @@ public class QueueProcessingManager implements ProcessingManager {
 	public void addProcessor(Class<? extends Processor<?>> type) {
 		try {
 			Processor<?> p = type.newInstance();
+			p.setFactory(factory);
+			p.init();
 			addProcessor(p);
 		} catch (Exception e) {
-			throw new SpoonException("Unable to instantiate processor \"" + type.getName() + "\" - Your processor should have a constructor with no arguments", e);
+			factory.getEnvironment().report(null, Level.ERROR, "Unable to instantiate processor \"" + type.getName() + "\" - Your processor should have a constructor with no arguments");
 		}
 	}
 
@@ -77,7 +82,7 @@ public class QueueProcessingManager implements ProcessingManager {
 		try {
 			addProcessor((Class<? extends Processor<?>>) getFactory().getEnvironment().getInputClassLoader().loadClass(qualifiedName));
 		} catch (ClassNotFoundException e) {
-			throw new SpoonException("Unable to load processor \"" + qualifiedName + "\" - Check your classpath.", e);
+			factory.getEnvironment().report(null, Level.ERROR, "Unable to load processor \"" + qualifiedName + "\" - Check your classpath.");
 		}
 	}
 
@@ -89,14 +94,14 @@ public class QueueProcessingManager implements ProcessingManager {
 		return factory;
 	}
 
-	public Queue<Processor<?>> getProcessors() {
+	public List<Processor<?>> getProcessors() {
 		if (processors == null) {
 			processors = new LinkedList<>();
 		}
 		return processors;
 	}
 
-	protected ProcessingVisitor getVisitor() {
+	private ProcessingVisitor getVisitor() {
 		if (visitor == null) {
 			visitor = new ProcessingVisitor(getFactory());
 		}
@@ -104,36 +109,49 @@ public class QueueProcessingManager implements ProcessingManager {
 	}
 
 	public void process(Collection<? extends CtElement> elements) {
-		Processor<?> p;
-		// copy so that one can reuse the processing manager
-		// among different processing steps
-		Queue<Processor<?>> processors = new LinkedList<>(getProcessors());
-		while ((p = processors.poll()) != null) {
-			try {
-				getFactory().getEnvironment().reportProgressMessage(p.getClass().getName());
-				current = p;
-				p.init(); // load the properties
-				p.process();
-				for (CtElement e : new ArrayList<>(elements)) {
-					getVisitor().setProcessor(p);
-					getVisitor().scan(e);
-				}
-			} catch (ProcessInterruption ignore) {
-			} finally {
-				p.processingDone();
+		for (Processor<?> p : getProcessors()) {
+			current = p;
+			process(elements, p);
+		}
+	}
+
+	/**
+	 * Recursively processes elements and their children with a given processor.
+	 */
+	public void process(Collection<? extends CtElement> elements, Processor<?> processor) {
+		try {
+			getFactory().getEnvironment().debugMessage("processing with '" + processor.getClass().getName() + "'...");
+			current = processor;
+			Timer.start(processor.getClass().getName());
+			for (CtElement e : elements) {
+				getFactory().getEnvironment().debugMessage(
+						"processing '" + ((e instanceof CtNamedElement) ? ((CtNamedElement) e).getSimpleName() : e.toString()) + "' with '" + processor.getClass().getName() + "'...");
+				processor.init();
+				getVisitor().setProcessor(processor);
+				getVisitor().scan(e);
+				processor.processingDone();
 			}
+			Timer.stop(processor.getClass().getName());
+		} catch (ProcessInterruption ignored) {
 		}
 	}
 
 	public void process(CtElement element) {
-		List<CtElement> l = new ArrayList<>();
-		l.add(element);
-		process(l);
+		for (Processor<?> p : getProcessors()) {
+			current = p;
+			getFactory().getEnvironment().debugMessage(
+					"processing '" + ((element instanceof CtNamedElement) ? ((CtNamedElement) element).getSimpleName() : element.toString()) + "' with '" + p.getClass().getName() + "'...");
+			p.init();
+			getVisitor().setProcessor(p);
+			getVisitor().scan(element);
+			p.processingDone();
+		}
 	}
 
 	public void setFactory(Factory factory) {
 		this.factory = factory;
 		factory.getEnvironment().setManager(this);
 	}
+
 
 }

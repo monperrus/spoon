@@ -17,6 +17,7 @@
 
 package spoon.test.method;
 
+import org.junit.Assert;
 import org.junit.Test;
 import spoon.Launcher;
 import spoon.reflect.declaration.CtClass;
@@ -24,6 +25,9 @@ import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.factory.Factory;
+import spoon.reflect.reference.CtExecutableReference;
+import spoon.reflect.reference.CtParameterReference;
+import spoon.reflect.visitor.CtScanner;
 import spoon.reflect.visitor.filter.NamedElementFilter;
 import spoon.test.delete.testclasses.Adobada;
 import spoon.test.method.testclasses.Tacos;
@@ -34,6 +38,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static spoon.testing.utils.ModelUtils.build;
@@ -51,6 +56,31 @@ public class MethodTest {
 		clone.setVisibility(ModifierKind.PRIVATE);
 
 		assertEquals(ModifierKind.PUBLIC, m2.getModifiers().iterator().next());
+	}
+
+	@Test
+	public void testCloneMethod() throws Exception {
+		Launcher l = new Launcher();
+		l.getEnvironment().setNoClasspath(true);
+		l.addInputResource("src/test/resources/noclasspath/A2.java");
+		l.buildModel();
+		CtClass<Object> a2 = l.getFactory().Class().get("A2");
+		CtMethod<?> methodB = a2.getMethodsByName("c").get(0);
+		CtMethod<?> methodClone = methodB.clone();
+		methodB.getBody().insertBegin(l.getFactory().createCodeSnippetStatement("// foo"));
+		methodClone.setParent(a2);
+		methodClone.accept(new CtScanner() {
+			@Override
+			public <T> void visitCtExecutableReference(CtExecutableReference<T> reference) {
+				if (reference.getParent() instanceof CtParameterReference) {
+					return;
+				}
+				System.out.println("=="+reference);
+				System.out.println("=="+reference.getParent().getClass());
+				assertSame(methodClone, reference.getDeclaration());
+				super.visitCtExecutableReference(reference);
+			}
+		});
 	}
 
 	@Test

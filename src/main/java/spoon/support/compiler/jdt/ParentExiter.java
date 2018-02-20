@@ -97,10 +97,13 @@ import spoon.reflect.declaration.CtTypeParameter;
 import spoon.reflect.declaration.CtTypedElement;
 import spoon.reflect.declaration.CtVariable;
 import spoon.reflect.reference.CtArrayTypeReference;
+import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtIntersectionTypeReference;
+import spoon.reflect.reference.CtParameterReference;
 import spoon.reflect.reference.CtTypeParameterReference;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.CtInheritanceScanner;
+import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -240,7 +243,12 @@ public class ParentExiter extends CtInheritanceScanner {
 		}
 		if (child instanceof CtMethod) {
 			type.addMethod((CtMethod<?>) child);
-			return;
+			for (CtExecutableReference ref : child.getElements(new TypeFilter<>(CtExecutableReference.class))) {
+				if (ref.getDeclaringType().getDeclaration() == type) {
+					ref.setDeclaringType(type.getFactory().Type().PARENT_TYPE.clone());
+				}
+				return;
+			}
 		}
 		super.scanCtType(type);
 	}

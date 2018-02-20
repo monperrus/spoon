@@ -17,20 +17,25 @@
 package spoon.support.reflect.reference;
 
 import spoon.Launcher;
+import spoon.SpoonException;
 import spoon.reflect.annotations.MetamodelPropertyField;
 import spoon.reflect.code.CtLambda;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
+import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeMember;
 import spoon.reflect.declaration.ModifierKind;
+import spoon.reflect.declaration.ParentNotInitializedException;
+import spoon.reflect.factory.TypeFactory;
 import spoon.reflect.path.CtRole;
 import spoon.reflect.reference.CtActualTypeContainer;
 import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.CtVisitor;
+import spoon.reflect.visitor.Filter;
 import spoon.reflect.visitor.filter.NamedElementFilter;
 import spoon.support.reflect.declaration.CtElementImpl;
 import spoon.support.util.RtHelper;
@@ -158,8 +163,27 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 	@SuppressWarnings("unchecked")
 	public CtExecutable<T> getDeclaration() {
 		final CtTypeReference<?> typeRef = getDeclaringType();
-		if (typeRef == null || typeRef.getDeclaration() == null) {
+		if (typeRef == null) {
 			return null;
+		}
+		System.out.println(typeRef.toString());
+		if (typeRef.equals(getFactory().Type().PARENT_TYPE)) {
+			System.out.println(this.getParent().toString());
+			System.out.println(this.getParent().getParent().toString());
+			System.out.println(this.getParent().getParent().getParent().toString());
+			//System.out.println(this.getParent().getParent().getParent().getParent().toString());
+			CtExecutable element = getParent(CtExecutable.class);
+			System.out.println("here"+element.getSimpleName());
+			while (element != null) {
+				if (element.getSimpleName().equals(this.getSimpleName())) {
+					return element;
+				}
+				try {
+					element = element.getParent(CtExecutable.class);
+				} catch (ParentNotInitializedException e) {
+					element = null;
+				}
+			}
 		}
 		return getCtExecutable(typeRef.getDeclaration());
 	}
@@ -297,6 +321,9 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 	public <C extends CtExecutableReference<T>> C setDeclaringType(CtTypeReference<?> declaringType) {
 		if (declaringType != null) {
 			declaringType.setParent(this);
+		}
+		if (declaringType == null) {
+			return (C) this;
 		}
 		getFactory().getEnvironment().getModelChangeListener().onObjectUpdate(this, DECLARING_TYPE, declaringType, this.declaringType);
 		this.declaringType = declaringType;

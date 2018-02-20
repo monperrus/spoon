@@ -69,6 +69,7 @@ public class TypeFactory extends SubFactory {
 					// TODO (leventov) it is questionable to me that nulltype should also be here
 					CtTypeReference.NULL_TYPE_NAME)));
 
+	public final CtTypeReference<?> PARENT_TYPE = createReference("<PARENT_TYPE>");
 	public final CtTypeReference<?> NULL_TYPE = createReference(CtTypeReference.NULL_TYPE_NAME);
 	public final CtTypeReference<Void> VOID = createReference(Void.class);
 	public final CtTypeReference<String> STRING = createReference(String.class);

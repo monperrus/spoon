@@ -243,7 +243,8 @@ public class ParentExiter extends CtInheritanceScanner {
 		if (child instanceof CtMethod) {
 			type.addMethod((CtMethod<?>) child);
 			for (CtExecutableReference ref : child.getElements(new TypeFilter<>(CtExecutableReference.class))) {
-				if (ref.getDeclaringType().getDeclaration() == type) {
+				//if (ref.getDeclaringType().getDeclaration() == type && ref.getSignature().equals(((CtMethod) child).getSignature())) {
+				if (ref.equals(((CtMethod) child).getReference())) {
 					ref.setDeclaringType(type.getFactory().Type().DYNAMIC_LOOKUP.clone());
 				}
 				return;

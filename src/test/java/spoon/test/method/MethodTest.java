@@ -29,6 +29,7 @@ import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtParameterReference;
 import spoon.reflect.visitor.CtScanner;
 import spoon.reflect.visitor.filter.NamedElementFilter;
+import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.test.delete.testclasses.Adobada;
 import spoon.test.method.testclasses.Tacos;
 
@@ -60,27 +61,21 @@ public class MethodTest {
 
 	@Test
 	public void testCloneMethod() throws Exception {
+		// contract: dynamic lookup of executable references is preserved after cloning
 		Launcher l = new Launcher();
 		l.getEnvironment().setNoClasspath(true);
 		l.addInputResource("src/test/resources/noclasspath/A2.java");
 		l.buildModel();
 		CtClass<Object> a2 = l.getFactory().Class().get("A2");
-		CtMethod<?> methodB = a2.getMethodsByName("c").get(0);
-		CtMethod<?> methodClone = methodB.clone();
-		methodB.getBody().insertBegin(l.getFactory().createCodeSnippetStatement("// foo"));
+		CtMethod<?> method = a2.getMethodsByName("c").get(0);
+		CtMethod<?> methodClone = method.clone();
+		methodClone.getBody().insertBegin(l.getFactory().createCodeSnippetStatement("// debug info"));
 		methodClone.setParent(a2);
-		methodClone.accept(new CtScanner() {
-			@Override
-			public <T> void visitCtExecutableReference(CtExecutableReference<T> reference) {
-				if (reference.getParent() instanceof CtParameterReference) {
-					return;
-				}
-				System.out.println("=="+reference);
-				System.out.println("=="+reference.getParent().getClass());
-				assertSame(methodClone, reference.getDeclaration());
-				super.visitCtExecutableReference(reference);
-			}
-		});
+		CtExecutableReference ctExecutableReference = method.getElements(new TypeFilter<>(CtExecutableReference.class)).get(0);
+		assertSame(method,  ctExecutableReference.getDeclaration());
+		CtExecutableReference reference = methodClone.getElements(new TypeFilter<>(CtExecutableReference.class)).get(0);
+		assertEquals("c", reference.getSimpleName());
+		assertSame(methodClone, reference.getDeclaration());
 	}
 
 	@Test

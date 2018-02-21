@@ -68,13 +68,16 @@ public class MethodTest {
 		l.buildModel();
 		CtClass<Object> a2 = l.getFactory().Class().get("A2");
 		CtMethod<?> method = a2.getMethodsByName("c").get(0);
-		CtMethod<?> methodClone = method.clone();
-		methodClone.getBody().insertBegin(l.getFactory().createCodeSnippetStatement("// debug info"));
-		methodClone.setParent(a2);
+		// the lookup is OK in the original node
 		CtExecutableReference ctExecutableReference = method.getElements(new TypeFilter<>(CtExecutableReference.class)).get(0);
 		assertSame(method,  ctExecutableReference.getDeclaration());
+
+		// cloning (and modifying for debug with toString)
+		CtMethod<?> methodClone = method.clone();
+		methodClone.getBody().insertBegin(l.getFactory().createCodeSnippetStatement("// debug info"));
+
+		// the lookup is OK in the clone as well
 		CtExecutableReference reference = methodClone.getElements(new TypeFilter<>(CtExecutableReference.class)).get(0);
-		assertEquals("c", reference.getSimpleName());
 		assertSame(methodClone, reference.getDeclaration());
 	}
 

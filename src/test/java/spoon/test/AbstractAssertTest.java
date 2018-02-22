@@ -1,10 +1,10 @@
-package spoon.testing;
+package spoon.test;
 
 import org.junit.Test;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.CtType;
-import spoon.testing.processors.FooToBarProcessor;
+import spoon.test.processors.FooToBarProcessor;
 
 import static spoon.testing.Assert.assertThat;
 import static spoon.testing.utils.ModelUtils.buildNoClasspath;

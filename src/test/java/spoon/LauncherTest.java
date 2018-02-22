@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import spoon.Launcher;
+import spoon.SpoonModelBuilder;
 import spoon.compiler.Environment;
 import spoon.reflect.CtModel;
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter;

@@ -1,7 +1,9 @@
-package spoon;
+package spoon.test;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import spoon.MavenLauncher;
+import spoon.SpoonException;
 
 import java.util.ArrayList;
 import java.util.Arrays;

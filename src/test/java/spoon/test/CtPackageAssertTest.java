@@ -1,4 +1,4 @@
-package spoon.testing;
+package spoon.test;
 
 import org.junit.Test;
 import spoon.reflect.declaration.CtPackage;
@@ -16,8 +16,8 @@ public class CtPackageAssertTest {
 	public void testEqualityBetweenTwoCtPackage() throws Exception {
 		final Factory factory = createFactory();
 		final CtPackage aRootPackage = factory.Package().getOrCreate("");
-		aRootPackage.addType(factory.Class().create("spoon.testing.testclasses.Foo").addModifier(ModifierKind.PUBLIC));
-		aRootPackage.addType(factory.Class().create("spoon.testing.testclasses.Bar").addModifier(ModifierKind.PUBLIC));
+		aRootPackage.addType(factory.Class().create("spoon.test.testclasses.Foo").addModifier(ModifierKind.PUBLIC));
+		aRootPackage.addType(factory.Class().create("spoon.test.testclasses.Bar").addModifier(ModifierKind.PUBLIC));
 		assertThat(build(new File("./src/test/java/spoon/testing/testclasses/")).Package().getRootPackage()).isEqualTo(aRootPackage);
 	}
 
@@ -30,7 +30,7 @@ public class CtPackageAssertTest {
 	public void testEqualityBetweenTwoCtPackageWithDifferentTypes() throws Exception {
 		final Factory factory = createFactory();
 		final CtPackage aRootPackage = factory.Package().getOrCreate("");
-		aRootPackage.addType(factory.Class().create("spoon.testing.testclasses.Foo").addModifier(ModifierKind.PUBLIC));
+		aRootPackage.addType(factory.Class().create("spoon.test.testclasses.Foo").addModifier(ModifierKind.PUBLIC));
 		assertThat(build(new File("./src/test/java/spoon/testing/testclasses/")).Package().getRootPackage()).isEqualTo(aRootPackage);
 	}
 }

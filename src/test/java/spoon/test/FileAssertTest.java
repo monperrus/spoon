@@ -1,4 +1,4 @@
-package spoon.testing;
+package spoon.test;
 
 import org.junit.Test;
 

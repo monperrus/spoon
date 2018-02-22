@@ -165,7 +165,8 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 		if (typeRef.equals(getFactory().Type().DYNAMIC_LOOKUP)) {
 			CtExecutable element = getParent(CtExecutable.class);
 			while (element != null) {
-				if (element.getSimpleName().equals(this.getSimpleName())) {
+				// TODO: use ClassTypingContext#isSameSignature? or equivalent
+				if (element.getSignature().equals(this.getSignature())) {
 					return element;
 				}
 				try {

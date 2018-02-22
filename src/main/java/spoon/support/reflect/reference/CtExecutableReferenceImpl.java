@@ -162,7 +162,7 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 		if (typeRef == null) {
 			return null;
 		}
-		if (typeRef.equals(getFactory().Type().DYNAMIC_LOOKUP)) {
+		if (typeRef instanceof CtDynamicLoopupTypeReferenceImpl) {
 			CtExecutable element = getParent(CtExecutable.class);
 			while (element != null) {
 				// TODO: use ClassTypingContext#isSameSignature? or equivalent
@@ -188,7 +188,7 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 		}
 		// using a shadow class
 		CtTypeReference<?> declaringType = getDeclaringType();
-		if (!declaringType.equals(getFactory().Type().DYNAMIC_LOOKUP)) {
+		if (!(declaringType instanceof CtDynamicLoopupTypeReferenceImpl)) {
 			return getCtExecutable(declaringType.getTypeDeclaration());
 		}
 

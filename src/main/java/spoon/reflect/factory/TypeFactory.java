@@ -22,13 +22,13 @@ import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtFormalTypeDeclarer;
+import spoon.reflect.declaration.CtImport;
 import spoon.reflect.declaration.CtInterface;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtPackage;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeParameter;
 import spoon.reflect.reference.CtArrayTypeReference;
-import spoon.reflect.declaration.CtImport;
 import spoon.reflect.reference.CtIntersectionTypeReference;
 import spoon.reflect.reference.CtReference;
 import spoon.reflect.reference.CtTypeParameterReference;
@@ -69,7 +69,6 @@ public class TypeFactory extends SubFactory {
 					// TODO (leventov) it is questionable to me that nulltype should also be here
 					CtTypeReference.NULL_TYPE_NAME)));
 
-	public final CtTypeReference<?> DYNAMIC_LOOKUP = createReference("<DYNAMIC_LOOKUP>");
 	public final CtTypeReference<?> NULL_TYPE = createReference(CtTypeReference.NULL_TYPE_NAME);
 	public final CtTypeReference<Void> VOID = createReference(Void.class);
 	public final CtTypeReference<String> STRING = createReference(String.class);

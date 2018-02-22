@@ -27,9 +27,11 @@ import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtParameterReference;
+import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.CtScanner;
 import spoon.reflect.visitor.filter.NamedElementFilter;
 import spoon.reflect.visitor.filter.TypeFilter;
+import spoon.support.reflect.reference.CtDynamicLoopupTypeReferenceImpl;
 import spoon.test.delete.testclasses.Adobada;
 import spoon.test.method.testclasses.Tacos;
 
@@ -71,14 +73,27 @@ public class MethodTest {
 		// the lookup is OK in the original node
 		CtExecutableReference ctExecutableReference = method.getElements(new TypeFilter<>(CtExecutableReference.class)).get(0);
 		assertSame(method,  ctExecutableReference.getDeclaration());
+		assertSame(method, ctExecutableReference.getDeclaration());
+		assertEquals("A2", ctExecutableReference.getDeclaringType().getSimpleName());
+		assertSame(a2, ctExecutableReference.getDeclaringType().getDeclaration());
 
+		CtTypeReference declaringType = ctExecutableReference.getDeclaringType();
+		assertEquals(((CtDynamicLoopupTypeReferenceImpl)declaringType).clone(), declaringType);
+		//assertEquals(((CtDynamicLoopupTypeReferenceImpl)declaringType).cloneSpecial(), declaringType);
 		// cloning (and modifying for debug with toString)
 		CtMethod<?> methodClone = method.clone();
 		methodClone.getBody().insertBegin(l.getFactory().createCodeSnippetStatement("// debug info"));
 
 		// the lookup is OK in the clone as well
 		CtExecutableReference reference = methodClone.getElements(new TypeFilter<>(CtExecutableReference.class)).get(0);
+
+		reference.setDeclaringType(new CtDynamicLoopupTypeReferenceImpl(reference));
+
+		assertEquals("c", reference.getSimpleName());
 		assertSame(methodClone, reference.getDeclaration());
+		// a2.addMethod(methodClone);
+		// assertEquals("<DYNAMIC_LOOKUP_REFERENCE>", reference.getDeclaringType().getSimpleName()); // not yet in a type
+		// assertSame(a2, reference.getDeclaringType().getDeclaration()); // now we are in a type
 	}
 
 	@Test

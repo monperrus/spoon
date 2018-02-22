@@ -18,10 +18,13 @@ package spoon.support.visitor.equals;
 
 import spoon.SpoonException;
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.declaration.CtMethod;
 import spoon.support.util.EmptyClearableList;
 import spoon.support.util.EmptyClearableSet;
 import spoon.support.visitor.clone.CloneVisitor;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,6 +47,22 @@ public class CloneHelper {
 	public static final CloneHelper INSTANCE = new CloneHelper();
 
 	public <T extends CtElement> T clone(T element) {
+		if (element == null) {
+			return null;
+		}
+		// if there is a method clone in the class, we call it directly
+		try {
+			Method method = null;
+			method = element.getClass().getMethod("cloneSpecial");
+			//return (T)
+					method.invoke(element);
+		} catch (NoSuchMethodException e) { // OK
+		} catch (IllegalAccessException e) {
+			throw new SpoonException(e);
+		} catch (InvocationTargetException e) {
+			throw new SpoonException(e);
+		}
+
 		final CloneVisitor cloneVisitor = new CloneVisitor(this);
 		cloneVisitor.scan(element);
 		return cloneVisitor.getClone();

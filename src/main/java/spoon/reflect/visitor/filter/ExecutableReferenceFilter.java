@@ -35,7 +35,6 @@ import spoon.reflect.visitor.Filter;
 public class ExecutableReferenceFilter implements Filter<CtExecutableReference<?>> {
 
 	private Map<CtExecutable<?>, CtExecutable<?>> executables = new IdentityHashMap<>();
-	private Set<String> typeQualifiedNames = new HashSet<>();
 	private Set<String> methodNames = new HashSet<>();
 
 	/**
@@ -70,7 +69,6 @@ public class ExecutableReferenceFilter implements Filter<CtExecutableReference<?
 			if (declType == null) {
 				throw new SpoonException("Cannot search for executable reference, which has no declaring type");
 			}
-			typeQualifiedNames.add(declType.getQualifiedName());
 			if (executable instanceof CtMethod<?>) {
 				methodNames.add(((CtMethod<?>) executable).getSimpleName());
 			}
@@ -85,10 +83,8 @@ public class ExecutableReferenceFilter implements Filter<CtExecutableReference<?
 			return executables.containsKey(execRef.getDeclaration());
 		} else {
 			//reference to constructor or method
-			if (typeQualifiedNames.contains(execRef.getDeclaringType().getQualifiedName())) {
-				if (CtExecutableReference.CONSTRUCTOR_NAME.equals(execRef.getSimpleName()) || methodNames.contains(execRef.getSimpleName())) {
-					return executables.containsKey(execRef.getDeclaration());
-				}
+			if (CtExecutableReference.CONSTRUCTOR_NAME.equals(execRef.getSimpleName()) || methodNames.contains(execRef.getSimpleName())) {
+				return executables.containsKey(execRef.getDeclaration());
 			}
 		}
 		return false;

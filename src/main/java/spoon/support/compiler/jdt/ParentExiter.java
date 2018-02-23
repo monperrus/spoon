@@ -103,7 +103,6 @@ import spoon.reflect.reference.CtTypeParameterReference;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.CtInheritanceScanner;
 import spoon.reflect.visitor.filter.TypeFilter;
-import spoon.support.reflect.reference.CtDynamicLoopupTypeReferenceImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -248,7 +247,7 @@ public class ParentExiter extends CtInheritanceScanner {
 			// dynamic lookup is better when one moves or clones elements
 			for (CtExecutableReference ref : child.getElements(new TypeFilter<>(CtExecutableReference.class))) {
 				CtTypeReference backup = ref.getDeclaringType();
-				if (ref.equals(((CtMethod) child).getReference())) {
+				if (ref.getSignature().equals(((CtMethod) child).getSignature())) {
 					ref.setDeclaringType(null);
 				}
 

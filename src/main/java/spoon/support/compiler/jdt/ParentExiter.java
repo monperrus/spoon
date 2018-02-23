@@ -245,6 +245,7 @@ public class ParentExiter extends CtInheritanceScanner {
 			type.addMethod((CtMethod<?>) child);
 
 			// now we replace hard-coded references with dynamic lookup
+			// dynamic lookup is better when one moves or clones elements
 			for (CtExecutableReference ref : child.getElements(new TypeFilter<>(CtExecutableReference.class))) {
 				CtTypeReference backup = ref.getDeclaringType();
 				if (ref.equals(((CtMethod) child).getReference())) {

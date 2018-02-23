@@ -50,19 +50,6 @@ public class CloneHelper {
 		if (element == null) {
 			return null;
 		}
-		// if there is a method clone in the class, we call it directly
-		try {
-			Method method = null;
-			method = element.getClass().getMethod("cloneSpecial");
-			//return (T)
-					method.invoke(element);
-		} catch (NoSuchMethodException e) { // OK
-		} catch (IllegalAccessException e) {
-			throw new SpoonException(e);
-		} catch (InvocationTargetException e) {
-			throw new SpoonException(e);
-		}
-
 		final CloneVisitor cloneVisitor = new CloneVisitor(this);
 		cloneVisitor.scan(element);
 		return cloneVisitor.getClone();

@@ -160,9 +160,6 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 	public CtExecutable<T> getDeclaration() {
 		final CtTypeReference<?> typeRef = declaringType;
 		if (typeRef == null) {
-			return null;
-		}
-		if (typeRef instanceof CtDynamicLoopupTypeReferenceImpl) {
 			CtExecutable element = getParent(CtExecutable.class);
 			while (element != null) {
 				// TODO: use ClassTypingContext#isSameSignature? or equivalent
@@ -188,7 +185,7 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 		}
 		// using a shadow class
 		CtTypeReference<?> declaringType = getDeclaringType();
-		if (!(declaringType instanceof CtDynamicLoopupTypeReferenceImpl)) {
+		if (declaringType != null) {
 			return getCtExecutable(declaringType.getTypeDeclaration());
 		}
 
@@ -323,9 +320,6 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 	public <C extends CtExecutableReference<T>> C setDeclaringType(CtTypeReference<?> declaringType) {
 		if (declaringType != null) {
 			declaringType.setParent(this);
-		}
-		if (declaringType == null) {
-			return (C) this;
 		}
 		getFactory().getEnvironment().getModelChangeListener().onObjectUpdate(this, DECLARING_TYPE, declaringType, this.declaringType);
 		this.declaringType = declaringType;

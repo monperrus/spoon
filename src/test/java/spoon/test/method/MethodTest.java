@@ -38,6 +38,7 @@ import spoon.test.method.testclasses.Tacos;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -71,29 +72,23 @@ public class MethodTest {
 		CtClass<Object> a2 = l.getFactory().Class().get("A2");
 		CtMethod<?> method = a2.getMethodsByName("c").get(0);
 		// the lookup is OK in the original node
-		CtExecutableReference ctExecutableReference = method.getElements(new TypeFilter<>(CtExecutableReference.class)).get(0);
-		assertSame(method,  ctExecutableReference.getDeclaration());
-		assertSame(method, ctExecutableReference.getDeclaration());
-		assertEquals("A2", ctExecutableReference.getDeclaringType().getSimpleName());
-		assertSame(a2, ctExecutableReference.getDeclaringType().getDeclaration());
+		List<CtExecutableReference> elements = method.getElements(new TypeFilter<>(CtExecutableReference.class));
 
-		CtTypeReference declaringType = ctExecutableReference.getDeclaringType();
-		assertEquals(((CtDynamicLoopupTypeReferenceImpl)declaringType).clone(), declaringType);
-		//assertEquals(((CtDynamicLoopupTypeReferenceImpl)declaringType).cloneSpecial(), declaringType);
+		CtExecutableReference methodRef = elements.get(0);
+		System.out.println(methodRef.getParent());
+		assertSame(method, methodRef.getDeclaration());
+
+		assertEquals(null, methodRef.getDeclaringType());
+
 		// cloning (and modifying for debug with toString)
 		CtMethod<?> methodClone = method.clone();
 		methodClone.getBody().insertBegin(l.getFactory().createCodeSnippetStatement("// debug info"));
 
 		// the lookup is OK in the clone as well
 		CtExecutableReference reference = methodClone.getElements(new TypeFilter<>(CtExecutableReference.class)).get(0);
-
-		reference.setDeclaringType(new CtDynamicLoopupTypeReferenceImpl(reference));
-
 		assertEquals("c", reference.getSimpleName());
 		assertSame(methodClone, reference.getDeclaration());
-		// a2.addMethod(methodClone);
-		// assertEquals("<DYNAMIC_LOOKUP_REFERENCE>", reference.getDeclaringType().getSimpleName()); // not yet in a type
-		// assertSame(a2, reference.getDeclaringType().getDeclaration()); // now we are in a type
+		assertEquals(null, methodClone.getDeclaringType());
 	}
 
 	@Test

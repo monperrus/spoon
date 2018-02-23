@@ -295,7 +295,7 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 			}
 			return true;
 		}
-		if (exec instanceof CtMethod<?> && thisExec instanceof CtMethod<?>) {
+		if (exec instanceof CtMethod<?> && thisExec instanceof CtMethod<?> && thisExec.isParentInitialized()) {
 			return new ClassTypingContext(((CtTypeMember) thisExec).getDeclaringType()).isOverriding((CtMethod<?>) thisExec, (CtMethod<?>) exec);
 		}
 		//it is not a method. So we can return true only if it is reference to the this executable

@@ -78,7 +78,7 @@ public interface CtExecutableReference<T> extends CtReference, CtActualTypeConta
 
 	/**
 	 * Gets the reference to the type that declares this executable.
-	 * By convention, if this is null, it is assumed that the reference points to the method, or one method upper in the parent tree.
+	 * By convention, if this is null, it is assumed that the reference points to the method (eg for recursive methods), or one method upper in the parent tree.
 	 * So even if getDeclaringType() returns null, getDeclaration() works, unless the model has been incorrectly built.
 	 */
 	@PropertyGetter(role = CtRole.DECLARING_TYPE)

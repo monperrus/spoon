@@ -173,7 +173,10 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 				}
 			}
 		}
-		return getCtExecutable(typeRef.getDeclaration());
+		if (typeRef != null) {
+			return getCtExecutable(typeRef.getDeclaration());
+		}
+		return null;
 	}
 
 	@Override

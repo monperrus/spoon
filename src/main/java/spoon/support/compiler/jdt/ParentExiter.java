@@ -246,9 +246,14 @@ public class ParentExiter extends CtInheritanceScanner {
 			// now we replace hard-coded references with dynamic lookup
 			// dynamic lookup is better to keep correct declaration lookups when one moves or clones elements
 			for (CtInvocation invocation : child.getElements(new TypeFilter<>(CtInvocation.class))) {
-				CtExecutableReference ref = invocation.getExecutable();
+				if (invocation.getTarget() == null || invocation.getTarget().getType() == null) {
+					continue;
+				}
+						CtExecutableReference ref = invocation.getExecutable();
 				CtTypeReference backup = (CtTypeReference) ref.getDeclaringType();
-				if (invocation.getTarget() != null && invocation.getTarget().getType().equals(type.getReference())
+
+				// do we point to the same method?
+				if (invocation.getTarget().getType().equals(type.getReference())
 						&& ref.getSignature().equals(((CtMethod) child).getSignature())) {
 					ref.setDeclaringType(null);
 				}

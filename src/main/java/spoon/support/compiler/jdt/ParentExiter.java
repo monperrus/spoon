@@ -248,7 +248,7 @@ public class ParentExiter extends CtInheritanceScanner {
 			for (CtInvocation invocation : child.getElements(new TypeFilter<>(CtInvocation.class))) {
 				CtExecutableReference ref = invocation.getExecutable();
 				CtTypeReference backup = (CtTypeReference) ref.getDeclaringType();
-				if (invocation.getTarget().getType().equals(type.getReference())
+				if (invocation.getTarget() != null && invocation.getTarget().getType().equals(type.getReference())
 						&& ref.getSignature().equals(((CtMethod) child).getSignature())) {
 					ref.setDeclaringType(null);
 				}

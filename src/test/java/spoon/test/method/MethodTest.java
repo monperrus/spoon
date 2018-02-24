@@ -24,7 +24,10 @@ import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.factory.Factory;
+import spoon.reflect.reference.CtExecutableReference;
+import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.filter.NamedElementFilter;
+import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.test.delete.testclasses.Adobada;
 import spoon.test.method.testclasses.Tacos;
 
@@ -34,6 +37,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static spoon.testing.utils.ModelUtils.build;
@@ -51,6 +55,39 @@ public class MethodTest {
 		clone.setVisibility(ModifierKind.PRIVATE);
 
 		assertEquals(ModifierKind.PUBLIC, m2.getModifiers().iterator().next());
+	}
+
+	@Test
+	public void testCloneMethod() throws Exception {
+		// contract: dynamic lookup of executable references is preserved after cloning
+		Launcher l = new Launcher();
+		l.getEnvironment().setNoClasspath(true);
+		l.addInputResource("src/test/resources/noclasspath/A2.java");
+		l.buildModel();
+		CtClass<Object> a2 = l.getFactory().Class().get("A2");
+		CtMethod<?> method = a2.getMethodsByName("c").get(0);
+		// the lookup is OK in the original node
+		CtExecutableReference ctExecutableReference = method.getElements(new TypeFilter<>(CtExecutableReference.class)).get(0);
+		assertSame(method,  ctExecutableReference.getDeclaration());
+		assertSame(method, ctExecutableReference.getDeclaration());
+		assertEquals("A2", ctExecutableReference.getDeclaringType().getSimpleName());
+		assertSame(a2, ctExecutableReference.getDeclaringType().getDeclaration());
+
+		CtTypeReference declaringType = ctExecutableReference.getDeclaringType();
+		//assertEquals(((CtDynamicLoopupTypeReferenceImpl)declaringType).cloneSpecial(), declaringType);
+		// cloning (and modifying for debug with toString)
+		CtMethod<?> methodClone = method.clone();
+		methodClone.getBody().insertBegin(l.getFactory().createCodeSnippetStatement("// debug info"));
+
+		// the lookup is OK in the clone as well
+		CtExecutableReference reference = methodClone.getElements(new TypeFilter<>(CtExecutableReference.class)).get(0);
+		assertEquals("c", reference.getSimpleName());
+
+		// the declaring type has been set to null
+		assertSame(null, reference.getDeclaringType());
+
+		// and thus we resolve to the clone correctly
+		assertSame(methodClone, reference.getDeclaration());
 	}
 
 	@Test

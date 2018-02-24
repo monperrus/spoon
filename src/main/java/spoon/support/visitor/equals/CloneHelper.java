@@ -143,14 +143,18 @@ public class CloneHelper {
 		// this scanner visit certain nodes to done some additional work after cloning
 		new CtScanner() {
 			@Override
-			public <T> void visitCtExecutableReference(CtExecutableReference<T> clone) {
+			public <T> void visitCtExecutableReference(CtExecutableReference<T> element) {
 				// for instance, here we can do additional things
 				// after cloning an executable reference
 				// we have access here to "topLevelElement" and "topLevelClone"
 				// if we want to analyze them as well.
 
+				if (element.getDeclaration() == topLevelElement) {
+					// the clone points to the cloned elements
+					element.setDeclaringType(null);
+				}
 				// super must be called to visit the subelements
-				super.visitCtExecutableReference(clone);
+				super.visitCtExecutableReference(element);
 			}
 		}.scan(topLevelClone);
 	}

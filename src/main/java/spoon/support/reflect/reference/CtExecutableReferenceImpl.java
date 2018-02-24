@@ -26,6 +26,7 @@ import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.CtTypeMember;
 import spoon.reflect.declaration.ModifierKind;
+import spoon.reflect.declaration.ParentNotInitializedException;
 import spoon.reflect.path.CtRole;
 import spoon.reflect.reference.CtActualTypeContainer;
 import spoon.reflect.reference.CtExecutableReference;
@@ -157,16 +158,40 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 	@Override
 	@SuppressWarnings("unchecked")
 	public CtExecutable<T> getDeclaration() {
-		final CtTypeReference<?> typeRef = getDeclaringType();
-		if (typeRef == null || typeRef.getDeclaration() == null) {
-			return null;
+		final CtTypeReference<?> typeRef = declaringType;
+		if (typeRef == null) {
+			CtExecutable element = getParent(CtExecutable.class);
+			while (element != null) {
+				if (element.getSignature().equals(this.getSignature())) {
+					return element;
+				}
+				try {
+					element = element.getParent(CtExecutable.class);
+				} catch (ParentNotInitializedException e) {
+					element = null;
+				}
+			}
 		}
-		return getCtExecutable(typeRef.getDeclaration());
+		if (typeRef != null) {
+			return getCtExecutable(typeRef.getDeclaration());
+		}
+		return null;
 	}
 
 	@Override
 	public CtExecutable<T> getExecutableDeclaration() {
-		return getCtExecutable(getDeclaringType().getTypeDeclaration());
+		// happy path
+		CtExecutable<T> r = getDeclaration();
+		if (r != null) {
+			return r;
+		}
+		// using a shadow class
+		CtTypeReference<?> declaringType = getDeclaringType();
+		if (declaringType != null) {
+			return getCtExecutable(declaringType.getTypeDeclaration());
+		}
+
+		return null;
 	}
 
 	private CtExecutable<T> getCtExecutable(CtType<?> typeDecl) {
@@ -269,7 +294,7 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 			}
 			return true;
 		}
-		if (exec instanceof CtMethod<?> && thisExec instanceof CtMethod<?>) {
+		if (exec instanceof CtMethod<?> && thisExec instanceof CtMethod<?> && thisExec.isParentInitialized()) {
 			return new ClassTypingContext(((CtTypeMember) thisExec).getDeclaringType()).isOverriding((CtMethod<?>) thisExec, (CtMethod<?>) exec);
 		}
 		//it is not a method. So we can return true only if it is reference to the this executable

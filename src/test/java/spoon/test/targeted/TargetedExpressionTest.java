@@ -358,8 +358,7 @@ public class TargetedExpressionTest {
 
 		final List<CtInvocation> newElements = nestedTypeScanner.getMethodsByName("checkType").get(0).getElements(new TypeFilter<>(CtInvocation.class));
 		assertEquals(1, newElements.size());
-		// this is a recursive method, so getDeclaration has a dynamic lookup
-		assertEqualsInvocation(new ExpectedTargetedExpression().target(expectedNestedAccess).result("this.checkType(type)"), newElements.get(0));
+		assertEqualsInvocation(new ExpectedTargetedExpression().declaringType(expectedNested).target(expectedNestedAccess).result("this.checkType(type)"), newElements.get(0));
 	}
 
 	@Test

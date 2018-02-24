@@ -175,11 +175,11 @@ public class AstCheckerTest {
 			} else {
 				return false;
 			}
-			System.out.println(candidate.getSignature()+" "+potentialDelegate.toString());
 			CtExecutable declaration = potentialDelegate.getExecutable().getDeclaration();
 			if (declaration == null || !(declaration instanceof CtMethod)) {
 				return false;
 			}
+			// check if the invocation has a model change listener
 			return !isToBeProcessed((CtMethod<?>) declaration);
 		}
 
@@ -219,7 +219,7 @@ public class AstCheckerTest {
 			return body.getElements(new TypeFilter<CtInvocation<?>>(CtInvocation.class) {
 				@Override
 				public boolean matches(CtInvocation<?> element) {
-					return FineModelChangeListener.class.getSimpleName().equals(element.getType().getSimpleName()) && super.matches(element);
+					return FineModelChangeListener.class.getSimpleName().equals(element.getExecutable().getDeclaringType().getSimpleName()) && super.matches(element);
 				}
 			}).size() > 0;
 		}

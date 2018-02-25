@@ -243,29 +243,29 @@ public class ParentExiter extends CtInheritanceScanner {
 		if (child instanceof CtMethod) {
 			type.addMethod((CtMethod<?>) child);
 
-			// now we replace hard-coded references with dynamic lookup
-			// dynamic lookup is better to keep correct declaration lookups when one moves or clones elements
-			for (CtInvocation invocation : child.getElements(new TypeFilter<>(CtInvocation.class))) {
-				if (invocation.getTarget() == null || invocation.getTarget().getType() == null) {
-					continue;
-				}
-						CtExecutableReference ref = invocation.getExecutable();
-				CtTypeReference backup = (CtTypeReference) ref.getDeclaringType();
-
-				// do we point to the same method?
-				if (invocation.getTarget().getType().equals(type.getReference())
-						&& ref.getSignature().equals(((CtMethod) child).getSignature())) {
-					ref.setDeclaringType(null);
-				}
-
-				// postcondition: the dynamic lookup should point to the same element
-				if (ref.getDeclaration() != child) {
-					// restoring the previous ref
-					ref.setDeclaringType(backup);
-
-				}
-				return;
-			}
+//			// now we replace hard-coded references with dynamic lookup
+//			// dynamic lookup is better to keep correct declaration lookups when one moves or clones elements
+//			for (CtInvocation invocation : child.getElements(new TypeFilter<>(CtInvocation.class))) {
+//				if (invocation.getTarget() == null || invocation.getTarget().getType() == null) {
+//					continue;
+//				}
+//						CtExecutableReference ref = invocation.getExecutable();
+//				CtTypeReference backup = (CtTypeReference) ref.getDeclaringType();
+//
+//				// do we point to the same method?
+//				if (invocation.getTarget().getType().equals(type.getReference())
+//						&& ref.getSignature().equals(((CtMethod) child).getSignature())) {
+//					ref.setDeclaringType(null);
+//				}
+//
+//				// postcondition: the dynamic lookup should point to the same element
+//				if (ref.getDeclaration() != child) {
+//					// restoring the previous ref
+//					ref.setDeclaringType(backup);
+//
+//				}
+//				return;
+//			}
 		}
 		super.scanCtType(type);
 	}

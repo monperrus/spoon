@@ -297,7 +297,7 @@ public class CtBiScannerDefault extends spoon.reflect.visitor.CtAbstractBiScanne
 	public <T> void visitCtExecutableReference(final spoon.reflect.reference.CtExecutableReference<T> reference) {
 		spoon.reflect.reference.CtExecutableReference other = ((spoon.reflect.reference.CtExecutableReference) (this.stack.peek()));
 		enter(reference);
-		biScan(spoon.reflect.path.CtRole.DECLARING_TYPE, reference.getDeclaringType(), other.getDeclaringType());
+		//biScan(spoon.reflect.path.CtRole.DECLARING_TYPE, reference.getDeclaringType(), other.getDeclaringType());
 		biScan(spoon.reflect.path.CtRole.TYPE, reference.getType(), other.getType());
 		biScan(spoon.reflect.path.CtRole.ARGUMENT_TYPE, reference.getParameters(), other.getParameters());
 		biScan(spoon.reflect.path.CtRole.TYPE_ARGUMENT, reference.getActualTypeArguments(), other.getActualTypeArguments());

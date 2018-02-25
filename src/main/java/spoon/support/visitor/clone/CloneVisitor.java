@@ -254,7 +254,7 @@ public class CloneVisitor extends spoon.reflect.visitor.CtScanner {
 	// auto-generated, see spoon.generating.CloneVisitorGenerator
 	public <T> void visitCtExecutableReference(final spoon.reflect.reference.CtExecutableReference<T> reference) {
 		spoon.reflect.reference.CtExecutableReference<T> aCtExecutableReference = spoon.support.visitor.clone.CloneBuilder.build(this.builder, reference, reference.getFactory().Core().createExecutableReference());
-		aCtExecutableReference.setDeclaringType(this.cloneHelper.clone(reference.getDeclaringType()));
+		//aCtExecutableReference.setDeclaringType(this.cloneHelper.clone(reference.getDeclaringType()));
 		aCtExecutableReference.setType(this.cloneHelper.clone(reference.getType()));
 		aCtExecutableReference.setParameters(this.cloneHelper.clone(reference.getParameters()));
 		aCtExecutableReference.setActualTypeArguments(this.cloneHelper.clone(reference.getActualTypeArguments()));

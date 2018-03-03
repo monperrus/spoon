@@ -18,13 +18,19 @@ package spoon.reflect.reference;
 
 import spoon.reflect.annotations.PropertyGetter;
 import spoon.reflect.annotations.PropertySetter;
+import spoon.reflect.declaration.CtAnnotation;
+import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.path.CtRole;
 import spoon.support.DerivedProperty;
+import spoon.support.UnsettableProperty;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
+
+import static spoon.reflect.path.CtRole.ANNOTATION;
 
 
 /**
@@ -166,4 +172,16 @@ public interface CtExecutableReference<T> extends CtReference, CtActualTypeConta
 
 	@Override
 	CtExecutableReference<T> clone();
+
+	/**
+	 * Cannot be used, always throw an exception.
+	 * Thus is considered as derived (not scanned, not cloned)
+	 */
+	@Override
+	@DerivedProperty
+	List<CtAnnotation<? extends Annotation>> getAnnotations();
+
+	@Override
+	@UnsettableProperty
+	<E extends CtElement> E setAnnotations(List<CtAnnotation<? extends Annotation>> annotation);
 }

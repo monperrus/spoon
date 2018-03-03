@@ -483,21 +483,25 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 
 	@Override
 	public <A extends Annotation> boolean hasAnnotation(Class<A> annotationType) {
-		throw new UnsupportedOperationException("cannot use hasAnnotation on an executable reference, consider using getExecutableDeclaration().hasAnnotation() instead");
+		getFactory().getEnvironment().debugMessage("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
+		return false;
 	}
 
 	@Override
 	public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
-		throw new UnsupportedOperationException("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
+		getFactory().getEnvironment().debugMessage("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
+		return null;
 	}
 
 	@Override
 	public List<CtAnnotation<? extends Annotation>> getAnnotations() {
-		throw new UnsupportedOperationException("cannot use getAnnotations on an executable reference, consider using getExecutableDeclaration().getAnnotations() instead");
+		getFactory().getEnvironment().debugMessage("cannot use getAnnotations on an executable reference, consider using getExecutableDeclaration().getAnnotations() instead");
+		return Collections.emptyList();
 	}
 
 	@Override
 	public <A extends Annotation> CtAnnotation<A> getAnnotation(CtTypeReference<A> annotationType) {
-		throw new UnsupportedOperationException("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
+		getFactory().getEnvironment().debugMessage("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
+		return null;
 	}
 }

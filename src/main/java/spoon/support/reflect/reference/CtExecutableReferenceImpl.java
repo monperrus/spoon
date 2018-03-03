@@ -19,6 +19,7 @@ package spoon.support.reflect.reference;
 import spoon.Launcher;
 import spoon.reflect.annotations.MetamodelPropertyField;
 import spoon.reflect.code.CtLambda;
+import spoon.reflect.declaration.CtAnnotation;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.declaration.CtExecutable;
@@ -37,6 +38,7 @@ import spoon.support.util.RtHelper;
 import spoon.support.visitor.ClassTypingContext;
 import spoon.support.visitor.SignaturePrinter;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -477,5 +479,25 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 	@Override
 	public CtExecutableReference<T> clone() {
 		return (CtExecutableReference<T>) super.clone();
+	}
+
+	@Override
+	public <A extends Annotation> boolean hasAnnotation(Class<A> annotationType) {
+		throw new UnsupportedOperationException("cannot use hasAnnotation on an executable reference, consider using getExecutableDeclaration().hasAnnotation() instead");
+	}
+
+	@Override
+	public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+		throw new UnsupportedOperationException("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
+	}
+
+	@Override
+	public List<CtAnnotation<? extends Annotation>> getAnnotations() {
+		throw new UnsupportedOperationException("cannot use getAnnotations on an executable reference, consider using getExecutableDeclaration().getAnnotations() instead");
+	}
+
+	@Override
+	public <A extends Annotation> CtAnnotation<A> getAnnotation(CtTypeReference<A> annotationType) {
+		throw new UnsupportedOperationException("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
 	}
 }

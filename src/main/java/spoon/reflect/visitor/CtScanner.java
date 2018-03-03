@@ -400,7 +400,6 @@ public abstract class CtScanner implements CtVisitor {
 		scan(CtRole.TYPE, reference.getType());
 		scan(CtRole.ARGUMENT_TYPE, reference.getParameters());
 		scan(CtRole.TYPE_ARGUMENT, reference.getActualTypeArguments());
-		scan(CtRole.ANNOTATION, reference.getAnnotations());
 		scan(CtRole.COMMENT, reference.getComments());
 		exit(reference);
 	}

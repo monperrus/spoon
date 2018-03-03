@@ -483,24 +483,36 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 
 	@Override
 	public <A extends Annotation> boolean hasAnnotation(Class<A> annotationType) {
+		// we don't throw an exception, because it would break client code
+		// that assumes that since this method is in CtElement
+		// it can be safely called on any CtElement
 		getFactory().getEnvironment().debugMessage("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
 		return false;
 	}
 
 	@Override
 	public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+		// we don't throw an exception, because it would break client code
+		// that assumes that since this method is in CtElement
+		// it can be safely called on any CtElement
 		getFactory().getEnvironment().debugMessage("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
 		return null;
 	}
 
 	@Override
 	public List<CtAnnotation<? extends Annotation>> getAnnotations() {
+		// we don't throw an exception, because it would break client code
+		// that assumes that since this method is in CtElement
+		// it can be safely called on any CtElement
 		getFactory().getEnvironment().debugMessage("cannot use getAnnotations on an executable reference, consider using getExecutableDeclaration().getAnnotations() instead");
 		return Collections.emptyList();
 	}
 
 	@Override
 	public <A extends Annotation> CtAnnotation<A> getAnnotation(CtTypeReference<A> annotationType) {
+		// we don't throw an exception, because it would break client code
+		// that assumes that since this method is in CtElement
+		// it can be safely called on any CtElement
 		getFactory().getEnvironment().debugMessage("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
 		return null;
 	}

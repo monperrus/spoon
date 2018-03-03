@@ -30,8 +30,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static spoon.reflect.path.CtRole.ANNOTATION;
-
 
 /**
  * This interface defines a reference to a
@@ -174,8 +172,7 @@ public interface CtExecutableReference<T> extends CtReference, CtActualTypeConta
 	CtExecutableReference<T> clone();
 
 	/**
-	 * Cannot be used, always throw an exception.
-	 * Thus is considered as derived (not scanned, not cloned)
+	 * Cannot be used on this element, thus is considered as derived (not scanned, not cloned).
 	 */
 	@Override
 	@DerivedProperty

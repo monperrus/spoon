@@ -496,7 +496,11 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 
 	@Override
 	public List<CtAnnotation<? extends Annotation>> getAnnotations() {
-		return getExecutableDeclaration().getAnnotations();
+		CtExecutable<T> executableDeclaration = getExecutableDeclaration();
+		if (executableDeclaration != null) {
+			return executableDeclaration.getAnnotations();
+		}
+		return emptyList();
 	}
 
 	@Override

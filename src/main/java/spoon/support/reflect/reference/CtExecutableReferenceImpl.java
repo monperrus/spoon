@@ -17,11 +17,13 @@
 package spoon.support.reflect.reference;
 
 import spoon.Launcher;
+import spoon.SpoonException;
 import spoon.reflect.annotations.MetamodelPropertyField;
 import spoon.reflect.code.CtLambda;
 import spoon.reflect.declaration.CtAnnotation;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtConstructor;
+import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
@@ -33,6 +35,7 @@ import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.CtVisitor;
 import spoon.reflect.visitor.filter.NamedElementFilter;
+import spoon.support.UnsettableProperty;
 import spoon.support.reflect.declaration.CtElementImpl;
 import spoon.support.util.RtHelper;
 import spoon.support.visitor.ClassTypingContext;
@@ -483,37 +486,27 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 
 	@Override
 	public <A extends Annotation> boolean hasAnnotation(Class<A> annotationType) {
-		// we don't throw an exception, because it would break client code
-		// that assumes that since this method is in CtElement
-		// it can be safely called on any CtElement
-		getFactory().getEnvironment().debugMessage("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
-		return false;
+		return getExecutableDeclaration().hasAnnotation(annotationType);
 	}
 
 	@Override
 	public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
-		// we don't throw an exception, because it would break client code
-		// that assumes that since this method is in CtElement
-		// it can be safely called on any CtElement
-		getFactory().getEnvironment().debugMessage("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
-		return null;
+		return getExecutableDeclaration().getAnnotation(annotationType);
 	}
 
 	@Override
 	public List<CtAnnotation<? extends Annotation>> getAnnotations() {
-		// we don't throw an exception, because it would break client code
-		// that assumes that since this method is in CtElement
-		// it can be safely called on any CtElement
-		getFactory().getEnvironment().debugMessage("cannot use getAnnotations on an executable reference, consider using getExecutableDeclaration().getAnnotations() instead");
-		return Collections.emptyList();
+		return getExecutableDeclaration().getAnnotations();
 	}
 
 	@Override
 	public <A extends Annotation> CtAnnotation<A> getAnnotation(CtTypeReference<A> annotationType) {
-		// we don't throw an exception, because it would break client code
-		// that assumes that since this method is in CtElement
-		// it can be safely called on any CtElement
-		getFactory().getEnvironment().debugMessage("cannot use getAnnotation on an executable reference, consider using getExecutableDeclaration().getAnnotation() instead");
-		return null;
+		return getExecutableDeclaration().getAnnotation(annotationType);
+	}
+
+	@Override
+	@UnsettableProperty
+	public <E extends CtElement> E setAnnotations(List<CtAnnotation<? extends Annotation>> annotations) {
+		throw new SpoonException("unsettable property");
 	}
 }

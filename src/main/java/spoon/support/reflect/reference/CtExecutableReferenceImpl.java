@@ -507,6 +507,6 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 	@Override
 	@UnsettableProperty
 	public <E extends CtElement> E setAnnotations(List<CtAnnotation<? extends Annotation>> annotations) {
-		throw new SpoonException("unsettable property");
+		//throw new SpoonException("unsettable property");
 	}
 }

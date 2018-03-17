@@ -120,8 +120,8 @@ public class PatternBuilder {
 		return new PatternBuilder(templateTypeRef, patternModel);
 	}
 
-	public static PatternBuilder create(CtElement patternModel) {
-		return new PatternBuilder(	null, Collections.singletonList(patternModel));
+	public static PatternBuilder create(CtTypeReference<?> templateTypeRef, CtElement patternModel) {
+		return new PatternBuilder(	templateTypeRef, Collections.singletonList(patternModel));
 	}
 
 	private final List<CtElement> patternModel;

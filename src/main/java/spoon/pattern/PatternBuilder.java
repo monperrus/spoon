@@ -121,7 +121,7 @@ public class PatternBuilder {
 	}
 
 	public static PatternBuilder create(CtTypeReference<?> templateTypeRef, CtElement patternModel) {
-		return new PatternBuilder(	templateTypeRef, Collections.singletonList(patternModel));
+		return new PatternBuilder(templateTypeRef, Collections.singletonList(patternModel));
 	}
 
 	private final List<CtElement> patternModel;

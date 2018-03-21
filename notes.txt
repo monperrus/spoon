@@ -1,6 +1,0 @@
-	src/test/java/spoon/test/template/CodeReplaceTest.java
-A	src/test/java/spoon/test/template/PatternTest.java
-A	src/test/java/spoon/test/template/TemplateMatcherTest.java
-M	src/test/java/spoon/test/template/TemplateTest.java
-A	src/test/java/spoon/test/template/core/ParameterInfoTest.java
-

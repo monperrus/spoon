@@ -33,7 +33,6 @@ import spoon.reflect.visitor.CtVisitor;
 import spoon.support.DerivedProperty;
 import spoon.support.UnsettableProperty;
 
-import java.lang.reflect.AnnotatedElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -188,12 +187,6 @@ public class CtTypeParameterReferenceImpl extends CtTypeReferenceImpl<Object> im
 		getFactory().getEnvironment().getModelChangeListener().onObjectUpdate(this, BOUNDING_TYPE, superType, this.superType);
 		this.superType = superType;
 		return (T) this;
-	}
-
-	@Override
-	protected AnnotatedElement getActualAnnotatedElement() {
-		// this is never annotated
-		return null;
 	}
 
 	@Override

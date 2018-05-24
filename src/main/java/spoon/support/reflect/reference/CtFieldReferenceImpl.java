@@ -29,7 +29,6 @@ import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.CtVisitor;
 import spoon.support.util.RtHelper;
 
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Member;
 import java.util.Collections;
 import java.util.Set;
@@ -72,11 +71,6 @@ public class CtFieldReferenceImpl<T> extends CtVariableReferenceImpl<T> implemen
 			Launcher.LOGGER.error(e.getMessage(), e);
 		}
 		return null;
-	}
-
-	@Override
-	protected AnnotatedElement getActualAnnotatedElement() {
-		return (AnnotatedElement) getActualField();
 	}
 
 	// @Override

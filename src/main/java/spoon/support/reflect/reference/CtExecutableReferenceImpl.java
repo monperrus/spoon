@@ -37,7 +37,6 @@ import spoon.support.util.RtHelper;
 import spoon.support.visitor.ClassTypingContext;
 import spoon.support.visitor.SignaturePrinter;
 
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -311,15 +310,6 @@ public class CtExecutableReferenceImpl<T> extends CtReferenceImpl implements CtE
 		getFactory().getEnvironment().getModelChangeListener().onObjectUpdate(this, TYPE, type, this.type);
 		this.type = type;
 		return (C) this;
-	}
-
-	@Override
-	protected AnnotatedElement getActualAnnotatedElement() {
-		if (isConstructor()) {
-			return getActualConstructor();
-		} else {
-			return getActualMethod();
-		}
 	}
 
 	@Override

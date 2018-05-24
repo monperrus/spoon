@@ -45,7 +45,6 @@ import spoon.support.util.QualifiedNameBasedSortedSet;
 import spoon.support.util.RtHelper;
 import spoon.support.visitor.ClassTypingContext;
 
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -168,11 +167,6 @@ public class CtTypeReferenceImpl<T> extends CtReferenceImpl implements CtTypeRef
 	@Override
 	public List<CtTypeReference<?>> getActualTypeArguments() {
 		return actualTypeArguments;
-	}
-
-	@Override
-	protected AnnotatedElement getActualAnnotatedElement() {
-		return getActualClass();
 	}
 
 	@Override

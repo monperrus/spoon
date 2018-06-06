@@ -60,6 +60,7 @@ public interface CtTypeReference<T> extends CtReference, CtActualTypeContainer, 
 	 * @throws SpoonClassNotFoundException if the class is not in the classpath
 	 * @deprecated use {@link #getTypeDeclaration()} instead
 	 */
+	@Deprecated
 	Class<T> getActualClass();
 
 	/**

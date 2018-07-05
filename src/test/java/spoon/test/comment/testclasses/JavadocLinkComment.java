@@ -1,5 +1,6 @@
 package spoon.test.comment.testclasses;
 
+import spoon.SpoonException;
 import spoon.support.reflect.reference.CtWildcardStaticTypeMemberReferenceImpl;
 
 /**
@@ -7,4 +8,12 @@ import spoon.support.reflect.reference.CtWildcardStaticTypeMemberReferenceImpl;
  * on {@link CtWildcardStaticTypeMemberReferenceImpl}
  */
 public class JavadocLinkComment {
+
+    /**
+     * Bla
+     *
+     * @see CtWildcardStaticTypeMemberReferenceImpl FYI
+     * @throws SpoonException when something is wrong
+     */
+    public void method() throws SpoonException {}
 }

@@ -983,5 +983,14 @@ public class CommentTest {
 		String commentString = comment.toString();
 
 		assertTrue(commentString, commentString.contains("{@link spoon.support.reflect.reference.CtWildcardStaticTypeMemberReferenceImpl}"));
+
+		CtMethod<?> method = javadocLinkComment.getMethodsByName("method").get(0);
+		comments = method.getComments();
+		assertEquals(1, comments.size());
+
+		comment = comments.get(0);
+		commentString = comment.toString();
+		assertTrue(commentString, commentString.contains("@see spoon.support.reflect.reference.CtWildcardStaticTypeMemberReferenceImpl"));
+		assertTrue(commentString, commentString.contains("@throws spoon.SpoonException"));
 	}
 }

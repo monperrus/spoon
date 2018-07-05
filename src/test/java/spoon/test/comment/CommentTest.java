@@ -41,6 +41,7 @@ import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.factory.FactoryImpl;
 import spoon.reflect.visitor.filter.AbstractFilter;
+import spoon.reflect.visitor.filter.NamedElementFilter;
 import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.support.DefaultCoreFactory;
 import spoon.support.JavaOutputProcessor;
@@ -962,5 +963,25 @@ public class CommentTest {
 		} catch (SpoonException e) {
 			assertTrue(e.getMessage().contains("consider using a block comment"));
 		}
+	}
+
+	@Test
+	public void testCommentWithLinkInFQNMode() {
+		// contract: in FQN mode links should be written in FQN too
+		Launcher launcher = new Launcher();
+		launcher.addInputResource("./src/test/java/spoon/test/comment/testclasses/JavadocLinkComment.java");
+		launcher.getEnvironment().setCommentEnabled(true);
+		launcher.getEnvironment().setAutoImports(false);
+		CtModel model = launcher.buildModel();
+
+		CtClass<?> javadocLinkComment = model.getElements(new NamedElementFilter<>(CtClass.class, "JavadocLinkComment")).get(0);
+
+		List<CtComment> comments = javadocLinkComment.getComments();
+		assertEquals(1, comments.size());
+
+		CtComment comment = comments.get(0);
+		String commentString = comment.toString();
+
+		assertTrue(commentString, commentString.contains("{@link spoon.support.reflect.reference.CtWildcardStaticTypeMemberReferenceImpl}"));
 	}
 }

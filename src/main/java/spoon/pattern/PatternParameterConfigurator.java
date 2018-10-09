@@ -17,6 +17,7 @@
 package spoon.pattern;
 
 import spoon.SpoonException;
+import spoon.metamodel.Metamodel;
 import spoon.pattern.internal.ValueConvertor;
 import spoon.pattern.internal.node.ListOfNodes;
 import spoon.pattern.internal.node.MapEntryNode;
@@ -24,9 +25,11 @@ import spoon.pattern.internal.node.ParameterNode;
 import spoon.pattern.internal.node.RootNode;
 import spoon.pattern.internal.node.StringNode;
 import spoon.pattern.internal.parameter.AbstractParameterInfo;
+import spoon.pattern.internal.parameter.ComputedParameterInfo;
 import spoon.pattern.internal.parameter.ListParameterInfo;
 import spoon.pattern.internal.parameter.MapParameterInfo;
 import spoon.pattern.internal.parameter.ParameterInfo;
+import spoon.pattern.internal.parameter.SimpleNameOfTypeReferenceParameterComputer;
 import spoon.reflect.code.CtArrayAccess;
 import spoon.reflect.code.CtBlock;
 import spoon.reflect.code.CtExpression;
@@ -131,17 +134,19 @@ public class PatternParameterConfigurator {
 		return this;
 	}
 
-	public PatternParameterConfigurator setMinOccurence(int minOccurence) {
-		currentParameter.setMinOccurences(minOccurence);
+	public PatternParameterConfigurator setMinOccurrence(int minOccurrence) {
+		currentParameter.setMinOccurrences(minOccurrence);
 		return this;
 	}
-	public PatternParameterConfigurator setMaxOccurence(int maxOccurence) {
-		if (maxOccurence == ParameterInfo.UNLIMITED_OCCURENCES || maxOccurence > 1 && currentParameter.isMultiple() == false) {
-			throw new SpoonException("Cannot set maxOccurences > 1 for single value parameter. Call setMultiple(true) first.");
+
+	public PatternParameterConfigurator setMaxOccurrence(int maxOccurrence) {
+		if (maxOccurrence == ParameterInfo.UNLIMITED_OCCURRENCES || maxOccurrence > 1 && currentParameter.isMultiple() == false) {
+			throw new SpoonException("Cannot set maxOccurrences > 1 for single value parameter. Call setMultiple(true) first.");
 		}
-		currentParameter.setMaxOccurences(maxOccurence);
+		currentParameter.setMaxOccurrences(maxOccurrence);
 		return this;
 	}
+
 	public PatternParameterConfigurator setMatchingStrategy(Quantifier quantifier) {
 		currentParameter.setMatchingStrategy(quantifier);
 		return this;
@@ -184,6 +189,7 @@ public class PatternParameterConfigurator {
 	public PatternParameterConfigurator byType(Class<?> type) {
 		return byType(type.getName());
 	}
+
 	/**
 	 * type identified by `typeQualifiedName` itself and all the references (with arbitrary actual type arguments)
 	 * to that type are subject for substitution by current parameter
@@ -207,6 +213,7 @@ public class PatternParameterConfigurator {
 		}
 		return this;
 	}
+
 	/**
 	 * type referred by {@link CtTypeReference} `type` and all the references (with same actual type arguments)
 	 * to that type are subject for substitution by current parameter
@@ -227,7 +234,9 @@ public class PatternParameterConfigurator {
 		CtType<?> type2 = queryModel().filterChildren((CtType<?> t) -> t.getQualifiedName().equals(typeQName)).first();
 		if (type2 != null) {
 			//Substitute name of template too
-			addSubstitutionRequest(pi, type2, CtRole.NAME);
+			ComputedParameterInfo piName = new ComputedParameterInfo(SimpleNameOfTypeReferenceParameterComputer.INSTANCE, pi);
+			piName.setParameterValueType(String.class);
+			addSubstitutionRequest(piName, type2, CtRole.NAME);
 		}
 		return this;
 	}
@@ -242,6 +251,7 @@ public class PatternParameterConfigurator {
 		byLocalType(searchScope, localTypeSimpleName, false);
 		return this;
 	}
+
 	PatternParameterConfigurator byLocalType(CtType<?> searchScope, String localTypeSimpleName, boolean optional) {
 		String nestedType = getLocalTypeRefBySimpleName(searchScope, localTypeSimpleName);
 		if (nestedType == null) {
@@ -333,6 +343,7 @@ public class PatternParameterConfigurator {
 		}
 		return this;
 	}
+
 	/**
 	 * Add parameters for each variable reference of `variable`
 	 * @param variable to be substituted variable
@@ -370,6 +381,7 @@ public class PatternParameterConfigurator {
 	public PatternParameterConfigurator byTemplateParameter() {
 		return byTemplateParameter(null);
 	}
+
 	/**
 	 * Creates pattern parameter for each field of type {@link TemplateParameter}
 	 * @param parameterValues pattern parameter values.
@@ -401,7 +413,7 @@ public class PatternParameterConfigurator {
 				 * Use it as Pattern parameter
 				 */
 				String fieldName = typeMember.getSimpleName();
-				String stringMarker = (param.value() != null && param.value().length() > 0) ? param.value() : fieldName;
+				String stringMarker = (param.value() != null && !param.value().isEmpty()) ? param.value() : fieldName;
 				//for the compatibility reasons with Parameters.getNamesToValues(), use the proxy name as parameter name
 				String parameterName = stringMarker;
 
@@ -571,32 +583,6 @@ public class PatternParameterConfigurator {
 	}
 
 	/**
-	 * CodeElement element identified by `simpleName`
-	 * @param simpleName the name of the element or reference
-	 * @return {@link PatternParameterConfigurator} to support fluent API
-	 */
-//	public PatternParameterConfigurator codeElementBySimpleName(String simpleName) {
-//		ParameterInfo pi = getCurrentParameter();
-//		pattern.getModel().filterChildren((CtNamedElement named) -> simpleName.equals(named.getSimpleName()))
-//			.forEach((CtNamedElement named) -> {
-//				if (named instanceof CtCodeElement) {
-//					addSubstitutionRequest(pi, named);
-//				}
-//			});
-//		pattern.getModel().filterChildren((CtReference ref) -> simpleName.equals(ref.getSimpleName()))
-//		.forEach((CtReference ref) -> {
-//			if (ref instanceof CtTypeReference<?>) {
-//				return;
-//			}
-//			CtCodeElement codeElement = ref.getParent(CtCodeElement.class);
-//			if (codeElement != null) {
-//				addSubstitutionRequest(pi, codeElement);
-//			}
-//		});
-//		return this;
-//	}
-
-	/**
 	 * All spoon model string attributes whose value is equal to `stringMarker`
 	 * are subject for substitution by current parameter
 	 * @param stringMarker a string value which has to be substituted
@@ -611,18 +597,19 @@ public class PatternParameterConfigurator {
 					addSubstitutionRequest(pi, element, roleHandler.getRole());
 				}
 			}
+			@Override
 			protected void visitStringAttribute(RoleHandler roleHandler, CtElement element, String mapEntryKey, CtElement mapEntryValue) {
 				if (stringMarker.equals(mapEntryKey)) {
 					patternBuilder.modifyNodeOfAttributeOfElement(element, roleHandler.getRole(), conflictResolutionMode, oldAttrNode -> {
 						if (oldAttrNode instanceof MapEntryNode) {
 							MapEntryNode mapEntryNode = (MapEntryNode) oldAttrNode;
-							return new MapEntryNode(new ParameterNode(pi), ((MapEntryNode) oldAttrNode).getValue());
+							return new MapEntryNode(new ParameterNode(pi), mapEntryNode.getValue());
 						}
 						return oldAttrNode;
 					});
 
 				}
-			};
+			}
 		}.scan(patternBuilder.getPatternModel());
 		return this;
 	}
@@ -638,12 +625,13 @@ public class PatternParameterConfigurator {
 		new StringAttributeScanner() {
 			@Override
 			protected void visitStringAttribute(RoleHandler roleHandler, CtElement element, String value) {
-				if (value != null && value.indexOf(stringMarker) >= 0) {
+				if (value != null && value.contains(stringMarker)) {
 					addSubstitutionRequest(pi, element, roleHandler.getRole(), stringMarker);
 				}
 			}
+			@Override
 			protected void visitStringAttribute(RoleHandler roleHandler, CtElement element, String mapEntryKey, CtElement mapEntryValue) {
-				if (mapEntryKey != null && mapEntryKey.indexOf(stringMarker) >= 0) {
+				if (mapEntryKey != null && mapEntryKey.contains(stringMarker)) {
 					patternBuilder.modifyNodeOfAttributeOfElement(element, roleHandler.getRole(), conflictResolutionMode, oldAttrNode -> {
 						List<RootNode> nodes = ((ListOfNodes) oldAttrNode).getNodes();
 						for (int i = 0; i < nodes.size(); i++) {
@@ -655,8 +643,8 @@ public class PatternParameterConfigurator {
 						}
 						return oldAttrNode;
 					});
+				}
 			}
-			};
 		}.scan(patternBuilder.getPatternModel());
 		return this;
 	}
@@ -691,12 +679,16 @@ public class PatternParameterConfigurator {
 		private void visitStringAttribute(CtElement element) {
 			for (RoleHandler roleHandler : stringAttributeRoleHandlers) {
 				if (roleHandler.getTargetType().isInstance(element)) {
+					if (Metamodel.getInstance().getConcept(element.getClass()).getProperty(roleHandler.getRole()).isUnsettable()) {
+						//do not visit unsettable string attributes, which cannot be modified by pattern
+						continue;
+					}
 					Object value = roleHandler.getValue(element);
 					if (value instanceof String) {
 						visitStringAttribute(roleHandler, element, (String) value);
 					} else if (value instanceof Map) {
 						for (Map.Entry<String, CtElement> e : ((Map<String, CtElement>) value).entrySet()) {
-							visitStringAttribute(roleHandler, element, (String) e.getKey(), e.getValue());
+							visitStringAttribute(roleHandler, element, e.getKey(), e.getValue());
 						}
 					}
 					//else it is a CtLiteral with non string value
@@ -757,6 +749,19 @@ public class PatternParameterConfigurator {
 	}
 
 	/**
+	 * Elements will be substituted by parameter value
+	 * @param elements to be substituted elements
+	 * @return {@link PatternParameterConfigurator} to support fluent API
+	 */
+	public PatternParameterConfigurator byElement(CtElement... elements) {
+		ParameterInfo pi = getCurrentParameter();
+		for (CtElement element : elements) {
+			addSubstitutionRequest(pi, element);
+		}
+		return this;
+	}
+
+	/**
 	 * Attribute defined by `role` of all elements matched by {@link Filter} will be substituted by parameter value
 	 * @param role {@link CtRole}, which defines to be substituted elements
 	 * @param filter {@link Filter}, which defines to be substituted elements
@@ -768,6 +773,20 @@ public class PatternParameterConfigurator {
 			.forEach((CtElement ele) -> {
 				addSubstitutionRequest(pi, ele, role);
 			});
+		return this;
+	}
+
+	/**
+	 * Attribute defined by `role` of `element`  will be substituted by parameter value
+	 * @param role {@link CtRole}, which defines to be substituted elements
+	 * @param elements to be substituted element
+	 * @return {@link PatternParameterConfigurator} to support fluent API
+	 */
+	public PatternParameterConfigurator byRole(CtRole role, CtElement... elements) {
+		ParameterInfo pi = getCurrentParameter();
+		for (CtElement element : elements) {
+			addSubstitutionRequest(pi, element, role);
+		}
 		return this;
 	}
 
@@ -829,6 +848,7 @@ public class PatternParameterConfigurator {
 	void addSubstitutionRequest(ParameterInfo parameter, CtElement element, CtRole attributeRole) {
 		patternBuilder.setNodeOfAttributeOfElement(element, attributeRole, new ParameterNode(parameter), conflictResolutionMode);
 	}
+
 	/**
 	 * Adds request to substitute substring of {@link String} value of `attributeRole` of `element`, by the value of this {@link ListOfNodes} parameter {@link ParameterInfo} value
 	 * @param element whose part of String attribute of {@link CtRole} `attributeRole` have to be replaced
@@ -843,7 +863,6 @@ public class PatternParameterConfigurator {
 		final ParameterInfo parameter;
 		final CtElement element;
 		public ParameterElementPair(ParameterInfo parameter, CtElement element) {
-			super();
 			this.parameter = parameter;
 			this.element = element;
 		}
@@ -875,9 +894,7 @@ public class PatternParameterConfigurator {
 	/**
 	 * for input `element` expression `X` in expression `X[Y]` it returns expression `X[Y]`
 	 * and registers extra {@link ListParameterInfo} to the parameter assigned to `X`
-	 * @param parameter TODO
-	 * @param valueResolver
-	 * @param element
+	 * @param pep pair of parameter and element which has to be transformed
 	 * @return
 	 */
 	private ParameterElementPair transformArrayAccess(ParameterElementPair pep) {
@@ -915,6 +932,7 @@ public class PatternParameterConfigurator {
 		}
 		return pep;
 	}
+
 	/**
 	 * @return an invocation of {@link TemplateParameter#S()} if it is parent of `element`
 	 */
@@ -925,7 +943,7 @@ public class PatternParameterConfigurator {
 			if (parent instanceof CtInvocation<?>) {
 				CtInvocation<?> invocation = (CtInvocation<?>) parent;
 				CtExecutableReference<?> executableRef = invocation.getExecutable();
-				if (executableRef.getSimpleName().equals("S")) {
+				if ("S".equals(executableRef.getSimpleName())) {
 					if (TemplateParameter.class.getName().equals(executableRef.getDeclaringType().getQualifiedName())) {
 						/*
 						 * the invocation of TemplateParameter#S() has to be substituted

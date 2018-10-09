@@ -1,3 +1,19 @@
+/**
+ * Copyright (C) 2006-2018 INRIA and contributors
+ * Spoon - http://spoon.gforge.inria.fr/
+ *
+ * This software is governed by the CeCILL-C License under French law and
+ * abiding by the rules of distribution of free software. You can use, modify
+ * and/or redistribute the software under the terms of the CeCILL-C license as
+ * circulated by CEA, CNRS and INRIA at http://www.cecill.info.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the CeCILL-C License for more details.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-C license and that you accept its terms.
+ */
 package spoon.test.factory;
 
 import org.junit.Assert;
@@ -28,7 +44,7 @@ public class FieldFactoryTest {
 		FieldFactory ff = type.getFactory().Field();
 		TypeFactory tf = type.getFactory().Type();
 
-		Set<ModifierKind> mods = new HashSet<ModifierKind>();
+		Set<ModifierKind> mods = new HashSet<>();
 		mods.add(ModifierKind.PRIVATE);
 		CtTypeReference<?> tref = tf.createReference(String.class);
 		ff.create(type,mods,tref,"name");

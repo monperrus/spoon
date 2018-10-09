@@ -1,3 +1,19 @@
+/**
+ * Copyright (C) 2006-2018 INRIA and contributors
+ * Spoon - http://spoon.gforge.inria.fr/
+ *
+ * This software is governed by the CeCILL-C License under French law and
+ * abiding by the rules of distribution of free software. You can use, modify
+ * and/or redistribute the software under the terms of the CeCILL-C license as
+ * circulated by CEA, CNRS and INRIA at http://www.cecill.info.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the CeCILL-C License for more details.
+ *
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL-C license and that you accept its terms.
+ */
 package spoon.reflect.visitor;
 
 import org.junit.Assert;
@@ -61,7 +77,7 @@ public class CtInheritanceScannerTest<T extends CtVisitable> {
 	 * @return
 	 * @throws Exception
 	 */
-	private List<Method> getMethodToInvoke(Class<?> entry) throws Exception {
+	private List<Method> getMethodToInvoke(Class<?> entry) {
 		Queue<Class<?>> tocheck = new LinkedList<>();
 		tocheck.add(entry);
 
@@ -73,7 +89,7 @@ public class CtInheritanceScannerTest<T extends CtVisitable> {
 			if (!intf.getSimpleName().startsWith("Ct")) {
 				continue;
 			}
-			Method mth=null;
+			Method mth = null;
 
 			// if a method visitX exists, it must be invoked
 			try {
@@ -85,7 +101,7 @@ public class CtInheritanceScannerTest<T extends CtVisitable> {
 			} catch (NoSuchMethodException ex) {
 				// no such method, nothing
 			}
-			if (mth!=null && !toInvoke.contains(mth)) {
+			if (mth != null && !toInvoke.contains(mth)) {
 				toInvoke.add(mth);
 			}
 
@@ -99,7 +115,7 @@ public class CtInheritanceScannerTest<T extends CtVisitable> {
 			} catch (NoSuchMethodException ex) {
 				// no such method, nothing
 			}
-			if (mth!=null && !toInvoke.contains(mth)) {
+			if (mth != null && !toInvoke.contains(mth)) {
 				toInvoke.add(mth);
 			}
 
@@ -125,17 +141,16 @@ public class CtInheritanceScannerTest<T extends CtVisitable> {
 		instance.accept(mocked);
 
 		// verify we call all methods
-		for (int i = 0; i < toInvoke.size(); i++) {
+		for (Method aToInvoke : toInvoke) {
 			try {
-				toInvoke.get(i).invoke(verify(mocked), instance);
+				aToInvoke.invoke(verify(mocked), instance);
 			} catch (InvocationTargetException e) {
 				if (e.getTargetException() instanceof AssertionError) {
-					fail("visit"+instance.getClass().getSimpleName().replaceAll("Impl$", "")+" does not call "+toInvoke.get(i).getName());
+					fail("visit" + instance.getClass().getSimpleName().replaceAll("Impl$", "") + " does not call " + aToInvoke.getName());
 				} else {
 					throw e.getTargetException();
 				}
 			}
 		}
 	}
-
 }

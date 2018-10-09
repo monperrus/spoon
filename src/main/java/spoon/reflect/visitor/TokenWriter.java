@@ -104,11 +104,6 @@ public interface TokenWriter {
 	TokenWriter writeCodeSnippet(String token);
 
 	/**
-	 * writes a comment
-	 */
-	TokenWriter writeComment(CtComment comment);
-
-	/**
 	 * writes new line (EOL)
 	 */
 	TokenWriter writeln();

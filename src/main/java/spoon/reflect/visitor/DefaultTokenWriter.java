@@ -66,12 +66,6 @@ public class DefaultTokenWriter implements TokenWriter {
 	}
 
 	@Override
-	public DefaultTokenWriter writeComment(CtComment comment) {
-		CommentHelper.printComment(printerHelper, comment);
-		return this;
-	}
-
-	@Override
 	public DefaultTokenWriter writeln() {
 		printerHelper.writeln();
 		return this;

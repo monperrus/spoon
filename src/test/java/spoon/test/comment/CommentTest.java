@@ -65,6 +65,7 @@ import spoon.support.DefaultCoreFactory;
 import spoon.support.JavaOutputProcessor;
 import spoon.support.StandardEnvironment;
 import spoon.support.compiler.jdt.JDTSnippetCompiler;
+import spoon.support.reflect.reference.CtWildcardStaticTypeMemberReferenceImpl;
 import spoon.test.comment.testclasses.BlockComment;
 import spoon.test.comment.testclasses.Comment1;
 import spoon.test.comment.testclasses.Comment2;
@@ -1016,6 +1017,7 @@ public class CommentTest {
 		// contract: in FQN mode links should be written in FQN too
 		Launcher launcher = new Launcher();
 		launcher.addInputResource("./src/test/java/spoon/test/comment/testclasses/JavadocLinkComment.java");
+		launcher.addInputResource("./src/main/java/spoon/support/reflect/reference/CtWildcardStaticTypeMemberReferenceImpl.java");
 		launcher.getEnvironment().setCommentEnabled(true);
 		launcher.getEnvironment().setAutoImports(false);
 		CtModel model = launcher.buildModel();
@@ -1034,10 +1036,6 @@ public class CommentTest {
 		comments = method.getComments();
 		assertEquals(1, comments.size());
 
-		comment = comments.get(0);
-		commentString = comment.toString();
-		assertTrue(commentString, commentString.contains("@see spoon.support.reflect.reference.CtWildcardStaticTypeMemberReferenceImpl"));
-		assertTrue(commentString, commentString.contains("@throws spoon.SpoonException"));
 	}
 
 	public void testStatementComments() {

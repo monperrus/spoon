@@ -36,6 +36,10 @@ public class PrinterHelper {
 	 */
 	private String lineSeparator = System.getProperty("line.separator");
 
+	public Environment getEnv() {
+		return env;
+	}
+
 	/**
 	 * Environment which Spoon is executed.
 	 */

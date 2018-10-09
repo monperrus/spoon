@@ -869,7 +869,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 							}
 						} else {
 							//There is a model inconsistency
-							printer.writeComment(f.getFactory().createComment("ERROR: Missing field \"" + f.getVariable().getSimpleName() + "\", please check your model. The code may not compile.", CommentType.BLOCK)).writeSpace();
+							CommentHelper.printComment(getPrinterHelper(), f.getFactory().createComment("ERROR: Missing field \"" + f.getVariable().getSimpleName() + "\", please check your model. The code may not compile.", CommentType.BLOCK));
 						}
 					}
 					// the implicit drives the separator
@@ -1107,7 +1107,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 		if (!env.isCommentsEnabled() && context.elementStack.size() > 1) {
 			return;
 		}
-		printer.writeComment(comment);
+		CommentHelper.printComment(getPrinterHelper(),comment);
 	}
 
 	@Override
@@ -1575,9 +1575,10 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 		if (!ctPackage.isUnnamedPackage()) {
 			elementPrinterHelper.writePackageLine(ctPackage.getQualifiedName());
 		} else {
-			printer.writeComment(
+			CommentHelper.printComment(getPrinterHelper(),
 					ctPackage.getFactory().createComment("default package (CtPackage.TOP_LEVEL_PACKAGE_NAME in Spoon= unnamed package)", CommentType.INLINE)
-				).writeln();
+				);
+			getPrinterHelper().writeln();
 		}
 	}
 

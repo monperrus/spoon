@@ -103,15 +103,6 @@ public class MutableTokenWriter implements TokenWriter {
 		return this;
 	}
 	@Override
-	public TokenWriter writeComment(CtComment comment) {
-		if (isMuted()) {
-			getPrinterHelper().setShouldWriteTabs(false);
-			return this;
-		}
-		delegate.writeComment(comment);
-		return this;
-	}
-	@Override
 	public TokenWriter writeln() {
 		if (isMuted()) {
 			//if new line is muted, then direct printer helper already wrote EOL and indentation

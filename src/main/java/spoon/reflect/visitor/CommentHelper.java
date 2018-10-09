@@ -19,15 +19,23 @@ package spoon.reflect.visitor;
 import spoon.reflect.code.CtComment;
 import spoon.reflect.code.CtJavaDoc;
 import spoon.reflect.code.CtJavaDocTag;
+import spoon.reflect.declaration.CtType;
+import spoon.reflect.visitor.filter.NamedElementFilter;
+import spoon.support.javadoc.JavadocDescription;
+import spoon.support.javadoc.JavadocDescriptionElement;
+import spoon.support.javadoc.JavadocInlineTag;
+import spoon.support.javadoc.JavadocSnippet;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static spoon.support.javadoc.JavadocDescription.parseText;
+
 /**
  * Computes source code representation of the Comment literal
  */
-class CommentHelper {
+public class CommentHelper {
 
 	/**
 	 * RegExp which matches all possible line separators
@@ -37,15 +45,13 @@ class CommentHelper {
 	private CommentHelper() {
 	}
 
-	static void printComment(PrinterHelper printer, CtComment comment) {
-		List<CtJavaDocTag> tags = null;
+	public static void printComment(PrinterHelper printer, CtComment comment) {
+		List<CtJavaDocTag> javaDocTags = null;
 		if (comment instanceof CtJavaDoc) {
-			tags = ((CtJavaDoc) comment).getTags();
+			javaDocTags = ((CtJavaDoc) comment).getTags();
 		}
-		printComment(printer, comment.getCommentType(), comment.getContent(), tags);
-	}
-
-	static void printComment(PrinterHelper printer, CtComment.CommentType commentType, String content, Collection<CtJavaDocTag> javaDocTags) {
+		CtComment.CommentType commentType = comment.getCommentType();
+		String content = comment.getContent();
 		switch (commentType) {
 		case FILE:
 			printer.write(DefaultJavaPrettyPrinter.JAVADOC_START).writeln();
@@ -66,17 +72,35 @@ class CommentHelper {
 				break;
 			default:
 				String[] lines = LINE_SEPARATORS_RE.split(content);
-				for (String com : lines) {
+				for (String line : lines) {
 					if (commentType == CtComment.CommentType.BLOCK) {
-						printer.write(com);
+						printer.write(line);
 						if (lines.length > 1) {
 							printer.writeln();
 						}
 					} else {
-						if (!com.isEmpty()) {
-							printer.write(DefaultJavaPrettyPrinter.COMMENT_STAR + com).writeln();
+						if (!line.isEmpty()) {
+							printer.write(DefaultJavaPrettyPrinter.COMMENT_STAR);
+							JavadocDescription desc = parseText(line);
+							for(JavadocDescriptionElement fragment : desc.getElements()) {
+								if (fragment instanceof JavadocInlineTag) {
+									JavadocInlineTag tag = (JavadocInlineTag) fragment;
+									if (tag.getType().equals(JavadocInlineTag.Type.LINK)
+											&& printer.getEnv().isAutoImports() == false
+											&& comment.getFactory().Type().get(tag.getContent()) == null) {
+										// we write it fully qualified
+										String fullyQualifed = comment.getFactory().getModel().filterChildren(new NamedElementFilter<>(CtType.class, tag.getContent())).first(CtType.class).getQualifiedName();
+										tag.setContent(fullyQualifed);
+									}
+									printer.write(tag.toText());
+
+								} else {
+									printer.write(fragment.toText());
+								}
+							}
+							printer.writeln();
 						} else {
-							printer.write(" *" /* no trailing space */ + com).writeln();
+							printer.write(" *" /* no trailing space */ + line).writeln();
 						}
 					}
 				}

@@ -25,7 +25,9 @@ import spoon.reflect.code.CtComment;
 import spoon.reflect.cu.SourcePositionHolder;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.path.CtRole;
+import spoon.reflect.visitor.CommentHelper;
 
+import static spoon.reflect.visitor.CommentHelper.printComment;
 import static spoon.support.sniper.internal.ElementSourceFragment.findIndexOfNextFragment;
 import static spoon.support.sniper.internal.ElementSourceFragment.filter;
 import static spoon.support.sniper.internal.ElementSourceFragment.checkCollectionItems;
@@ -181,7 +183,7 @@ abstract class AbstractSourceFragmentContext implements SourceFragmentContext {
 						//comment still exist
 						if (changeResolver.getChanges(comment).size() > 0) {
 							//comment is modified print it normally
-							mutableTokenWriter.writeComment(comment);
+							printComment(mutableTokenWriter.getPrinterHelper(),comment);
 						} else {
 							//comment is not modified write origin sources
 							mutableTokenWriter.getPrinterHelper().directPrint(fragment.getSourceCode());

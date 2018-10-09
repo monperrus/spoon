@@ -28,6 +28,7 @@ import spoon.compiler.SpoonResourceHelper;
 import spoon.reflect.code.CtComment;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.factory.Factory;
+import spoon.reflect.visitor.CommentHelper;
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter;
 import spoon.reflect.visitor.ElementPrinterHelper;
 import spoon.reflect.visitor.PrettyPrinter;
@@ -334,20 +335,7 @@ public class PrinterTest {
 					allTokens.append(identifier);
 					return this;
 				}
-				
-				@Override
-				public TokenWriter writeComment(CtComment comment) {
-					checkRepeatingOfTokens("writeComment");
-					DefaultTokenWriter sptw = new DefaultTokenWriter(new PrinterHelper(factory.getEnvironment()));
-					PrinterHelper ph = sptw.getPrinterHelper();
-					ph.setLineSeparator(getPrinterHelper().getLineSeparator());
-					ph.setTabCount(getPrinterHelper().getTabCount());
-					sptw.writeComment(comment);
-					handleTabs();
-					allTokens.append(sptw.getPrinterHelper().toString());
-					return this;
-				}
-				
+
 				@Override
 				public TokenWriter writeln() {
 					checkRepeatingOfTokens("writeln");

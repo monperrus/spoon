@@ -998,7 +998,6 @@ public class CommentTest {
 
 //		comment = comments.get(0);
 //		commentString = comment.toString();
-//		assertTrue(commentString, commentString.contains("@see spoon.support.reflect.reference.CtWildcardStaticTypeMemberReferenceImpl"));
 //		assertTrue(commentString, commentString.contains("@throws spoon.SpoonException"));
 	}
 

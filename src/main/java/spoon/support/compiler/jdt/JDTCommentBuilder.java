@@ -533,9 +533,6 @@ public class JDTCommentBuilder {
 		StringBuilder ret = new StringBuilder();
 		try (BufferedReader br = new BufferedReader(comment)) {
 			String line = br.readLine();
-			if (line.length() < 2 || line.charAt(0) != '/') {
-				// throw new SpoonException("Unexpected beginning of comment");
-			}
 			boolean isLastLine = false;
 			if (line.charAt(1) == '/') {
 				//it is single line comment, which starts with "//"

@@ -113,7 +113,7 @@ public class WildComments {
 			/*** starts and ends with 3 * ***/
 			"starts and ends with 3 * **",
 			/**** starts and ends with 4 * ****/
-			"** starts and ends with 4 * ***",
+			"* starts and ends with 4 * ***",
 
 			/* these comments should not cause 'Unexpected next line after last line' exception */
 			"these comments should not cause 'Unexpected next line after last line' exception",

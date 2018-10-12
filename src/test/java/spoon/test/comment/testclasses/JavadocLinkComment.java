@@ -12,7 +12,6 @@ public class JavadocLinkComment {
     /**
      * Bla
      *
-     * @see CtWildcardStaticTypeMemberReferenceImpl FYI
      * @throws SpoonException when something is wrong
      */
     public void method() throws SpoonException {}

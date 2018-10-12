@@ -95,38 +95,6 @@ public class Javadoc {
         return sb.toString();
     }
 
-//    /**
-//     * Create a JavadocComment, by formatting the text of the Javadoc using no indentation (expecting the pretty printer to do the formatting.)
-//     */
-//    public JavadocComment toComment() {
-//        return toComment("");
-//    }
-//
-//    /**
-//     * Create a JavadocComment, by formatting the text of the Javadoc using the given indentation.
-//     */
-//    public JavadocComment toComment(String indentation) {
-//        for (char c : indentation.toCharArray()) {
-//            if (!Character.isWhitespace(c)) {
-//                throw new IllegalArgumentException("The indentation string should be composed only by whitespace characters");
-//            }
-//        }
-//        StringBuilder sb = new StringBuilder();
-//        sb.append(System.lineSeparator());
-//        final String text = toText();
-//        if (!text.isEmpty()) {
-//            for (String line : text.split(System.lineSeparator())) {
-//                sb.append(indentation);
-//                sb.append(" * ");
-//                sb.append(line);
-//                sb.append(System.lineSeparator());
-//            }
-//        }
-//        sb.append(indentation);
-//        sb.append(" ");
-//        return new JavadocComment(sb.toString());
-//    }
-
     public JavadocDescription getDescription() {
         return description;
     }

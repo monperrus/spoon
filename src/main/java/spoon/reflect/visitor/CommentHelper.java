@@ -46,12 +46,7 @@ public class CommentHelper {
 	}
 
 	public static void printComment(PrinterHelper printer, CtComment comment) {
-		List<CtJavaDocTag> javaDocTags = null;
-		if (comment instanceof CtJavaDoc) {
-			javaDocTags = ((CtJavaDoc) comment).getTags();
-		}
 		CtComment.CommentType commentType = comment.getCommentType();
-		String content = comment.getContent();
 		switch (commentType) {
 		case FILE:
 			printer.write(DefaultJavaPrettyPrinter.JAVADOC_START).writeln();
@@ -66,52 +61,7 @@ public class CommentHelper {
 			printer.write(DefaultJavaPrettyPrinter.BLOCK_COMMENT_START);
 			break;
 		}
-		switch (commentType) {
-			case INLINE:
-				printer.write(content);
-				break;
-			default:
-				String[] lines = LINE_SEPARATORS_RE.split(content);
-				for (String line : lines) {
-					if (commentType == CtComment.CommentType.BLOCK) {
-						printer.write(line);
-						if (lines.length > 1) {
-							printer.writeln();
-						}
-					} else {
-						if (!line.isEmpty()) {
-							printer.write(DefaultJavaPrettyPrinter.COMMENT_STAR);
-							JavadocDescription desc = parseText(line);
-							for(JavadocDescriptionElement fragment : desc.getElements()) {
-								if (fragment instanceof JavadocInlineTag) {
-									JavadocInlineTag tag = (JavadocInlineTag) fragment;
-									if (tag.getType().equals(JavadocInlineTag.Type.LINK)
-											&& printer.getEnv().isAutoImports() == false
-											&& comment.getFactory().Type().get(tag.getContent()) == null) {
-										// we write it fully qualified
-										String fullyQualifed = comment.getFactory().getModel().filterChildren(new NamedElementFilter<>(CtType.class, tag.getContent())).first(CtType.class).getQualifiedName();
-										tag.setContent(fullyQualifed);
-									}
-									printer.write(tag.toText());
-
-								} else {
-									printer.write(fragment.toText());
-								}
-							}
-							printer.writeln();
-						} else {
-							printer.write(" *" /* no trailing space */ + line).writeln();
-						}
-					}
-				}
-				if (javaDocTags != null && javaDocTags.isEmpty() == false) {
-					printer.write(" *").writeln();
-					for (CtJavaDocTag docTag : javaDocTags) {
-						printJavaDocTag(printer, docTag);
-					}
-				}
-				break;
-		}
+		printer.write(comment.getContent());
 		switch (commentType) {
 			case BLOCK:
 				printer.write(DefaultJavaPrettyPrinter.BLOCK_COMMENT_END);
@@ -120,6 +70,17 @@ public class CommentHelper {
 				printer.write(DefaultJavaPrettyPrinter.BLOCK_COMMENT_END);
 				break;
 			case JAVADOC:
+				// we also have the tags
+				List<CtJavaDocTag> javaDocTags = null;
+				if (comment instanceof CtJavaDoc) {
+					javaDocTags = ((CtJavaDoc) comment).getTags();
+				}
+				if (javaDocTags != null && javaDocTags.isEmpty() == false) {
+					printer.write(" *").writeln();
+					for (CtJavaDocTag docTag : javaDocTags) {
+						printJavaDocTag(printer, docTag);
+					}
+				}
 				printer.write(DefaultJavaPrettyPrinter.BLOCK_COMMENT_END);
 				break;
 		}

@@ -31,8 +31,7 @@ import static spoon.reflect.path.CtRole.COMMENT_TAG;
  * <pre>
  * &#x2F;**
  *  * Description
- *  * @tag a tag in the javadoc
- * *&#x2F;
+ *  * @tag a tag in the javadoc *&#x2F;
  * </pre>
  */
 public interface CtJavaDoc extends CtComment {

@@ -85,6 +85,12 @@ public class TokenWriterProxy implements TokenWriter {
 	}
 
 	@Override
+	public TokenWriter writeComment(CtComment comment) {
+		this.listener.onTokenWriterWrite(TokenType.COMMENT, null, comment, () -> delegate.writeComment(comment));
+		return this;
+	}
+
+	@Override
 	public TokenWriter writeln() {
 		this.listener.onTokenWriterWrite(TokenType.NEW_LINE, "\n", null, () -> delegate.writeln());
 		return this;

@@ -705,7 +705,7 @@ public class DefaultCoreFactory extends SubFactory implements CoreFactory {
 		CtComment e = new CtCommentImpl();
 		e.setFactory(getMainFactory());
 		e.setCommentType(CtComment.CommentType.BLOCK);
-		e.setContent("");
+		e.setContent("/**/");
 		return e;
 	}
 

@@ -24,6 +24,8 @@ import spoon.reflect.visitor.CtVisitor;
 
 import java.util.Objects;
 
+import static spoon.support.compiler.jdt.JDTCommentBuilder.cleanComment;
+
 public class CtCommentImpl extends CtStatementImpl implements CtComment {
 	private static final long serialVersionUID = 1L;
 
@@ -42,7 +44,7 @@ public class CtCommentImpl extends CtStatementImpl implements CtComment {
 
 	@Override
 	public String getContent() {
-		return content;
+		return cleanComment(content);
 	}
 
 	@Override
@@ -84,7 +86,7 @@ public class CtCommentImpl extends CtStatementImpl implements CtComment {
 
 		CtCommentImpl ctComment = (CtCommentImpl) o;
 
-		if (!Objects.equals(content, ctComment.content)) {
+		if (!Objects.equals(getContent(), ctComment.getContent())) {
 			return false;
 		}
 		return type == ctComment.type;

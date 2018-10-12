@@ -128,8 +128,7 @@ public class CommentTest {
 		assertEquals("/* comment1 */" + EOL
 				+ "// comment2" + EOL
 				+ "/**" + EOL
-				+ " * Comment3" + EOL
-				+ " */" + EOL
+				+ "Comment3 */" + EOL
 				+ "@java.lang.Deprecated" + EOL
 				+ "package spoon.test.comment.testclasses;" + EOL, l_content);
 	}
@@ -180,27 +179,6 @@ public class CommentTest {
 		CtJavaDoc classJavaDoc = (CtJavaDoc) type.getComments().get(0);
 		//contract: test that java doc is printed correctly
 		String str = classJavaDoc.toString();
-		StringTokenizer st = new StringTokenizer(str, System.getProperty("line.separator"));
-		boolean first = true;
-		while (st.hasMoreTokens()) {
-			String line = st.nextToken();
-			if (first) {
-				//first
-				first = false;
-				assertEquals(3, line.length());
-				assertEquals("/**", line);
-			} else {
-				if (st.hasMoreTokens()) {
-					//in the middle
-					assertTrue(line.length() >= 2);
-					assertEquals(" *", line.substring(0, 2));
-				} else {
-					//last
-					assertTrue(line.length() == 3);
-					assertEquals(" */", line.substring(0, 3));
-				}
-			}
-		}
 		assertEquals("JavaDoc test class." + EOL + EOL
 				+ "Long description", classJavaDoc.getContent());
 
@@ -915,27 +893,6 @@ public class CommentTest {
 		CtJavaDoc classJavaDoc = (CtJavaDoc) type.getComments().get(0);
 		//contract: test that java doc is printed correctly
 		String str = classJavaDoc.toString();
-		StringTokenizer st = new StringTokenizer(str, System.getProperty("line.separator"));
-		boolean first = true;
-		while (st.hasMoreTokens()) {
-			String line = st.nextToken();
-			if (first) {
-				//first
-				first = false;
-				assertEquals(3, line.length());
-				assertEquals("/**", line);
-			} else {
-				if (st.hasMoreTokens()) {
-					//in the middle
-					assertTrue(line.length() >= 2);
-					assertEquals(" *", line.substring(0, 2));
-				} else {
-					//last
-					assertTrue(line.length() == 3);
-					assertEquals(" */", line.substring(0, 3));
-				}
-			}
-		}
 		//This test passes on MS Windows too - why spoon uses `\n` on MS Windows too?
 		assertEquals("This file contains MS Windows EOL.\n"
 				+ "It is here to test whether comments are printed well\n"

@@ -111,7 +111,7 @@ public class WildComments {
 			"/* starts with space and /*",
 
 			/*** starts and ends with 3 * ***/
-			"* starts and ends with 3 * **",
+			"starts and ends with 3 * **",
 			/**** starts and ends with 4 * ****/
 			"** starts and ends with 4 * ***",
 

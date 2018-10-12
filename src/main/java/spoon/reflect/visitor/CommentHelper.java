@@ -92,7 +92,7 @@ public class CommentHelper {
 		printer.write(docTag.getType().name().toLowerCase());
 		printer.write(" ");
 		if (docTag.getType().hasParam()) {
-			printer.write(docTag.getParam()).writeln();
+			printer.write(docTag.getParam());
 		}
 
 		String[] tagLines = LINE_SEPARATORS_RE.split(docTag.getContent());

@@ -18,6 +18,7 @@ package spoon.reflect.code;
 
 import spoon.reflect.annotations.PropertyGetter;
 import spoon.reflect.annotations.PropertySetter;
+import spoon.support.DerivedProperty;
 
 import static spoon.reflect.path.CtRole.COMMENT_TYPE;
 import static spoon.reflect.path.CtRole.COMMENT_CONTENT;
@@ -59,11 +60,18 @@ public interface CtComment extends CtStatement {
 	String LINE_SEPARATOR = "\n";
 
 	/**
-	 * Get the content of the comment
+	 * Get the content of the comment.
+	 * The returned is without the delimiters (/*, //)
+	 * and without the itermediate "*" in case of Javadoc API comments.
+	 *
+	 * @see #getRawContent() for the raw comment.
 	 * @return the content of the comment
 	 */
 	@PropertyGetter(role = COMMENT_CONTENT)
 	String getContent();
+
+	@DerivedProperty
+	String getRawContent();
 
 	@PropertySetter(role = COMMENT_CONTENT)
 	<E extends CtComment> E setContent(String content);

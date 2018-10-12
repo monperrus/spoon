@@ -48,6 +48,11 @@ public class CtCommentImpl extends CtStatementImpl implements CtComment {
 	}
 
 	@Override
+	public String getRawContent() {
+		return content;
+	}
+
+	@Override
 	public <E extends CtComment> E setContent(String content) {
 		getFactory().getEnvironment().getModelChangeListener().onObjectUpdate(this, CtRole.COMMENT_CONTENT, content, this.content);
 		this.content = content;

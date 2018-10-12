@@ -159,6 +159,9 @@ public class CommentTest {
 		Factory f = getSpoonFactory();
 		CtClass<?> type = (CtClass<?>) f.Type().get(OtherJavaDoc.class);
 		CtJavaDoc classJavaDoc = (CtJavaDoc) type.getComments().get(0);
+		assertEquals("/**\n" +
+				" * A short description without a proper end\n" +
+				" */", classJavaDoc.getRawContent());
 		assertEquals("A short description without a proper end", classJavaDoc.getShortDescription());
 		assertEquals("A short description without a proper end", classJavaDoc.getLongDescription());
 	}

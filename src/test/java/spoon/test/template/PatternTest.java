@@ -1165,77 +1165,57 @@ public class PatternTest {
 				new File("./src/test/java/spoon/test/template/testclasses/replace")
 			);
 		Pattern p = OldPattern.createPatternFromMethodPatternModel(f);
-		assertEquals("if (/* CtInvocation"+nl+"" +
-				"    / <= ${useStartKeyword}"+nl+"" +
-				" */"+nl+"" +
-				"useStartKeyword()) {"+nl+"" +
-				"    /* CtInvocation"+nl+"" +
-				"        /argument/ <= ${startKeyword}"+nl+"" +
-				"     */"+nl+"" +
-				"    /* CtInvocation"+nl+"" +
-				"        /target/ <= ${printer}"+nl+"" +
-				"     */"+nl+"" +
-				"    /* CtInvocation"+nl+"" +
-				"        / <= ${printer}"+nl+"" +
-				"     */"+nl+"" +
-				"    printer().writeSpace().writeKeyword(/* CtInvocation"+nl+"" +
-				"        / <= ${startKeyword}"+nl+"" +
-				"     */"+nl+"" +
-				"    startKeyword()).writeSpace();"+nl+"" +
-				"}"+nl+"" +
-				"try (final spoon.reflect.visitor.ListPrinter lp = /* CtInvocation"+nl+"" +
-				"    /argument/ <= ${end}"+nl+"" +
-				"    /target/ <= ${elementPrinterHelper}"+nl+"" +
-				" */"+nl+"" +
-				"/* CtInvocation"+nl+"" +
-				"    / <= ${elementPrinterHelper}"+nl+"" +
-				" */"+nl+"" +
-				"elementPrinterHelper().createListPrinter(/* CtInvocation"+nl+"" +
-				"    / <= ${startPrefixSpace}"+nl+"" +
-				" */"+nl+"" +
-				"startPrefixSpace(), /* CtInvocation"+nl+"" +
-				"    / <= ${start}"+nl+"" +
-				" */"+nl+"" +
-				"start(), /* CtInvocation"+nl+"" +
-				"    / <= ${startSuffixSpace}"+nl+"" +
-				" */"+nl+"" +
-				"startSuffixSpace(), /* CtInvocation"+nl+"" +
-				"    / <= ${nextPrefixSpace}"+nl+"" +
-				" */"+nl+"" +
-				"nextPrefixSpace(), /* CtInvocation"+nl+"" +
-				"    / <= ${next}"+nl+"" +
-				" */"+nl+"" +
-				"next(), /* CtInvocation"+nl+"" +
-				"    / <= ${nextSuffixSpace}"+nl+"" +
-				" */"+nl+"" +
-				"nextSuffixSpace(), /* CtInvocation"+nl+"" +
-				"    / <= ${endPrefixSpace}"+nl+"" +
-				" */"+nl+"" +
-				"endPrefixSpace(), /* CtInvocation"+nl+"" +
-				"    / <= ${end}"+nl+"" +
-				" */"+nl+"" +
-				"end())) {"+nl+"" +
-				"    /* CtForEach"+nl+"" +
-				"        /expression/ <= ${getIterable}"+nl+"" +
-				"        /foreachVariable/ <= ${item}"+nl+"" +
-				"     */"+nl+"" +
-				"    for (/* CtLocalVariable"+nl+"" +
-				"        / <= ${item}"+nl+"" +
-				"     */"+nl+"" +
-				"    java.lang.Object item : /* CtInvocation"+nl+"" +
-				"        / <= ${getIterable}"+nl+"" +
-				"     */"+nl+"" +
-				"    getIterable()) /* CtBlock"+nl+"" +
-				"        /statement/ <= ${statements}"+nl+"" +
-				"     */"+nl+"" +
-				"    {"+nl+"" +
-				"        lp.printSeparatorIfAppropriate();"+nl+"" +
-				"        /* CtInvocation"+nl+"" +
-				"            / <= ${statements}"+nl+"" +
-				"         */"+nl+"" +
-				"        statements();"+nl+"" +
-				"    }"+nl+"" +
-				"}"+nl, p.print(true));
+		assertEquals("if (/* CtInvocation\n" +
+				"/ <= ${useStartKeyword} */\n" +
+				"useStartKeyword()) {\n" +
+				"    /* CtInvocation\n" +
+				"    /argument/ <= ${startKeyword} */\n" +
+				"    /* CtInvocation\n" +
+				"    /target/ <= ${printer} */\n" +
+				"    /* CtInvocation\n" +
+				"    / <= ${printer} */\n" +
+				"    printer().writeSpace().writeKeyword(/* CtInvocation\n" +
+				"    / <= ${startKeyword} */\n" +
+				"    startKeyword()).writeSpace();\n" +
+				"}\n" +
+				"try (final spoon.reflect.visitor.ListPrinter lp = /* CtInvocation\n" +
+				"/argument/ <= ${end}\n" +
+				"/target/ <= ${elementPrinterHelper} */\n" +
+				"/* CtInvocation\n" +
+				"/ <= ${elementPrinterHelper} */\n" +
+				"elementPrinterHelper().createListPrinter(/* CtInvocation\n" +
+				"/ <= ${startPrefixSpace} */\n" +
+				"startPrefixSpace(), /* CtInvocation\n" +
+				"/ <= ${start} */\n" +
+				"start(), /* CtInvocation\n" +
+				"/ <= ${startSuffixSpace} */\n" +
+				"startSuffixSpace(), /* CtInvocation\n" +
+				"/ <= ${nextPrefixSpace} */\n" +
+				"nextPrefixSpace(), /* CtInvocation\n" +
+				"/ <= ${next} */\n" +
+				"next(), /* CtInvocation\n" +
+				"/ <= ${nextSuffixSpace} */\n" +
+				"nextSuffixSpace(), /* CtInvocation\n" +
+				"/ <= ${endPrefixSpace} */\n" +
+				"endPrefixSpace(), /* CtInvocation\n" +
+				"/ <= ${end} */\n" +
+				"end())) {\n" +
+				"    /* CtForEach\n" +
+				"    /expression/ <= ${getIterable}\n" +
+				"    /foreachVariable/ <= ${item} */\n" +
+				"    for (/* CtLocalVariable\n" +
+				"    / <= ${item} */\n" +
+				"    java.lang.Object item : /* CtInvocation\n" +
+				"    / <= ${getIterable} */\n" +
+				"    getIterable()) /* CtBlock\n" +
+				"    /statement/ <= ${statements} */\n" +
+				"    {\n" +
+				"        lp.printSeparatorIfAppropriate();\n" +
+				"        /* CtInvocation\n" +
+				"        / <= ${statements} */\n" +
+				"        statements();\n" +
+				"    }\n" +
+				"}\n", p.print(true));
 	}
 
 	@Test

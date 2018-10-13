@@ -27,6 +27,7 @@ import spoon.reflect.visitor.CtVisitor;
 import spoon.reflect.visitor.filter.NamedElementFilter;
 import spoon.support.javadoc.Javadoc;
 import spoon.support.javadoc.JavadocBlockTag;
+import spoon.support.javadoc.JavadocDescription;
 import spoon.support.javadoc.JavadocDescriptionElement;
 import spoon.support.javadoc.JavadocInlineTag;
 import spoon.support.util.ModelList;
@@ -38,7 +39,7 @@ import static spoon.support.compiler.jdt.JDTCommentBuilder.cleanComment;
 public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 
 	@MetamodelPropertyField(role = CtRole.COMMENT_TAG)
-	private final ModelList<CtJavaDocTag> tags = new ModelList<CtJavaDocTag>() {
+	private transient final ModelList<CtJavaDocTag> tags = new ModelList<CtJavaDocTag>() {
 		@Override
 		protected CtElement getOwner() {
 			return CtJavaDocImpl.this;
@@ -54,7 +55,7 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 	};
 
 	/** parsed version of the javadoc */
-	Javadoc javadoc;
+	private transient Javadoc javadoc;
 
 	@Override
 	public <E extends CtComment> E setContent(String content) {
@@ -70,11 +71,20 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 
 	@Override
 	public String getContent() {
-		return updateInlineLinks(javadoc).getDescription().toText();
+		if (getRawContent() == null || javadoc == null) {
+			return "";
+		}
+
+		// for deserialization, we must rebuild the Javadoc object
+		if (getRawContent() != null || javadoc == null) {
+			setContent(getRawContent());
+		}
+
+		return getJavadocWithUpdatedInlineLinks().toText();
 	}
 
-	private Javadoc updateInlineLinks(Javadoc javadoc) {
-		for(JavadocDescriptionElement fragment : javadoc.getDescription().getElements()) {
+	private Javadoc getJavadocWithUpdatedInlineLinks() {
+		for(JavadocDescriptionElement fragment : getJavadocDescription().getElements()) {
 			if (fragment instanceof JavadocInlineTag) {
 				JavadocInlineTag tag = (JavadocInlineTag) fragment;
 				if (tag.getType().equals(JavadocInlineTag.Type.LINK)
@@ -86,8 +96,20 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 						tag.setContent(type.getQualifiedName());
 					}
 				}
-			}		}
+			}
+		}
 		return javadoc;
+	}
+
+	private JavadocDescription getJavadocDescription() {
+		if (javadoc == null) {
+			return new JavadocDescription();
+		}
+		JavadocDescription description = javadoc.getDescription();
+		if (description != null) {
+			return description;
+		}
+		return new JavadocDescription();
 	}
 
 	public CtJavaDocImpl() {

@@ -30,6 +30,9 @@ public class JavadocSnippet implements JavadocDescriptionElement {
         if (text == null) {
             throw new NullPointerException();
         }
+        if (text.startsWith("/**")) {
+            text = text.substring(3);
+        }
         this.text = text;
     }
 

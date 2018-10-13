@@ -76,7 +76,7 @@ public class CommentHelper {
 					javaDocTags = ((CtJavaDoc) comment).getTags();
 				}
 				if (javaDocTags != null && javaDocTags.isEmpty() == false) {
-					printer.write(" *").writeln();
+					printer.writeln();
 					for (CtJavaDocTag docTag : javaDocTags) {
 						printJavaDocTag(printer, docTag);
 					}
@@ -87,7 +87,6 @@ public class CommentHelper {
 	}
 
 	static void printJavaDocTag(PrinterHelper printer, CtJavaDocTag docTag) {
-		printer.write(DefaultJavaPrettyPrinter.COMMENT_STAR);
 		printer.write(CtJavaDocTag.JAVADOC_TAG_PREFIX);
 		printer.write(docTag.getType().name().toLowerCase());
 		printer.write(" ");
@@ -98,11 +97,8 @@ public class CommentHelper {
 		String[] tagLines = LINE_SEPARATORS_RE.split(docTag.getContent());
 		for (int i = 0; i < tagLines.length; i++) {
 			String com = tagLines[i];
-			if (i > 0 || docTag.getType().hasParam()) {
-				printer.write(DefaultJavaPrettyPrinter.COMMENT_STAR);
-			}
 			if (docTag.getType().hasParam()) {
-				printer.write("\t\t");
+				printer.write(" ");
 			}
 			printer.write(com.trim()).writeln();
 		}

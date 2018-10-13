@@ -218,9 +218,8 @@ switch(x) {
 ```java
 
 /**
-Description
-@see 
-		a tag in the javadoc */
+ * Description
+ * @see a tag in the javadoc */
 
 ```
 ### CtLambda

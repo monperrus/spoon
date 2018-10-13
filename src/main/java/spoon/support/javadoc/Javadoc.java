@@ -138,7 +138,9 @@ public class Javadoc {
     private final static String EOL = System.lineSeparator();
 
     public static Javadoc parse(String commentContent) {
-        List<String> cleanLines = cleanLines(commentContent);
+        List<String> cleanLines;
+		//cleanLines = cleanLines(commentContent);
+		cleanLines = Arrays.asList(commentContent.split(EOL));
         int indexOfFirstBlockTag = cleanLines.stream()
                 .filter(Javadoc::isABlockLine)
                 .map(cleanLines::indexOf)

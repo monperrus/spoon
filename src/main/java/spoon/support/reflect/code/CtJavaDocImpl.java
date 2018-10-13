@@ -39,7 +39,7 @@ import static spoon.support.compiler.jdt.JDTCommentBuilder.cleanComment;
 public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 
 	@MetamodelPropertyField(role = CtRole.COMMENT_TAG)
-	private transient final ModelList<CtJavaDocTag> tags = new ModelList<CtJavaDocTag>() {
+	private final ModelList<CtJavaDocTag> tags = new ModelList<CtJavaDocTag>() {
 		@Override
 		protected CtElement getOwner() {
 			return CtJavaDocImpl.this;
@@ -71,16 +71,17 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 
 	@Override
 	public String getContent() {
+		// for deserialization, we must rebuild the Javadoc object
+		if (getRawContent() != null || javadoc == null) {
+			javadoc = Javadoc.parse(cleanComment(getRawContent()));
+		}
+
 		if (getRawContent() == null || javadoc == null) {
 			return "";
 		}
 
-		// for deserialization, we must rebuild the Javadoc object
-		if (getRawContent() != null || javadoc == null) {
-			setContent(getRawContent());
-		}
-
-		return getJavadocWithUpdatedInlineLinks().toText();
+		return getJavadocWithUpdatedInlineLinks().getDescription().toText().trim();
+		//return cleanComment(getRawContent());
 	}
 
 	private Javadoc getJavadocWithUpdatedInlineLinks() {

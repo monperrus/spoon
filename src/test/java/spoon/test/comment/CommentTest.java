@@ -58,13 +58,19 @@ import spoon.reflect.declaration.CtType;
 import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.factory.FactoryImpl;
+import spoon.reflect.path.CtPath;
+import spoon.reflect.path.CtPathBuilder;
+import spoon.reflect.path.CtPathStringBuilder;
+import spoon.reflect.path.CtRole;
 import spoon.reflect.visitor.filter.AbstractFilter;
 import spoon.reflect.visitor.filter.NamedElementFilter;
 import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.support.DefaultCoreFactory;
 import spoon.support.JavaOutputProcessor;
+import spoon.support.SerializationModelStreamer;
 import spoon.support.StandardEnvironment;
 import spoon.support.compiler.jdt.JDTSnippetCompiler;
+import spoon.support.reflect.code.CtJavaDocImpl;
 import spoon.support.reflect.reference.CtWildcardStaticTypeMemberReferenceImpl;
 import spoon.test.comment.testclasses.BlockComment;
 import spoon.test.comment.testclasses.Comment1;
@@ -1044,4 +1050,26 @@ public class CommentTest {
 		CtMethod<?> method = nestedIface.getMethodsByName("mytest").get(0);
 		assertEquals(1, method.getComments().size());
 	}
+
+	@Test
+	public void testJavadocSer() throws IOException {
+		// contract: javadoc can be serialized
+		Launcher launcher = new Launcher();
+		launcher.addInputResource("./src/main/java/spoon/reflect/declaration/CtAnnotation.java");
+		launcher.getEnvironment().setCommentEnabled(true);
+		CtModel model = launcher.buildModel();
+		File file = new File("target/testDefaultCompressionType.ser");
+		CtPath p2 = new CtPathStringBuilder().fromString(".**.getAnnotationType#comment");
+		CtElement el = p2.evaluateOn(model.getRootPackage()).get(0);
+		new SerializationModelStreamer().save(launcher.getFactory(), new FileOutputStream(file));
+		Factory factoryFromFile = new SerializationModelStreamer().load(new FileInputStream(file));
+		CtElement elAfter = p2.evaluateOn(factoryFromFile.getModel().getRootPackage()).get(0);
+		assertEquals(el, elAfter);
+		assertEquals("/**\n" +
+				"Returns the annotation type of this annotation.\n" +
+				"@return a reference to the type of this annotation\n" +
+				" */", elAfter.toString());
+	}
+
+
 }

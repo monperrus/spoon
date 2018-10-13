@@ -90,7 +90,6 @@ public class CtJavaDocTagImpl extends CtElementImpl implements CtJavaDocTag {
 	public String toString()	{
 		return this.getType().toString()	//Tag type, with @ sign included
 				+ " "	//Space required between tag type and parameter
-				+ this.param + System.lineSeparator()	//Tag parameter
-				+ "\t\t" + this.content + System.lineSeparator();
+				+ this.param + " " + this.content;
 	}
 }

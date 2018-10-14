@@ -1066,8 +1066,8 @@ public class CommentTest {
 		CtElement elAfter = p2.evaluateOn(factoryFromFile.getModel().getRootPackage()).get(0);
 		assertEquals(el, elAfter);
 		assertEquals("/**" + System.lineSeparator() +
-				"Returns the annotation type of this annotation.\n\n" + System.lineSeparator() +
-				"@return a reference to the type of this annotation\n" + System.lineSeparator() +
+				"Returns the annotation type of this annotation." + System.lineSeparator() + System.lineSeparator() +
+				"@return a reference to the type of this annotation" + System.lineSeparator() +
 				" */", elAfter.toString());
 	}
 

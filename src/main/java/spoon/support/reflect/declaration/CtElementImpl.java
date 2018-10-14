@@ -21,8 +21,6 @@ import spoon.Launcher;
 import spoon.reflect.ModelElementContainerDefaultCapacities;
 import spoon.reflect.annotations.MetamodelPropertyField;
 import spoon.reflect.code.CtComment;
-import spoon.reflect.code.CtJavaDoc;
-import spoon.reflect.code.CtJavaDocTag;
 import spoon.reflect.cu.CompilationUnit;
 import spoon.reflect.cu.SourcePosition;
 import spoon.reflect.declaration.CtAnnotation;

@@ -16,7 +16,6 @@
  */
 package spoon.reflect.visitor;
 
-import org.apache.commons.lang3.StringUtils;
 import spoon.reflect.code.CtComment;
 import spoon.reflect.code.CtJavaDoc;
 import spoon.reflect.code.CtJavaDocTag;
@@ -37,6 +36,7 @@ public class CommentHelper {
 	private CommentHelper() {
 	}
 
+	/** Utility method to print a comment without prefix ("/*", "//") and suffix "* /" */
 	public static void printCommentContent(PrinterHelper printer, CtComment comment) {
 		printer.write(comment.getContent());
 		switch (comment.getCommentType()) {

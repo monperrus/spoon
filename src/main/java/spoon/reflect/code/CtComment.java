@@ -61,16 +61,18 @@ public interface CtComment extends CtStatement {
 
 	/**
 	 * Get the content of the comment.
-	 * The returned is without the delimiters (/*, //)
-	 * and without the itermediate "*" in case of Javadoc API comments.
+	 * The returned content is a parsed version of the raw content:
+	 *   - without the delimiters (/*, //)
+	 *   - without the intermediate prefix " * " in case of Javadoc API comments.
 	 *
 	 * @see #getRawContent() for the raw comment.
-	 * @return the content of the comment
+	 * @return the parsed content of the comment
 	 */
-	@PropertyGetter(role = COMMENT_CONTENT)
+	@DerivedProperty
 	String getContent();
 
-	@DerivedProperty
+	/** The exact string that appears in source code, with delimiters */
+	@PropertyGetter(role = COMMENT_CONTENT)
 	String getRawContent();
 
 	@PropertySetter(role = COMMENT_CONTENT)

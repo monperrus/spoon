@@ -44,6 +44,7 @@ public class CtCommentImpl extends CtStatementImpl implements CtComment {
 
 	@Override
 	public String getContent() {
+		// cleanComment is required for full backward compatibility of `getContent()`
 		return cleanComment(content);
 	}
 

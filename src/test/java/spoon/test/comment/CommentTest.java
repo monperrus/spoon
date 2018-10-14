@@ -134,7 +134,7 @@ public class CommentTest {
 		assertEquals("/* comment1 */" + EOL
 				+ "// comment2" + EOL
 				+ "/**" + EOL
-				+ "Comment3 */" + EOL
+				+ "Comment3" + EOL + " */" + EOL
 				+ "@java.lang.Deprecated" + EOL
 				+ "package spoon.test.comment.testclasses;" + EOL, l_content);
 	}
@@ -1065,9 +1065,9 @@ public class CommentTest {
 		Factory factoryFromFile = new SerializationModelStreamer().load(new FileInputStream(file));
 		CtElement elAfter = p2.evaluateOn(factoryFromFile.getModel().getRootPackage()).get(0);
 		assertEquals(el, elAfter);
-		assertEquals("/**\n" +
-				"Returns the annotation type of this annotation.\n" +
-				"@return a reference to the type of this annotation\n" +
+		assertEquals("/**" + System.lineSeparator() +
+				"Returns the annotation type of this annotation.\n\n" + System.lineSeparator() +
+				"@return a reference to the type of this annotation\n" + System.lineSeparator() +
 				" */", elAfter.toString());
 	}
 

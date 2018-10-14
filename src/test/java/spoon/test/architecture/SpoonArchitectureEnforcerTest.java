@@ -358,6 +358,7 @@ public class SpoonArchitectureEnforcerTest {
 		officialPackages.add("spoon.support.modelobs.context");
 		officialPackages.add("spoon.support.modelobs");
 		officialPackages.add("spoon.experimental");
+		officialPackages.add("spoon.javadoc");
 		officialPackages.add("spoon.javadoc.internal");
 		officialPackages.add("spoon.legacy");
 		officialPackages.add("spoon.metamodel");

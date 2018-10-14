@@ -135,6 +135,7 @@ public class Javadoc {
 
     private final static String EOL = System.lineSeparator();
 
+    /** parse the description part (before tags) of a Javadoc */
     public static JavadocDescription parseText(String text) {
         JavadocDescription instance = new JavadocDescription();
         int index = 0;

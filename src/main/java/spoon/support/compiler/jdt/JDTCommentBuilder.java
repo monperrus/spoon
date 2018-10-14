@@ -531,7 +531,9 @@ public class JDTCommentBuilder {
 		try (BufferedReader br = new BufferedReader(comment)) {
 			String line = br.readLine();
 			// nothing in the first line
-			if (line == null || line.length() == 0) return "";
+			if (line == null || line.length() == 0) {
+				return "";
+			}
 			boolean isLastLine = false;
 			if (line.charAt(1) == '/') {
 				//it is single line comment, which starts with "//"

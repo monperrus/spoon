@@ -1,145 +1,153 @@
-/**
- * Copyright (C) 2006-2018 INRIA and contributors
- * Spoon - http://spoon.gforge.inria.fr/
- *
- * This software is governed by the CeCILL-C License under French law and
- * abiding by the rules of distribution of free software. You can use, modify
- * and/or redistribute the software under the terms of the CeCILL-C license as
- * circulated by CEA, CNRS and INRIA at http://www.cecill.info.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the CeCILL-C License for more details.
- *
- * The fact that you are presently reading this means that you have had
- * knowledge of the CeCILL-C license and that you accept its terms.
- */
+	/**
+	* Copyright (C) 2006-2018 INRIA and contributors Spoon - http://spoon.gforge.inria.fr/
+	*
+	* <p>This software is governed by the CeCILL-C License under French law and abiding by the rules of
+	* distribution of free software. You can use, modify and/or redistribute the software under the
+	* terms of the CeCILL-C license as circulated by CEA, CNRS and INRIA at http://www.cecill.info.
+	*
+	* <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+	* without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	* CeCILL-C License for more details.
+	*
+	* <p>The fact that you are presently reading this means that you have had knowledge of the CeCILL-C
+	* license and that you accept its terms.
+	*/
+	package spoon.javadoc.internal;
 
-package spoon.javadoc.internal;
+	/**
+	* An inline tag contained in a Javadoc description.
+	*
+	* <p>For example <code>{@link String}</code>
+	*/
+	public class JavadocInlineTag implements JavadocDescriptionElement {
 
-/**
- * An inline tag contained in a Javadoc description.
- * <p>
- * For example <code>{@link String}</code>
- */
-public class JavadocInlineTag implements JavadocDescriptionElement {
+	/** Return the next word of the string, in other words it stops when a space is encountered. */
+	public static String nextWord(String string) {
+		int index = 0;
+		while (index < string.length() && !Character.isWhitespace(string.charAt(index))) {
+			index++;
+		}
+		return string.substring(0, index);
+	}
 
-    /**
-     * Return the next word of the string, in other words it stops when a space is encountered.
-     */
-    public static String nextWord(String string) {
-        int index = 0;
-        while (index < string.length() && !Character.isWhitespace(string.charAt(index))) {
-            index++;
-        }
-        return string.substring(0, index);
-    }
+	/** parses a Javadoc tag */
+	public static JavadocDescriptionElement fromText(String text) {
+		if (!text.startsWith("{@")) {
+			throw new IllegalArgumentException(
+				String.format("Expected to start with '{@'. Text '%s'", text));
+		}
+		if (!text.endsWith("}")) {
+			throw new IllegalArgumentException(
+				String.format("Expected to end with '}'. Text '%s'", text));
+		}
+		text = text.substring(2, text.length() - 1);
+		String tagName = nextWord(text);
+		Type type = Type.fromName(tagName);
+		String content = text.substring(tagName.length()).trim();
+		return new JavadocInlineTag(tagName, type, content);
+	}
 
-    /** parses a Javadoc tag */
-    public static JavadocDescriptionElement fromText(String text) {
-        if (!text.startsWith("{@")) {
-            throw new IllegalArgumentException(String.format("Expected to start with '{@'. Text '%s'", text));
-        }
-        if (!text.endsWith("}")) {
-            throw new IllegalArgumentException(String.format("Expected to end with '}'. Text '%s'", text));
-        }
-        text = text.substring(2, text.length() - 1);
-        String tagName = nextWord(text);
-        Type type = Type.fromName(tagName);
-        String content = text.substring(tagName.length()).trim();
-        return new JavadocInlineTag(tagName, type, content);
-    }
+	/**
+		* The type of tag: it could either correspond to a known tag (code, docRoot, etc.) or represent
+		* an unknown tag.
+		*/
+	public enum Type {
+		CODE,
+		DOC_ROOT,
+		INHERIT_DOC,
+		LINK,
+		LINKPLAIN,
+		LITERAL,
+		VALUE,
+		UNKNOWN;
 
-    /**
-     * The type of tag: it could either correspond to a known tag (code, docRoot, etc.) or represent
-     * an unknown tag.
-     */
-    public enum Type {
-        CODE,
-        DOC_ROOT,
-        INHERIT_DOC,
-        LINK,
-        LINKPLAIN,
-        LITERAL,
-        VALUE,
-        UNKNOWN;
+		Type() {
+			this.keyword = name();
+		}
 
-        Type() {
-            this.keyword = name();
-        }
+		private String keyword;
 
-        private String keyword;
+		static JavadocInlineTag.Type fromName(String tagName) {
+			for (JavadocInlineTag.Type t : JavadocInlineTag.Type.values()) {
+			if (t.keyword.equals(tagName.toUpperCase())) {
+				return t;
+			}
+			}
+			return UNKNOWN;
+		}
+	}
 
-        static JavadocInlineTag.Type fromName(String tagName) {
-            for (JavadocInlineTag.Type t : JavadocInlineTag.Type.values()) {
-                if (t.keyword.equals(tagName.toUpperCase())) {
-                    return t;
-                }
-            }
-            return UNKNOWN;
-        }
+	private String tagName;
+	private Type type;
 
-    }
+	public void setContent(String content) {
+		this.content = content;
+	}
 
-    private String tagName;
-    private Type type;
+	private String content;
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+	public JavadocInlineTag(String tagName, Type type, String content) {
+		this.tagName = tagName;
+		this.type = type;
+		this.content = content;
+	}
 
-    private String content;
+	public Type getType() {
+		return type;
+	}
 
-    public JavadocInlineTag(String tagName, Type type, String content) {
-        this.tagName = tagName;
-        this.type = type;
-        this.content = content;
-    }
+	public String getContent() {
+		return content;
+	}
 
-    public Type getType() {
-        return type;
-    }
+	public String getName() {
+		return tagName;
+	}
 
-    public String getContent() {
-        return content;
-    }
+	@Override
+	public String toText() {
+		return "{@" + tagName + " " + this.content + "}";
+	}
 
-    public String getName() {
-        return tagName;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
 
-    @Override
-    public String
-    toText() {
-        return "{@" + tagName + " " + this.content +"}";
-    }
+		JavadocInlineTag that = (JavadocInlineTag) o;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+		if (tagName != null ? !tagName.equals(that.tagName) : that.tagName != null) {
+			return false;
+		}
+		if (type != that.type) {
+			return false;
+		}
+		return content != null ? content.equals(that.content) : that.content == null;
+	}
 
-        JavadocInlineTag that = (JavadocInlineTag) o;
+	@Override
+	public int hashCode() {
+		int result = tagName != null ? tagName.hashCode() : 0;
+		result = 31 * result + (type != null ? type.hashCode() : 0);
+		result = 31 * result + (content != null ? content.hashCode() : 0);
+		return result;
+	}
 
-        if (tagName != null ? !tagName.equals(that.tagName) : that.tagName != null) return false;
-        if (type != that.type) return false;
-        return content != null ? content.equals(that.content) : that.content == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = tagName != null ? tagName.hashCode() : 0;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (content != null ? content.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "JavadocInlineTag{" +
-                "tagName='" + tagName + '\'' +
-                ", type=" + type +
-                ", content='" + content + '\'' +
-                '}';
-    }
-}
+	@Override
+	public String toString() {
+		return "JavadocInlineTag{"
+			+ "tagName='"
+			+ tagName
+			+ '\''
+			+ ", type="
+			+ type
+			+ ", content='"
+			+ content
+			+ '\''
+			+ '}';
+	}
+	}

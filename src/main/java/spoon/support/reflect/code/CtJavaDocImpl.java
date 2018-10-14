@@ -85,7 +85,7 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 	}
 
 	private Javadoc getJavadocWithUpdatedInlineLinks() {
-		for(JavadocDescriptionElement fragment : getJavadocDescription().getElements()) {
+		for (JavadocDescriptionElement fragment : getJavadocDescription().getElements()) {
 			if (fragment instanceof JavadocInlineTag) {
 				JavadocInlineTag tag = (JavadocInlineTag) fragment;
 				if (tag.getType().equals(JavadocInlineTag.Type.LINK)

@@ -152,13 +152,13 @@ public class EnumsTest {
 		assertTrue(content.contains("FAIL,"));
 		assertTrue(content.contains("KEEP_OLD_NODE(),"));
 
-		assertTrue(content.contains("/**\n"
-				+ "     * Add new {@link RootNode} after existing nodes\n"
+		assertTrue(content, content.contains("/**\n"
+				+ "    Add new {@link RootNode} after existing nodes\n"
 				+ "     */\n"
 				+ "    APPEND"));
 
 		assertTrue(content.contains("/**\n"
-				+ "     * Keep old {@link RootNode} and ignore requests to add new {@link RootNode}\n"
+				+ "    Keep old {@link RootNode} and ignore requests to add new {@link RootNode}\n"
 				+ "     */\n"
 				+ "    KEEP_OLD_NODE(),"));
 	}

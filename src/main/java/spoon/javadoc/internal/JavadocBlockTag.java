@@ -15,12 +15,10 @@
  * knowledge of the CeCILL-C license and that you accept its terms.
  */
 
-package spoon.support.javadoc;
+package spoon.javadoc.internal;
 
 
 import java.util.Optional;
-
-import static spoon.support.javadoc.JavadocInlineTag.nextWord;
 
 /**
  * A block tag.
@@ -83,10 +81,10 @@ public class JavadocBlockTag {
         this.type = type;
         this.tagName = type.keyword;
         if (type.hasName()) {
-            this.name = Optional.of(nextWord(content));
+            this.name = Optional.of(JavadocInlineTag.nextWord(content));
             content = content.substring(this.name.get().length()).trim();
         }
-        this.content = JavadocDescription.parseText(content);
+        this.content = Javadoc.parseText(content);
     }
 
     public JavadocBlockTag(String tagName, String content) {
@@ -114,6 +112,7 @@ public class JavadocBlockTag {
         return tagName;
     }
 
+    /** pretty-prints the Javadoc tag */
     public String toText() {
         StringBuilder sb = new StringBuilder();
         sb.append("@");

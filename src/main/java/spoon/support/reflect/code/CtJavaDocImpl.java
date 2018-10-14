@@ -25,11 +25,11 @@ import spoon.reflect.declaration.CtType;
 import spoon.reflect.path.CtRole;
 import spoon.reflect.visitor.CtVisitor;
 import spoon.reflect.visitor.filter.NamedElementFilter;
-import spoon.support.javadoc.Javadoc;
-import spoon.support.javadoc.JavadocBlockTag;
-import spoon.support.javadoc.JavadocDescription;
-import spoon.support.javadoc.JavadocDescriptionElement;
-import spoon.support.javadoc.JavadocInlineTag;
+import spoon.javadoc.internal.Javadoc;
+import spoon.javadoc.internal.JavadocBlockTag;
+import spoon.javadoc.internal.JavadocDescription;
+import spoon.javadoc.internal.JavadocDescriptionElement;
+import spoon.javadoc.internal.JavadocInlineTag;
 import spoon.support.util.ModelList;
 
 import java.util.List;
@@ -72,7 +72,7 @@ public class CtJavaDocImpl extends CtCommentImpl implements CtJavaDoc {
 	@Override
 	public String getContent() {
 		// for deserialization, we must rebuild the Javadoc object
-		if (getRawContent() != null || javadoc == null) {
+		if (javadoc == null && getRawContent() != null) {
 			javadoc = Javadoc.parse(cleanComment(getRawContent()));
 		}
 

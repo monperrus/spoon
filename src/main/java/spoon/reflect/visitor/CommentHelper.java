@@ -16,21 +16,13 @@
  */
 package spoon.reflect.visitor;
 
+import org.apache.commons.lang3.StringUtils;
 import spoon.reflect.code.CtComment;
 import spoon.reflect.code.CtJavaDoc;
 import spoon.reflect.code.CtJavaDocTag;
-import spoon.reflect.declaration.CtType;
-import spoon.reflect.visitor.filter.NamedElementFilter;
-import spoon.support.javadoc.JavadocDescription;
-import spoon.support.javadoc.JavadocDescriptionElement;
-import spoon.support.javadoc.JavadocInlineTag;
-import spoon.support.javadoc.JavadocSnippet;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import static spoon.support.javadoc.JavadocDescription.parseText;
 
 /**
  * Computes source code representation of the Comment literal
@@ -45,6 +37,27 @@ public class CommentHelper {
 	private CommentHelper() {
 	}
 
+	public static void printCommentContent(PrinterHelper printer, CtComment comment) {
+		printer.write(comment.getContent());
+		switch (comment.getCommentType()) {
+			case JAVADOC:
+				printer.writeln();
+				// we also have the tags
+				List<CtJavaDocTag> javaDocTags = null;
+				if (comment instanceof CtJavaDoc) {
+					javaDocTags = ((CtJavaDoc) comment).getTags();
+				}
+				if (javaDocTags != null && javaDocTags.isEmpty() == false) {
+					printer.writeln();
+					for (CtJavaDocTag docTag : javaDocTags) {
+						printJavaDocTag(printer, docTag);
+					}
+				}
+				break;
+		}
+	}
+
+	/** Utility method to print a complete comment */
 	public static void printComment(PrinterHelper printer, CtComment comment) {
 		CtComment.CommentType commentType = comment.getCommentType();
 		switch (commentType) {
@@ -61,7 +74,7 @@ public class CommentHelper {
 			printer.write(DefaultJavaPrettyPrinter.BLOCK_COMMENT_START);
 			break;
 		}
-		printer.write(comment.getContent());
+		printCommentContent(printer, comment);
 		switch (commentType) {
 			case BLOCK:
 				printer.write(DefaultJavaPrettyPrinter.BLOCK_COMMENT_END);
@@ -70,17 +83,6 @@ public class CommentHelper {
 				printer.write(DefaultJavaPrettyPrinter.BLOCK_COMMENT_END);
 				break;
 			case JAVADOC:
-				// we also have the tags
-				List<CtJavaDocTag> javaDocTags = null;
-				if (comment instanceof CtJavaDoc) {
-					javaDocTags = ((CtJavaDoc) comment).getTags();
-				}
-				if (javaDocTags != null && javaDocTags.isEmpty() == false) {
-					printer.writeln();
-					for (CtJavaDocTag docTag : javaDocTags) {
-						printJavaDocTag(printer, docTag);
-					}
-				}
 				printer.write(DefaultJavaPrettyPrinter.BLOCK_COMMENT_END);
 				break;
 		}
@@ -91,16 +93,10 @@ public class CommentHelper {
 		printer.write(docTag.getType().name().toLowerCase());
 		printer.write(" ");
 		if (docTag.getType().hasParam()) {
-			printer.write(docTag.getParam());
+			printer.write(docTag.getParam()).write(" ");
 		}
 
-		String[] tagLines = LINE_SEPARATORS_RE.split(docTag.getContent());
-		for (int i = 0; i < tagLines.length; i++) {
-			String com = tagLines[i];
-			if (docTag.getType().hasParam()) {
-				printer.write(" ");
-			}
-			printer.write(com.trim()).writeln();
-		}
+		printer.write(docTag.getContent()).writeln();
+
 	}
 }

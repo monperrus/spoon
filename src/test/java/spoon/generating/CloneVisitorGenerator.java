@@ -521,7 +521,7 @@ public class CloneVisitorGenerator extends AbstractManualProcessor {
 			}
 
 			private boolean isConstantOrStatic(CtField<?> ctField) {
-				return ctField.getModifiers().contains(ModifierKind.FINAL) || ctField.getModifiers().contains(ModifierKind.STATIC);
+				return ctField.getModifiers().contains(ModifierKind.FINAL) || ctField.getModifiers().contains(ModifierKind.STATIC) || ctField.getModifiers().contains(ModifierKind.TRANSIENT);
 			}
 		}.scan(getFactory().Class().get(CtInheritanceScanner.class));
 	}

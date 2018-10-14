@@ -47,12 +47,9 @@ public class JavaDocTest {
 
 		assertEquals("public class Bar {" + System.lineSeparator()
 				+ "    /**" + System.lineSeparator()
-				+ "     * Creates an annotation type." + System.lineSeparator()
-				+ "     *" + System.lineSeparator()
-				+ "     * @param owner" + System.lineSeparator()
-				+ "     * \t\tthe package of the annotation type" + System.lineSeparator()
-				+ "     * @param simpleName" + System.lineSeparator()
-				+ "     * \t\tthe name of annotation" + System.lineSeparator()
+				+ "    Creates an annotation type." + System.lineSeparator() + System.lineSeparator()
+				+ "    @param owner the package of the annotation type" + System.lineSeparator()
+				+ "    @param simpleName the name of annotation" + System.lineSeparator()
 				+ "     */" + System.lineSeparator()
 				+ "    public <T> CtAnnotationType<?> create(CtPackage owner, String simpleName) {" + System.lineSeparator()
 				+ "        return null;" + System.lineSeparator()
@@ -62,13 +59,11 @@ public class JavaDocTest {
 		// contract: getDocComment never returns null, it returns an empty string if no comment
 		assertEquals("", aClass.getDocComment());
 
-		// contract: getDocComment returns the comment content together with the tag content
-		assertEquals("Creates an annotation type." + System.lineSeparator()
-				+ "@param owner" + System.lineSeparator()
-				+ "\t\tthe package of the annotation type" + System.lineSeparator()
-				+ "@param simpleName" + System.lineSeparator()
-				+ "\t\tthe name of annotation" + System.lineSeparator()
+		assertEquals("Creates an annotation type." + System.lineSeparator() + System.lineSeparator()
+						+ "@param owner the package of the annotation type" + System.lineSeparator()
+						+ "@param simpleName the name of annotation" + System.lineSeparator()
 				, aClass.getMethodsByName("create").get(0).getDocComment());
+		// contract: getDocComment returns the comment content together with the tag content
 
 		assertEquals(2, aClass.getMethodsByName("create").get(0).getComments().get(0).asJavaDoc().getTags().size());
 

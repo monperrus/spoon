@@ -15,7 +15,7 @@
  * knowledge of the CeCILL-C license and that you accept its terms.
  */
 
-package spoon.support.javadoc;
+package spoon.javadoc.internal;
 
 /**
  * An element of a description: either an inline tag or a piece of text.
@@ -23,5 +23,6 @@ package spoon.support.javadoc;
  * So for example <code>a text</code> or <code>{@link String}</code> could be valid description elements.
  */
 public interface JavadocDescriptionElement {
+    /** pretty-prints the Javadoc fragment */
     String toText();
 }

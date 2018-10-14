@@ -15,30 +15,22 @@
  * knowledge of the CeCILL-C license and that you accept its terms.
  */
 
-package spoon.support.javadoc;
+package spoon.javadoc.internal;
+
 
 /**
- * A piece of text inside a Javadoc description.
- * <p>
- * For example in <code>A class totally unrelated to {@link String}, I swear!</code> we would have two snippets: one
- * before and one after the inline tag (<code>{@link String}</code>).
+ * Simply a pair of objects.
+ *
+ * @param <A> type of object a.
+ * @param <B> type of object b.
  */
-public class JavadocSnippet implements JavadocDescriptionElement {
-    private String text;
+public class Pair<A, B> {
+    public final A a;
+    public final B b;
 
-    public JavadocSnippet(String text) {
-        if (text == null) {
-            throw new NullPointerException();
-        }
-        if (text.startsWith("/**")) {
-            text = text.substring(3);
-        }
-        this.text = text;
-    }
-
-    @Override
-    public String toText() {
-        return this.text;
+    public Pair(A a, B b) {
+        this.a = a;
+        this.b = b;
     }
 
     @Override
@@ -46,21 +38,18 @@ public class JavadocSnippet implements JavadocDescriptionElement {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        JavadocSnippet that = (JavadocSnippet) o;
+        Pair<?, ?> pair = (Pair<?, ?>) o;
 
-        return text.equals(that.text);
+        if (a != null ? !a.equals(pair.a) : pair.a != null) return false;
+        if (b != null ? !b.equals(pair.b) : pair.b != null) return false;
 
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return text.hashCode();
+        int result = a != null ? a.hashCode() : 0;
+        return 31 * result + (b != null ? b.hashCode() : 0);
     }
 
-    @Override
-    public String toString() {
-        return "JavadocSnippet{" +
-                "text='" + text + '\'' +
-                '}';
-    }
 }

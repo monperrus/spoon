@@ -15,9 +15,7 @@
  * knowledge of the CeCILL-C license and that you accept its terms.
  */
 
-package spoon.support.javadoc;
-
-import org.eclipse.jdt.internal.compiler.parser.JavadocParser;
+package spoon.javadoc.internal;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,7 +24,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static spoon.support.javadoc.JavadocInlineTag.nextWord;
+import static spoon.javadoc.internal.JavadocInlineTag.nextWord;
 
 
 /**
@@ -137,8 +135,44 @@ public class Javadoc {
 
     private final static String EOL = System.lineSeparator();
 
+    public static JavadocDescription parseText(String text) {
+        JavadocDescription instance = new JavadocDescription();
+        int index = 0;
+        Pair<Integer, Integer> nextInlineTagPos;
+        while ((nextInlineTagPos = indexOfNextInlineTag(text, index)) != null) {
+            if (nextInlineTagPos.a != index) {
+                instance.addElement(new JavadocSnippet(text.substring(index, nextInlineTagPos.a)));
+            }
+            instance.addElement(JavadocInlineTag.fromText(text.substring(nextInlineTagPos.a, nextInlineTagPos.b + 1)));
+            index = nextInlineTagPos.b + 1;
+        }
+        if (index < text.length()) {
+            instance.addElement(new JavadocSnippet(text.substring(index)));
+        }
+        return instance;
+    }
+
+    private static Pair<Integer, Integer> indexOfNextInlineTag(String text, int start) {
+        int index = text.indexOf("{@", start);
+        if (index == -1) {
+            return null;
+        }
+        // we are interested only in complete inline tags
+        int closeIndex = text.indexOf("}", index);
+        if (closeIndex == -1) {
+            return null;
+        }
+        return new Pair<>(index, closeIndex);
+    }
+
+
+    /** parses the Javadoc content (description + tags) */
     public static Javadoc parse(String commentContent) {
         List<String> cleanLines;
+
+        // In JavaParse, ,they had their own version of cleaning
+        // not backward compatible with Spoon's one
+        // so we keep Spoon's one
 		//cleanLines = cleanLines(commentContent);
 		cleanLines = Arrays.asList(commentContent.split(EOL));
         int indexOfFirstBlockTag = cleanLines.stream()
@@ -169,7 +203,7 @@ public class Javadoc {
                     .map(s -> BLOCK_TAG_PREFIX + s)
                     .collect(Collectors.toList());
         }
-        Javadoc document = new Javadoc(JavadocDescription.parseText(descriptionText));
+        Javadoc document = new Javadoc(parseText(descriptionText));
         blockLines.forEach(l -> document.addBlockTag(parseBlockTag(l)));
         return document;
     }

@@ -15,7 +15,7 @@
  * knowledge of the CeCILL-C license and that you accept its terms.
  */
 
-package spoon.support.javadoc;
+package spoon.javadoc.internal;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,36 +28,6 @@ import java.util.List;
 public class JavadocDescription {
 
     private List<JavadocDescriptionElement> elements;
-
-    public static JavadocDescription parseText(String text) {
-        JavadocDescription instance = new JavadocDescription();
-        int index = 0;
-        Pair<Integer, Integer> nextInlineTagPos;
-        while ((nextInlineTagPos = indexOfNextInlineTag(text, index)) != null) {
-            if (nextInlineTagPos.a != index) {
-                instance.addElement(new JavadocSnippet(text.substring(index, nextInlineTagPos.a)));
-            }
-            instance.addElement(JavadocInlineTag.fromText(text.substring(nextInlineTagPos.a, nextInlineTagPos.b + 1)));
-            index = nextInlineTagPos.b + 1;
-        }
-        if (index < text.length()) {
-            instance.addElement(new JavadocSnippet(text.substring(index)));
-        }
-        return instance;
-    }
-
-    private static Pair<Integer, Integer> indexOfNextInlineTag(String text, int start) {
-        int index = text.indexOf("{@", start);
-        if (index == -1) {
-            return null;
-        }
-        // we are interested only in complete inline tags
-        int closeIndex = text.indexOf("}", index);
-        if (closeIndex == -1) {
-            return null;
-        }
-        return new Pair<>(index, closeIndex);
-    }
 
     public JavadocDescription() {
         elements = new LinkedList<>();

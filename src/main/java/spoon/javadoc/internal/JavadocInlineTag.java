@@ -15,7 +15,7 @@
  * knowledge of the CeCILL-C license and that you accept its terms.
  */
 
-package spoon.support.javadoc;
+package spoon.javadoc.internal;
 
 /**
  * An inline tag contained in a Javadoc description.
@@ -35,6 +35,7 @@ public class JavadocInlineTag implements JavadocDescriptionElement {
         return string.substring(0, index);
     }
 
+    /** parses a Javadoc tag */
     public static JavadocDescriptionElement fromText(String text) {
         if (!text.startsWith("{@")) {
             throw new IllegalArgumentException(String.format("Expected to start with '{@'. Text '%s'", text));
@@ -108,7 +109,8 @@ public class JavadocInlineTag implements JavadocDescriptionElement {
     }
 
     @Override
-    public String toText() {
+    public String
+    toText() {
         return "{@" + tagName + " " + this.content +"}";
     }
 

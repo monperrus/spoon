@@ -41,12 +41,14 @@ import spoon.reflect.path.CtPath;
 import spoon.reflect.path.CtRole;
 import spoon.reflect.reference.CtReference;
 import spoon.reflect.reference.CtTypeReference;
+import spoon.reflect.visitor.CommentHelper;
 import spoon.reflect.visitor.CtIterator;
 import spoon.reflect.visitor.CtScanner;
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter;
 import spoon.reflect.visitor.EarlyTerminatingScanner;
 import spoon.reflect.visitor.Filter;
 import spoon.reflect.visitor.ModelConsistencyChecker;
+import spoon.reflect.visitor.PrinterHelper;
 import spoon.reflect.visitor.Query;
 import spoon.reflect.visitor.chain.CtConsumableFunction;
 import spoon.reflect.visitor.chain.CtFunction;
@@ -186,12 +188,9 @@ public abstract class CtElementImpl implements CtElement, Serializable {
 	public String getDocComment() {
 		for (CtComment ctComment : comments) {
 			if (ctComment.getCommentType() == CtComment.CommentType.JAVADOC) {
-				StringBuilder result = new StringBuilder();
-				result.append(ctComment.getContent() + System.lineSeparator());
-				for (CtJavaDocTag tag: ((CtJavaDoc) ctComment).getTags()) {
-					result.append(tag.toString()); // the tag already contains a new line
-				}
-				return result.toString();
+				PrinterHelper ph = new PrinterHelper(getFactory().getEnvironment());
+				CommentHelper.printCommentContent(ph, ctComment);
+				return ph.toString();
 			}
 		}
 		return "";

@@ -504,7 +504,7 @@ public class MainTest {
 			SourcePosition sp = type.getPosition();
 			totalCount += assertSourcePositionTreeIsCorrectlyOrder(sp.getCompilationUnit().getOriginalSourceFragment(), 0, sp.getCompilationUnit().getOriginalSourceCode().length());
 			hasComment = hasComment || type.getComments().size() > 0; 
-		};
+		}
 		assertTrue(totalCount > 1000);
 		assertTrue(hasComment);
 	}
@@ -533,29 +533,22 @@ public class MainTest {
 
 	@Test
 	public void testElementToPathToElementEquivalency() {
-
-		rootPackage.accept(new CtScanner() {
-			@Override
-			public void scan(CtElement element) {
-				if (element != null) {
-					CtPath path = element.getPath();
-					String pathStr = path.toString();
-					try {
-						CtPath pathRead = new CtPathStringBuilder().fromString(pathStr);
-						assertEquals(pathStr, pathRead.toString());
-						Collection<CtElement> returnedElements = pathRead.evaluateOn(rootPackage);
-						//contract: CtUniqueRolePathElement.evaluateOn() returns a unique elements if provided only a list of one inputs
-						assertEquals(1, returnedElements.size());
-						CtElement actualElement = (CtElement) returnedElements.toArray()[0];
-						//contract: Element -> Path -> String -> Path -> Element leads to the original element
-						assertSame(element, actualElement);
-					} catch (CtPathException e) {
-						throw new AssertionError("Path " + pathStr + " is either incorrectly generated or incorrectly read", e);
-					} catch (AssertionError e) {
-						throw new AssertionError("Path " + pathStr + " detection failed on " + element.getClass().getSimpleName() + ": " + element.toString(), e);
-					}
-				}
-				super.scan(element);
+		rootPackage.getPackage("spoon").getElements(e->true).parallelStream().forEach(element -> {
+			CtPath path = element.getPath();
+			String pathStr = path.toString();
+			try {
+				CtPath pathRead = new CtPathStringBuilder().fromString(pathStr);
+				assertEquals(pathStr, pathRead.toString());
+				Collection<CtElement> returnedElements = pathRead.evaluateOn(rootPackage);
+				//contract: CtUniqueRolePathElement.evaluateOn() returns a unique elements if provided only a list of one inputs
+				assertEquals(1, returnedElements.size());
+				CtElement actualElement = (CtElement) returnedElements.toArray()[0];
+				//contract: Element -> Path -> String -> Path -> Element leads to the original element
+				assertSame(element, actualElement);
+			} catch (CtPathException e) {
+				throw new AssertionError("Path " + pathStr + " is either incorrectly generated or incorrectly read", e);
+			} catch (AssertionError e) {
+				throw new AssertionError("Path " + pathStr + " detection failed on " + element.getClass().getSimpleName() + ": " + element.toString(), e);
 			}
 		});
 	}

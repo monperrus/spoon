@@ -28,7 +28,7 @@
   <groupId>fr.inria.gforge.spoon</groupId>
   <artifactId>spoon-core</artifactId>
   <packaging>jar</packaging>
-  <version>7.1.0-SNAPSHOT</version>
+  <version>7.2.0-SNAPSHOT</version>
   <name>Spoon Core</name>
   <description>Spoon is a tool for meta-programming, analysis and transformation of Java programs.</description>
   <url>http://spoon.gforge.inria.fr/</url>
@@ -271,7 +271,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.9.2</version>
+      <version>2.9.5</version>
     </dependency>
     <dependency>
       <!-- to reproduce JTD error with nullable annotation -->
@@ -296,6 +296,12 @@
           <artifactId>mysema-commons-lang</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.jboss.windup.decompiler.fernflower/fernflower -->
+    <dependency>
+      <groupId>org.jboss.windup.decompiler.fernflower</groupId>
+      <artifactId>fernflower</artifactId>
+      <version>2.5.0.Final</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -654,7 +660,24 @@
   </reporting>
 
   <profiles>
-    <profile>
+      <profile>
+          <id>checkstyle-test</id>
+          <build>
+              <plugins>
+                  <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-checkstyle-plugin</artifactId>
+                      <version>2.17</version>
+                      <configuration>
+                          <failsOnError>true</failsOnError>
+                          <configLocation>checkstyle-test.xml</configLocation>
+                          <consoleOutput>true</consoleOutput>
+                      </configuration>
+                  </plugin>
+              </plugins>
+          </build>
+      </profile>
+      <profile>
       <id>coveralls</id>
       <build>
         <plugins>

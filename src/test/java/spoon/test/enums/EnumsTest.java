@@ -25,6 +25,7 @@ import spoon.reflect.declaration.CtEnum;
 import spoon.reflect.declaration.CtEnumValue;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
+import spoon.reflect.declaration.CtField;
 import spoon.reflect.declaration.ModifierKind;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter;
@@ -34,6 +35,7 @@ import spoon.test.enums.testclasses.Burritos;
 import spoon.test.enums.testclasses.Foo;
 import spoon.test.enums.testclasses.NestedEnums;
 import spoon.test.enums.testclasses.Regular;
+import spoon.test.enums.testclasses.EnumWithMembers;
 import spoon.testing.utils.ModelUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -165,7 +167,7 @@ public class EnumsTest {
 
 	@Test
 	public void testEnumValue() {
-		// contract: constructorCall on enumvalues should be implicit if they're not declared
+		// contract: constructorCall on enum values should be implicit if they're not declared
 
 		Launcher launcher = new Launcher();
 		launcher.addInputResource("./src/test/java/spoon/test/comment/testclasses/EnumClass.java");
@@ -185,5 +187,22 @@ public class EnumsTest {
 				assertFalse(defaultExpression.isImplicit());
 			}
 		}
+	}
+
+	@Test
+	public void testEnumMembersModifiers() throws Exception {
+		// contract: enum members should have correct modifiers
+		final Factory factory = build(EnumWithMembers.class);
+		CtModel model = factory.getModel();
+
+		CtField lenField = model.getElements(new TypeFilter<>(CtField.class)).stream()
+				.filter(p -> "len".equals(p.getSimpleName()))
+				.findFirst().get();
+
+		assertTrue(lenField.isPrivate());
+		assertTrue(lenField.isStatic());
+		assertFalse(lenField.isFinal());
+		assertFalse(lenField.isPublic());
+		assertFalse(lenField.isProtected());
 	}
 }

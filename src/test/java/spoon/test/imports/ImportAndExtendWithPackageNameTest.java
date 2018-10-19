@@ -16,13 +16,14 @@
  */
 package spoon.test.imports;
 
-import org.junit.Assert;
 import org.junit.Test;
 import spoon.Launcher;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.reference.CtTypeReference;
 
 import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
 
 public class ImportAndExtendWithPackageNameTest {
 
@@ -37,12 +38,12 @@ public class ImportAndExtendWithPackageNameTest {
         runLaunch.buildModel();
 
         final Collection<CtType<?>> types = runLaunch.getModel().getAllTypes();
-        Assert.assertSame(1, types.size());
+        assertEquals(1, types.size());
 
         final CtType type = types.iterator().next();
-        Assert.assertEquals("ImportAndExtendWithPackageName", type.getSimpleName());
+        assertEquals("ImportAndExtendWithPackageName", type.getSimpleName());
 
         final CtTypeReference superClass = type.getSuperclass();
-        Assert.assertEquals("LLkParser", superClass.getSimpleName());
+        assertEquals("LLkParser", superClass.getSimpleName());
     }
 }

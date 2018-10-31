@@ -75,6 +75,10 @@ public interface CtComment extends CtStatement {
 	@PropertyGetter(role = COMMENT_CONTENT)
 	String getRawContent();
 
+	/** Sets the content of this comment.
+	 *
+	 * It is meant to be `setRawContent`, but is called this way for sake of backward-compatibility.
+	 */
 	@PropertySetter(role = COMMENT_CONTENT)
 	<E extends CtComment> E setContent(String content);
 

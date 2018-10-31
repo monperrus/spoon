@@ -522,11 +522,7 @@ public class JDTCommentBuilder {
 	 * @return the content of the comment
 	 */
 	private String getCommentContent(int start, int end) {
-		try {
-			return IOUtils.toString(new CharArrayReader(contents, start, end - start));
-		} catch (IOException e) {
-			throw new SpoonException(e);
-		}
+		return new String(contents, start, end - start);
 	}
 
 	public static String cleanComment(String comment) {

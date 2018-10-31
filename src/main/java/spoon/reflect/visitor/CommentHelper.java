@@ -38,7 +38,7 @@ public class CommentHelper {
 
 	/** Utility method to print a comment without prefix ("/*", "//") and suffix "* /" */
 	public static void printCommentContent(PrinterHelper printer, CtComment comment) {
-		printer.write(comment.getContent());
+		printer.write(comment.getRawContent());
 		switch (comment.getCommentType()) {
 			case JAVADOC:
 				printer.writeln();

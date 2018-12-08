@@ -35,5 +35,5 @@ mvn  checkstyle:checkstyle -Pcheckstyle-test
 cd ..
 
 # Spoon Control Flow
-cd spooncontrolflow
+cd spoon-control-flow
 mvn test

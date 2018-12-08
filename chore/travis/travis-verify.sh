@@ -36,5 +36,5 @@ cd ..
 
 # Spoon Control Flow
 cd spoon-control-flow
-mvn versions:use-latest-versions -DallowSnapshots=true # always test with latest version
+mvn versions:use-latest-versions -DallowSnapshots=true -Dexcludes=org.jgrapht # always test with latest version
 mvn clean test

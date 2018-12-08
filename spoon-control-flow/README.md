@@ -1,8 +1,11 @@
 Spoon Control Flow
 ==================
 
-A module for control-flow analysis of Java software
-Code by @marcelinorc.
+A module for control-flow analysis of Java software, originally written by [@marcelinorc](https://github.com/marcelinorc//).
+
+
+Usage
+------
 
 ```java
 ControlFlowBuilder visitor = new ControlFlowBuilder();
@@ -11,10 +14,12 @@ ControlFlowGraph graph = visitor.getResult();
 
 ```
 
+Visualization
+------------
+
 <img src="src/test/resources/graph.dot.png"/>
 
 
-Can produce Dot visualization:
 
 ```
 digraph null { 

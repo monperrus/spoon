@@ -36,4 +36,5 @@ cd ..
 
 # Spoon Control Flow
 cd spoon-control-flow
-mvn test
+mvn versions:use-latest-versions -DallowSnapshots=true # always test with latest version
+mvn clean test

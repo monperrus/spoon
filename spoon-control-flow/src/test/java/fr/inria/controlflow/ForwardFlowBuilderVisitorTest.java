@@ -37,8 +37,7 @@ public class ForwardFlowBuilderVisitorTest {
 
         });
         pm.process(factory.getModel().getRootPackage());
-        factory.getModel().getRootPackage().accept(visitor);
-        factory.getModel().filterChildren(visitor);
+
         ControlFlowGraph graph = visitor.getResult();
         if (simplify) graph.simplifyConvergenceNodes();
 

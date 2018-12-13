@@ -31,3 +31,10 @@ mvn verify license:check site javadoc:jar install -DskipTests -DadditionalJOptio
 
 # checkstyle in src/tests
 mvn  checkstyle:checkstyle -Pcheckstyle-test
+
+cd ..
+
+# Spoon Control Flow
+cd spoon-control-flow
+mvn versions:use-latest-versions -DallowSnapshots=true -Dexcludes=org.jgrapht # always test with latest version
+mvn clean test

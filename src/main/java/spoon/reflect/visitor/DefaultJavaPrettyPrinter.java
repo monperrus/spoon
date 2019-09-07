@@ -763,11 +763,6 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 			//target is not implicit, we always print it
 			return true;
 		}
-		//target is implicit, we should not print it
-		if (!forceFullyQualified) {
-			//fully qualified mode is not forced so we should not print implicit target
-			return false;
-		}
 		//forceFullyQualified is ON, we should print full qualified names
 		if (target instanceof CtThisAccess) {
 			//the implicit this access is never printed even in forceFullyQualified mode
@@ -1241,7 +1236,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 			}
 		} else {
 			// It's a method invocation
-			if (invocation.getTarget() != null && (forceFullyQualified || !invocation.getTarget().isImplicit())) {
+			if (invocation.getTarget() != null && (!invocation.getTarget().isImplicit())) {
 				try (Writable _context = context.modify()) {
 					if (invocation.getTarget() instanceof CtTypeAccess) {
 						_context.ignoreGenerics(true);
@@ -1719,7 +1714,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 	}
 
 	private boolean printQualified(CtTypeReference<?> ref) {
-		return forceFullyQualified || !ref.isImplicitParent();
+		return !ref.isImplicitParent();
 		}
 
 
@@ -1740,7 +1735,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 
 	@Override
 	public <T> void visitCtTypeAccess(CtTypeAccess<T> typeAccess) {
-		if (!forceFullyQualified && typeAccess.isImplicit()) {
+		if (typeAccess.isImplicit()) {
 			return;
 		}
 		enterCtExpression(typeAccess);
@@ -1803,10 +1798,6 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 	private boolean isPrintTypeReference(CtTypeReference<?> accessType) {
 		if (!accessType.isImplicit()) {
 			//always print explicit type refs
-			return true;
-		}
-		if (forceFullyQualified) {
-			//print access type always if fully qualified mode is forced
 			return true;
 		}
 		if (context.forceWildcardGenerics() && accessType.getTypeDeclaration().getFormalCtTypeParameters().size() > 0) {

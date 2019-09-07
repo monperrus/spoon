@@ -172,7 +172,7 @@ public class VisibilityTest {
 		}).get(0);
 		assertNotNull(ctInvocation.getTarget());
 		assertTrue(ctInvocation.getTarget().isImplicit());
-		assertEquals("bound()", ctInvocation.toString());
+		assertEquals("this.bound()", ctInvocation.toString());
 		assertEquals("bound()", ctInvocation.print());
 	}
 }

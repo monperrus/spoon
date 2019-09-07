@@ -27,6 +27,7 @@ import spoon.reflect.path.CtPath;
 import spoon.reflect.path.CtRole;
 import spoon.reflect.reference.CtReference;
 import spoon.reflect.reference.CtTypeReference;
+import spoon.reflect.visitor.CtAbstractVisitor;
 import spoon.reflect.visitor.CtIterator;
 import spoon.reflect.visitor.CtScanner;
 import spoon.reflect.visitor.DefaultJavaPrettyPrinter;
@@ -277,7 +278,17 @@ public abstract class CtElementImpl implements CtElement, Serializable {
 
 	@Override
 	public String toString() {
-		return print(true);
+		DefaultJavaPrettyPrinter printer = new DefaultJavaPrettyPrinter(getFactory().getEnvironment());
+		String errorMessage = "";
+		try {
+			printer.scan(this);
+		} catch (ParentNotInitializedException ignore) {
+			LOGGER.error(ERROR_MESSAGE_TO_STRING, ignore);
+			errorMessage = ERROR_MESSAGE_TO_STRING;
+		}
+		// in line-preservation mode, newlines are added at the beginning to matches the lines
+		// removing them from the toString() representation
+		return printer.toString().replaceFirst("^\\s+", "") + errorMessage;
 	}
 
 	@Override
@@ -287,7 +298,6 @@ public abstract class CtElementImpl implements CtElement, Serializable {
 
 	private String print(boolean forceFullyQualified) {
 		DefaultJavaPrettyPrinter printer = new DefaultJavaPrettyPrinter(getFactory().getEnvironment());
-		printer.setForceFullyQualified(forceFullyQualified);
 		//the printer is created here directly without any ImportValidator
 		//which would change the model content - it is not wanted!
 		String errorMessage = "";

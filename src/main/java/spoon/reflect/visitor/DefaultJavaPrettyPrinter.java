@@ -199,11 +199,6 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 	 */
 	protected CtCompilationUnit sourceCompilationUnit;
 
-	/**
-	 * Ignores isImplicit attribute on model and always prints fully qualified names
-	 */
-	protected boolean forceFullyQualified = false;
-
 	public boolean inlineElseIf = true;
 
 	/**
@@ -759,13 +754,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 		if (target == null) {
 			return false;
 		}
-		if (!target.isImplicit()) {
-			//target is not implicit, we always print it
-			return true;
-		}
-		//forceFullyQualified is ON, we should print full qualified names
-		if (target instanceof CtThisAccess) {
-			//the implicit this access is never printed even in forceFullyQualified mode
+		if (target.isImplicit()) {
 			return false;
 		}
 		return true;
@@ -2037,10 +2026,4 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 		return this.preprocessors;
 	}
 
-	/**
-	 * @param forceFullyQualified true to ignore `isImplicit` attribute on model and always print fully qualified names
-	 */
-	public void setForceFullyQualified(boolean forceFullyQualified) {
-		this.forceFullyQualified = forceFullyQualified;
-}
 }

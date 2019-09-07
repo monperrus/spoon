@@ -108,6 +108,7 @@ public class TestModifiers {
         spoon.addInputResource("./src/test/java/spoon/test/modifiers/testclasses/AbstractClass.java");
         spoon.addInputResource("./src/test/java/spoon/test/modifiers/testclasses/ConcreteClass.java");
         spoon.getEnvironment().setShouldCompile(true);
+
         spoon.run();
 
         CtType<?> abstractClass = spoon.getFactory().Type().get(AbstractClass.class);

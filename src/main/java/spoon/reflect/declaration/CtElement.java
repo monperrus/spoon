@@ -394,6 +394,13 @@ public interface CtElement extends FactoryAccessor, CtVisitable, Cloneable, CtQu
 	/**
 	 * @return pretty printed source code of this element.
 	 *
+	 *
+	 */
+	@Override
+	String toString();
+	/**
+	 * @return pretty printed source code of this element.
+	 *
 	 * Note: `implicit` elements are not printed.
 	 * The model is not modified by printing.
 	 * It means it doesn't try to fix model inconsistencies (if any)

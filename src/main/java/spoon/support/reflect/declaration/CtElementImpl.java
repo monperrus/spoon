@@ -279,16 +279,17 @@ public abstract class CtElementImpl implements CtElement, Serializable {
 	@Override
 	public String toString() {
 		DefaultJavaPrettyPrinter printer = new DefaultJavaPrettyPrinter(getFactory().getEnvironment());
+		CtElement clone = this.clone();
 		new CtScanner() {
 			@Override
 			protected void enter(CtElement e) {
 				e.setImplicit(false);
 				super.enter(e);
 			}
-		}.scan(this.clone());
+		}.scan(clone);
 		String errorMessage = "";
 		try {
-			printer.scan(this);
+			printer.scan(clone);
 		} catch (ParentNotInitializedException ignore) {
 			LOGGER.error(ERROR_MESSAGE_TO_STRING, ignore);
 			errorMessage = ERROR_MESSAGE_TO_STRING;

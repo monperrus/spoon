@@ -309,6 +309,7 @@ public class LambdaTest {
 		final CtParameter<?> ctParameterFirstLambda = lambda1.getParameters().get(0);
 		assertEquals("s", ctParameterFirstLambda.getSimpleName());
 		assertTrue(ctParameterFirstLambda.getType().isImplicit());
+		assertEquals("spoon.test.lambda.testclasses.Bar.SingleSubscriber<? super T>", ctParameterFirstLambda.getType().toString());
 		assertEquals("", ctParameterFirstLambda.getType().print());
 		assertEquals("spoon.test.lambda.testclasses.Bar.SingleSubscriber<? super T>", ctParameterFirstLambda.getType().toString());
 		assertEquals("SingleSubscriber", ctParameterFirstLambda.getType().getSimpleName());
@@ -337,6 +338,7 @@ public class LambdaTest {
 
 		final CtArrayTypeReference typeParameter = (CtArrayTypeReference) ctParameter.getType();
 		assertTrue(typeParameter.getComponentType().isImplicit());
+		assertEquals("java.lang.Object", typeParameter.getComponentType().toString());
 		assertEquals("", typeParameter.getComponentType().print());
 		assertEquals("java.lang.Object", typeParameter.getComponentType().toString());
 		assertEquals("Object", typeParameter.getComponentType().getSimpleName());

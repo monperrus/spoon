@@ -173,6 +173,7 @@ public class GenericsTest {
 
 		// the diamond is resolved to String but we don't print it, so we use the fully qualified name.
 		assertTrue(val.getType().getActualTypeArguments().get(0).isImplicit());
+		assertEquals("java.lang.String", val.getType().getActualTypeArguments().get(0).toString());
 		assertEquals("", val.getType().getActualTypeArguments().get(0).print());
 		assertEquals("java.lang.String", val.getType().getActualTypeArguments().get(0).getQualifiedName());
 		assertEquals("new java.util.ArrayList<>()",val.toString());
@@ -300,6 +301,7 @@ public class GenericsTest {
 					.getActualClass());
 
 			//print prints model following implicit same like in origin source
+			assertEquals("java.util.Map.Entry", ref.toString());
 			assertEquals("Map.Entry", ref.print());
 
 			CtField<?> y = type.getElements(new NamedElementFilter<>(CtField.class,"y"))

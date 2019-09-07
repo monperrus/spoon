@@ -64,7 +64,7 @@ public class ForceImportProcessor extends AbstractCompilationUnitImportsProcesso
 		}
 	}
 
-
+	@Override
 	protected void handleTargetedExpression(LexicalScope nameScope, CtRole role, CtTargetedExpression<?, ?> targetedExpression, CtExpression<?> target) {
 		if (target.isImplicit()) {
 			return;

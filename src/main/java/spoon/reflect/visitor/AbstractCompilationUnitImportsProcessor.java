@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Internal generic {@link Processor} of {@link CtCompilationUnit}, which scans CtCompilationUnit modules, packages and types
+ *{@link Processor} of {@link CtCompilationUnit}, which scans CtCompilationUnit modules, packages and types
  * with purpose to find type references and expressions which might influence import directives.
  */
 @Experimental
@@ -59,8 +59,6 @@ abstract class AbstractCompilationUnitImportsProcessor<T extends CtScanner, U> e
 		}
 		scanner.exit(cu);
 	}
-
-	protected abstract T createRawScanner();
 
 	protected CtScannerListener createScannerListener(T scanner) {
 		return new ScannerListener(scanner);
@@ -179,7 +177,6 @@ abstract class AbstractCompilationUnitImportsProcessor<T extends CtScanner, U> e
 		}
 	}
 
-	protected abstract U getContext(T scanner);
 
 	protected T createScanner() {
 		T scanner = createRawScanner();
@@ -211,6 +208,10 @@ abstract class AbstractCompilationUnitImportsProcessor<T extends CtScanner, U> e
 			});
 		}
 	}
+
+	protected abstract U getContext(T scanner);
+
+	protected abstract T createRawScanner();
 
 	protected abstract void handleTypeReference(U context, CtRole role, CtTypeReference<?> element);
 

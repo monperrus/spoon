@@ -657,8 +657,12 @@ private transient  ClassLoader inputClassloader;
 		this.ignoreDuplicateDeclarations = ignoreDuplicateDeclarations;
 	}
 
-	@Override
-	public List<Processor<CtCompilationUnit>> getCompilationUnitValidators() {
+	/**
+	 * @return list of {@link Processor}, which are used to validate and fix model before it's printing
+	 *
+	 * Note: by default the validators depends on {@link #isAutoImports()}
+	 */
+	private List<Processor<CtCompilationUnit>> getCompilationUnitValidators() {
 		if (compilationUnitValidators == null) {
 			if (isAutoImports()) {
 				return Collections.unmodifiableList(Arrays.<Processor<CtCompilationUnit>>asList(
@@ -687,8 +691,12 @@ private transient  ClassLoader inputClassloader;
 		return Collections.unmodifiableList(compilationUnitValidators);
 	}
 
-	@Override
-	public void setCompilationUnitValidators(List<Processor<CtCompilationUnit>> compilationUnitValidators) {
+	/**
+	 * @param compilationUnitValidators list of {@link Processor}, which have to be used to validate and fix model before it's printing
+	 *
+	 * Note: once this method is called, the calling of {@link #setAutoImports(boolean)} makes no sense
+	 */
+	private void setCompilationUnitValidators(List<Processor<CtCompilationUnit>> compilationUnitValidators) {
 		if (compilationUnitValidators != null) {
 			this.compilationUnitValidators = new ArrayList<>(compilationUnitValidators);
 		} else {

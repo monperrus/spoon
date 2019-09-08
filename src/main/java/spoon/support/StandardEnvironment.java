@@ -670,9 +670,9 @@ private transient  ClassLoader inputClassloader;
 						//remove unused imports first. Do not add new imports at time when conflicts are not resolved
 						//new ImportCleaner().setCanAddImports(false),
 						//solve conflicts, the current imports are relevant too
-						new ImportConflictDetector(),
+						new ImportConflictDetector()
 						//compute final imports
-						new ImportCleaner().setImportComparator(new DefaultImportComparator())
+						//new ImportCleaner().setImportComparator(new DefaultImportComparator())
 				));
 				printer.setPreprocessors(preprocessors);
 			}

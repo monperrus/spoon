@@ -784,6 +784,9 @@ public class Launcher implements SpoonAPI {
 		try {
 			modelBuilder.generateProcessedSourceFiles(getEnvironment().getOutputType(), typeFilter);
 		} catch (Exception e) {
+			if (e instanceof RuntimeException) {
+				throw e;
+			}
 			throw new SpoonException(e);
 		}
 

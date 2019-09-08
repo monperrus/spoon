@@ -51,6 +51,10 @@ public class ForceFullyQualifiedProcessor extends ImportAnalyzer<LexicalScopeSca
 				//do not use FQ names for that
 				return;
 			}
+			if (role == CtRole.ACCESSED_TYPE) {
+				// is handled by handleTargetedExpression below
+				return;
+			}
 			//force fully qualified name
 			reference.setImplicit(false);
 			reference.setImplicitParent(false);
@@ -94,6 +98,12 @@ public class ForceFullyQualifiedProcessor extends ImportAnalyzer<LexicalScopeSca
 				//do not use FQ names for that
 				return;
 			}
+			if (nameScope.forEachElementByName(ImportConflictDetector.getFirstPackageQName(typeAccess.getAccessedType()), x -> {
+				return true;
+			})) {
+				target.setImplicit(true);
+				return;
+			};
 		}
 		target.setImplicit(false);
 	}

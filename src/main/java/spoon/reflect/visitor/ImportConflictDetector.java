@@ -261,7 +261,7 @@ public class ImportConflictDetector extends ImportAnalyzer<LexicalScopeScanner, 
 		});
 	}
 
-	private String getFirstPackageQName(CtTypeReference<?> typeRef) {
+	static String getFirstPackageQName(CtTypeReference<?> typeRef) {
 		if (typeRef != null) {
 			CtPackageReference packRef = typeRef.getPackage();
 			if (packRef != null) {

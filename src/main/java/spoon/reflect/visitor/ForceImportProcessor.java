@@ -35,7 +35,7 @@ public class ForceImportProcessor extends ImportAnalyzer<LexicalScopeScanner, Le
 	protected void handleTypeReference(CtTypeReference<?> reference, LexicalScope nameScope, CtRole role) {
 		if (reference.getPackage() != null) {
 			//force import of package of top level types only
-			reference.setImplicitParent(true);
+			reference.getPackage().setImplicit(true);
 		} else {
 			//it is a reference to an child type
 			//if it is a reference in scope of parent type declaration then make it implicit, else keep it as it is

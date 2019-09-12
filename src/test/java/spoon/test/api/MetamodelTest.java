@@ -54,6 +54,7 @@ import spoon.reflect.visitor.filter.AnnotationFilter;
 import spoon.reflect.visitor.filter.SuperInheritanceHierarchyFunction;
 import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.support.DefaultCoreFactory;
+import spoon.support.DerivedProperty;
 import spoon.support.StandardEnvironment;
 import spoon.support.visitor.ClassTypingContext;
 import spoon.template.Parameter;
@@ -80,6 +81,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static spoon.test.architecture.SpoonArchitectureEnforcerTest.assertSetEquals;
 
 public class MetamodelTest {
 	@Test
@@ -137,6 +139,7 @@ public class MetamodelTest {
 		interfaces.addInputResource("src/main/java/spoon/reflect/reference");
 		interfaces.buildModel();
 		Factory factory = interfaces.getFactory();
+		CtTypeReference derivedProperty = factory.Type().get(DerivedProperty.class).getReference();
 		CtTypeReference propertyGetter = factory.Type().get(PropertyGetter.class).getReference();
 		CtTypeReference propertySetter = factory.Type().get(PropertySetter.class).getReference();
 
@@ -151,10 +154,12 @@ public class MetamodelTest {
 		Set<CtMethod<?>> isNotSetter = setters.stream().filter(m -> !(m.getSimpleName().startsWith("set") || m.getSimpleName().startsWith("add") || m.getSimpleName().startsWith("insert") || m.getSimpleName().startsWith("remove"))).collect(Collectors.toSet());
 
 		assertEquals(expectedRoles, getterRoles);
+
 		//these two derived roles has no setter
 		expectedRoles.remove(CtRole.DECLARED_MODULE.name());
 		expectedRoles.remove(CtRole.DECLARED_TYPE.name());
-		assertEquals(expectedRoles, setterRoles);
+
+		assertSetEquals("", expectedRoles, setterRoles);
 		assertEquals(Collections.EMPTY_SET, isNotGetter);
 		assertEquals(Collections.EMPTY_SET, isNotSetter);
 	}

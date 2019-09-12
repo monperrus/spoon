@@ -429,7 +429,7 @@ public class SpoonArchitectureEnforcerTest {
 		assertSetEquals("you have created a new package or removed an existing one, please declare it explicitly in SpoonArchitectureEnforcerTest#testSpecPackage", officialPackages, currentPackages);
 	}
 
-	private static void assertSetEquals(String msg, Set<?> set1, Set<?> set2) {
+	public static void assertSetEquals(String msg, Set<?> set1, Set<?> set2) {
 		if (set1 == null || set2 == null) {
 			throw new IllegalArgumentException();
 		}
@@ -448,14 +448,14 @@ public class SpoonArchitectureEnforcerTest {
 
 		for (Object o : set1) {
 			if (!set2.contains(o)) {
-				results.add("Missing package " + o + " in computed set");
+				results.add("Missing element " + o + " in computed set");
 			} else {
 				set2.remove(o);
 			}
 		}
 
 		for (Object o : set2) {
-			results.add("Package " + o + " presents in computed but not expected set.");
+			results.add("element " + o + " presents in computed but not expected set.");
 		}
 		return StringUtils.join(results, "\n");
 	}

@@ -872,7 +872,7 @@ public class CtTypeReferenceImpl<T> extends CtReferenceImpl implements CtTypeRef
 	@DerivedProperty
 	public boolean isImplicitParent() {
 		if (pack != null) {
-			return pack.isImplicit();
+			return false;
 		} else if (declaringType != null) {
 			return declaringType.isImplicit();
 		}
@@ -883,7 +883,7 @@ public class CtTypeReferenceImpl<T> extends CtReferenceImpl implements CtTypeRef
 	@DerivedProperty
 	public CtTypeReferenceImpl<T> setImplicitParent(boolean parentIsImplicit) {
 		if (pack != null) {
-			pack.setImplicit(parentIsImplicit);
+			// nothing to do, it's not an inner class
 		} else if (declaringType != null) {
 			declaringType.setImplicit(parentIsImplicit);
 		}

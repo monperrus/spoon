@@ -67,37 +67,26 @@ public class ImportConflictDetector extends ImportAnalyzer<LexicalScopeScanner, 
 		CtExpression<?> target = targetedExpression.getTarget();
 		if (targetedExpression instanceof CtFieldAccess<?>) {
 			CtFieldAccess<?> fieldAccess = (CtFieldAccess<?>) targetedExpression;
-			if (target.isImplicit()) {
-				/*
-				 * target is implicit, check whether there is no conflict with an local variable, catch variable or parameter
-				 * in case of conflict make it explicit, otherwise the field access is shadowed by that variable.
-				 * Search for potential variable declaration until we found a class which declares or inherits this field
-				 */
-				final CtField<?> field = fieldAccess.getVariable().getFieldDeclaration();
-				if (field != null) {
-					final String fieldName = field.getSimpleName();
-					nameScope.forEachElementByName(fieldName, named -> {
-						if (named instanceof CtMethod) {
-							//the methods with same name are no problem for field access
-							return null;
-						}
-						if (named == field) {
-							return true;
-						}
-						//another variable declaration was found which is hiding the field declaration for this field access. Make the field access explicit
-						target.setImplicit(false);
-						return false;
-					});
-				}
-			}
-			if (!target.isImplicit()) {
-				//the target should be visible in sources
-				if (target instanceof CtTypeAccess) {
-					//the type has to be visible in sources
-					CtTypeAccess<?> typeAccess = (CtTypeAccess<?>) target;
-					CtTypeReference<?> accessedTypeRef = typeAccess.getAccessedType();
-					checkConflictOfTypeReference(nameScope, accessedTypeRef);
-				}
+			/*
+			 * target is implicit, check whether there is no conflict with an local variable, catch variable or parameter
+			 * in case of conflict make it explicit, otherwise the field access is shadowed by that variable.
+			 * Search for potential variable declaration until we found a class which declares or inherits this field
+			 */
+			final CtField<?> field = fieldAccess.getVariable().getFieldDeclaration();
+			if (field != null) {
+				final String fieldName = field.getSimpleName();
+				nameScope.forEachElementByName(fieldName, named -> {
+					if (named instanceof CtMethod) {
+						//the methods with same name are no problem for field access
+						return null;
+					}
+					if (named == field) {
+						return true;
+					}
+					//another variable declaration was found which is hiding the field declaration for this field access. Make the field access explicit
+					target.setImplicit(false);
+					return false;
+				});
 			}
 		}
 	}

@@ -26,7 +26,7 @@ public interface CtModifiable extends CtElement {
 	 * @return the modifiers of this declaration in undefined order; an empty
 	 * set if there are none
 	 */
-	@PropertyGetter(role = MODIFIER)
+	@DerivedProperty
 	Set<ModifierKind> getModifiers();
 
 	/**
@@ -41,7 +41,7 @@ public interface CtModifiable extends CtElement {
 	/**
 	 * Sets the modifiers.
 	 */
-	@PropertySetter(role = MODIFIER)
+	@DerivedProperty
 	<T extends CtModifiable> T setModifiers(Set<ModifierKind> modifiers);
 
 	/**
@@ -49,7 +49,6 @@ public interface CtModifiable extends CtElement {
 	 *
 	 * @param modifier
 	 */
-	@PropertySetter(role = MODIFIER)
 	<T extends CtModifiable> T addModifier(ModifierKind modifier);
 
 	/**
@@ -57,13 +56,11 @@ public interface CtModifiable extends CtElement {
 	 *
 	 * @param modifier
 	 */
-	@PropertySetter(role = MODIFIER)
 	<T extends CtModifiable> T removeModifier(ModifierKind modifier);
 
 	/**
 	 * Sets the visibility of this modifiable element (replaces old visibility).
 	 */
-	@PropertySetter(role = MODIFIER)
 	<T extends CtModifiable> T setVisibility(ModifierKind visibility);
 
 	/**
@@ -72,7 +69,9 @@ public interface CtModifiable extends CtElement {
 	@DerivedProperty
 	ModifierKind getVisibility();
 
+	@PropertyGetter(role = MODIFIER)
 	Set<CtExtendedModifier> getExtendedModifiers();
+	@PropertySetter(role = MODIFIER)
 	<T extends CtModifiable> T setExtendedModifiers(Set<CtExtendedModifier> extendedModifiers);
 
 	/**

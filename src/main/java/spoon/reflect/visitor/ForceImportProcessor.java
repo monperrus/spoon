@@ -33,6 +33,10 @@ public class ForceImportProcessor extends ImportAnalyzer<LexicalScopeScanner, Le
 
 	@Override
 	protected void handleTypeReference(CtTypeReference<?> reference, LexicalScope nameScope, CtRole role) {
+		if (reference.getPackage() != null && "java.lang".equals(reference.getPackage().getQualifiedName())) {
+			reference.setImplicitParent(false);
+			return;
+		}
 		if (reference.getPackage() != null) {
 			//force import of package of top level types only
 			reference.setImplicitParent(true);

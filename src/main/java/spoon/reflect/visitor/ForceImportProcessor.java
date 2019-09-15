@@ -34,7 +34,7 @@ public class ForceImportProcessor extends ImportAnalyzer<LexicalScopeScanner, Le
 	@Override
 	protected void handleTypeReference(CtTypeReference<?> reference, LexicalScope nameScope, CtRole role) {
 		if (reference.getPackage() != null && "java.lang".equals(reference.getPackage().getQualifiedName())) {
-			reference.setImplicitParent(false);
+			reference.setImplicitParent(true);
 			return;
 		}
 		if (reference.getPackage() != null) {

@@ -156,7 +156,6 @@ public class MetamodelTest {
 		//derived roles with no setter:
 		expectedRoles.remove(CtRole.DECLARED_MODULE.name());
 		expectedRoles.remove(CtRole.DECLARED_TYPE.name());
-		expectedRoles.remove(CtRole.EMODIFIER.name());
 
 		assertSetEquals("", expectedRoles, setterRoles);
 

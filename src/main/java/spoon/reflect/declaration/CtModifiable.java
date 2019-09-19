@@ -78,6 +78,7 @@ public interface CtModifiable extends CtElement {
 	 */
 	@PropertyGetter(role = EMODIFIER)
 	Set<CtExtendedModifier> getExtendedModifiers();
+	@PropertySetter(role = EMODIFIER)
 	<T extends CtModifiable> T setExtendedModifiers(Set<CtExtendedModifier> extendedModifiers);
 
 	/**

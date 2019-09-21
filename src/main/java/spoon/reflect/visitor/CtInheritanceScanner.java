@@ -128,7 +128,7 @@ import java.util.Collection;
  * (abstract) supertype scanning methods. It declares a scan method for each
  * abstract element of the AST and a visit method for each element of the AST.
  */
-public abstract class CtInheritanceScanner implements CtVisitor {
+public abstract class CtInheritanceScanner extends CtScanner implements CtVisitor {
 
 	/**
 	 * Default constructor.

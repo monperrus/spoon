@@ -257,7 +257,9 @@ public class ImportCleaner extends AbstractProcessor<CtElement> {
 			if (context == null) {
 				return;
 			}
-			if (reference.isImplicit() && ImportAnalyzer.ignoredRoles.contains(reference.getRoleInParent())) {
+			if (reference.isImplicit() && ImportAnalyzer.IGNORED_ROLES_WHEN_IMPLICIT.contains(reference.getRoleInParent())) {
+				// some type are references are implicit for some reason
+				// but we never import them
 				return;
 			}
 			if (!reference.isImplicit() && reference.isSimplyQualified()) {

@@ -79,7 +79,7 @@ abstract class ImportAnalyzer<T extends CtScanner, U> extends AbstractProcessor<
 	}
 
 	//The set of roles whose values are always kept implicit
-	protected static Set<CtRole> IGNORED_ROLES_WHEN_IMPLICIT = new HashSet<>(Arrays.asList(
+	static final Set<CtRole> IGNORED_ROLES_WHEN_IMPLICIT = new HashSet<>(Arrays.asList(
 			//e.g. List<String> s = new ArrayList</*keep me implicit*/>();
 			CtRole.TYPE_ARGUMENT,
 			//e.g. List<?/* extends Object*/>
@@ -87,8 +87,6 @@ abstract class ImportAnalyzer<T extends CtScanner, U> extends AbstractProcessor<
 			//e.g. (/*implicit type of parameter*/ p) -> {}
 			CtRole.TYPE
 	));
-
-	static final Set<CtRole> ignoredRoles = IGNORED_ROLES_WHEN_IMPLICIT;
 
 	/**
 	 * {@link CtScannerListener} implementation which stops scanning of children on elements,
@@ -183,7 +181,7 @@ abstract class ImportAnalyzer<T extends CtScanner, U> extends AbstractProcessor<
 					return ScanningMode.SKIP_ALL;
 				}
 			}
-			if (element.isImplicit() && ignoredRoles.contains(role)) {
+			if (element.isImplicit() && IGNORED_ROLES_WHEN_IMPLICIT.contains(role)) {
 				//ignore implicit actual type arguments
 				return ScanningMode.SKIP_ALL;
 			}

@@ -7,6 +7,7 @@ package spoon.reflect.visitor;
 
 import spoon.SpoonException;
 import spoon.experimental.CtUnresolvedImport;
+import spoon.processing.AbstractProcessor;
 import spoon.reflect.code.CtExpression;
 import spoon.reflect.code.CtFieldAccess;
 import spoon.reflect.code.CtInvocation;
@@ -46,72 +47,17 @@ import java.util.stream.Collectors;
  * This does not force some references to be implicit, and doesn't fix the wrong implicit which causes conflicts: this fixing done by {@link ImportConflictDetector}
  */
 @Experimental
-public class ImportCleaner extends ImportAnalyzer<ImportCleaner.ImportCleanerScanner, ImportCleaner.Context> {
+public class ImportCleaner extends AbstractProcessor<CtElement> {
 
 	private Comparator<CtImport> importComparator;
 	private boolean canAddImports = true;
 	private boolean canRemoveImports = true;
 
-	@Override
-	protected ImportCleanerScanner createScanner() {
-		return new ImportCleanerScanner();
-	}
 
 	@Override
-	protected Context getScannerContextInformation(ImportCleanerScanner scanner) {
-		return scanner.context;
-	}
+	public void process(CtElement element) {
+		new ImportCleanerScanner().scan(element);
 
-	@Override
-	protected void handleTargetedExpression(CtTargetedExpression<?, ?> targetedExpression, Context context, CtRole role) {
-		if (context == null) {
-			return;
-		}
-		CtExpression<?> target = targetedExpression.getTarget();
-
-		if (target != null && target.isImplicit()) {
-			if (target instanceof CtTypeAccess) {
-				if (targetedExpression instanceof CtFieldAccess) {
-					context.addImport(((CtFieldAccess<?>) targetedExpression).getVariable());
-				} else if (targetedExpression instanceof CtInvocation) {
-					CtExecutableReference<?> execRef = ((CtInvocation<?>) targetedExpression).getExecutable();
-					if (execRef.isStatic()) {
-						context.addImport(execRef);
-					}
-				}
-
-			} else if (targetedExpression instanceof CtInvocation<?>) {
-				CtInvocation<?> invocation = (CtInvocation<?>) targetedExpression;
-				//import static method
-				if (invocation.getExecutable().isStatic()) {
-					context.addImport(invocation.getExecutable());
-				}
-			} else if (targetedExpression instanceof CtFieldAccess<?>) {
-				//import static field
-				CtFieldAccess<?> fieldAccess = (CtFieldAccess<?>) targetedExpression;
-				if (fieldAccess.getVariable().isStatic()) {
-					context.addImport(fieldAccess.getVariable());
-				}
-			} else {
-				throw new SpoonException("TODO");
-			}
-		}
-
-
-	}
-
-	@Override
-	protected void handleTypeReference(CtTypeReference<?> reference, Context context, CtRole role) {
-		if (context == null) {
-			return;
-		}
-		if (!reference.isImplicit() && reference.isSimplyQualified()) {
-			/*
-			 * the package is implicit. E.g. `Assert.assertTrue`
-			 * where package `org.junit` is implicit
-			 */
-			context.addImport(reference);
-		}
 	}
 
 	class Context {
@@ -295,19 +241,65 @@ public class ImportCleaner extends ImportAnalyzer<ImportCleaner.ImportCleanerSca
 		return visitor.found;
 	}
 
-	class ImportCleanerScanner extends EarlyTerminatingScanner<Void> {
+	class ImportCleanerScanner extends CtInheritanceScanner {
 		Context context;
+
 		@Override
-		protected void enter(CtElement e) {
-			if (e instanceof CtCompilationUnit) {
-				context = new Context((CtCompilationUnit) e);
-			}
+		public void visitCtCompilationUnit(CtCompilationUnit compilationUnit) {
+			super.visitCtCompilationUnit(compilationUnit);
+			context = new Context(compilationUnit);
 		}
 
 		@Override
-		protected void exit(CtElement e) {
-			if (e instanceof CtCompilationUnit) {
-				context.onCompilationUnitProcessed((CtCompilationUnit) e);
+		public <T> void visitCtTypeReference(CtTypeReference<T> reference) {
+			super.visitCtTypeReference(reference);
+			if (context == null) {
+				return;
+			}
+			if (!reference.isImplicit() && reference.isSimplyQualified()) {
+				/*
+				 * the package is implicit. E.g. `Assert.assertTrue`
+				 * where package `org.junit` is implicit
+				 */
+				context.addImport(reference);
+			}
+
+		}
+
+		@Override
+		public <T, E extends CtExpression<?>> void scanCtTargetedExpression(CtTargetedExpression<T, E> targetedExpression) {
+			super.scanCtTargetedExpression(targetedExpression);
+			if (context == null) {
+				return;
+			}
+			CtExpression<?> target = targetedExpression.getTarget();
+
+			if (target != null && target.isImplicit()) {
+				if (target instanceof CtTypeAccess) {
+					if (targetedExpression instanceof CtFieldAccess) {
+						context.addImport(((CtFieldAccess<?>) targetedExpression).getVariable());
+					} else if (targetedExpression instanceof CtInvocation) {
+						CtExecutableReference<?> execRef = ((CtInvocation<?>) targetedExpression).getExecutable();
+						if (execRef.isStatic()) {
+							context.addImport(execRef);
+						}
+					}
+
+				} else if (targetedExpression instanceof CtInvocation<?>) {
+					CtInvocation<?> invocation = (CtInvocation<?>) targetedExpression;
+					//import static method
+					if (invocation.getExecutable().isStatic()) {
+						context.addImport(invocation.getExecutable());
+					}
+				} else if (targetedExpression instanceof CtFieldAccess<?>) {
+					//import static field
+					CtFieldAccess<?> fieldAccess = (CtFieldAccess<?>) targetedExpression;
+					if (fieldAccess.getVariable().isStatic()) {
+						context.addImport(fieldAccess.getVariable());
+					}
+				} else {
+					throw new SpoonException("TODO");
+				}
 			}
 		}
 	}

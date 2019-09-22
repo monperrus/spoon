@@ -88,13 +88,14 @@ abstract class ImportAnalyzer<T extends CtScanner, U> extends AbstractProcessor<
 			CtRole.TYPE
 	));
 
+	static final Set<CtRole> ignoredRoles = IGNORED_ROLES_WHEN_IMPLICIT;
+
 	/**
 	 * {@link CtScannerListener} implementation which stops scanning of children on elements,
 	 * which mustn't have influence to compilation unit imports.
 	 */
 	protected class ScannerListener implements CtScannerListener {
 		protected T scanner;
-		protected Set<CtRole> ignoredRoles = IGNORED_ROLES_WHEN_IMPLICIT;
 
 		ScannerListener(T scanner) {
 			super();

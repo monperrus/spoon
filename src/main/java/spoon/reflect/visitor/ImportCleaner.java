@@ -26,6 +26,7 @@ import spoon.reflect.reference.CtPackageReference;
 import spoon.reflect.reference.CtReference;
 import spoon.reflect.reference.CtTypeMemberWildcardImportReference;
 import spoon.reflect.reference.CtTypeReference;
+import spoon.reflect.visitor.chain.ScanningMode;
 import spoon.support.Experimental;
 import spoon.support.util.ModelList;
 import spoon.support.visitor.ClassTypingContext;
@@ -254,6 +255,9 @@ public class ImportCleaner extends AbstractProcessor<CtElement> {
 		public <T> void visitCtTypeReference(CtTypeReference<T> reference) {
 			super.visitCtTypeReference(reference);
 			if (context == null) {
+				return;
+			}
+			if (reference.isImplicit() && ImportAnalyzer.ignoredRoles.contains(reference.getRoleInParent())) {
 				return;
 			}
 			if (!reference.isImplicit() && reference.isSimplyQualified()) {

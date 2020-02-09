@@ -114,6 +114,7 @@ import spoon.reflect.visitor.printer.CommentOffset;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1051,6 +1052,11 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 
 	@Override
 	public void visitCtCompilationUnit(CtCompilationUnit compilationUnit) {
+		visitCtCompilationUnit(compilationUnit, compilationUnit.getDeclaredTypes());
+	}
+
+	//
+	private void visitCtCompilationUnit(CtCompilationUnit compilationUnit, List<CtType<?>> types) {
 		CtCompilationUnit outerCompilationUnit = this.sourceCompilationUnit;
 		try {
 			this.sourceCompilationUnit = compilationUnit;
@@ -1071,7 +1077,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 					scan(imprt);
 					printer.writeln();
 				}
-				for (CtType<?> t : compilationUnit.getDeclaredTypes()) {
+				for (CtType<?> t : types) {
 					scan(t);
 				}
 			break;
@@ -2014,8 +2020,8 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 			//the type was cloned and moved to different package. Adapt package reference of compilation unit too
 			sourceCompilationUnit.getPackageDeclaration().setReference(packRef);
 		}
-		printCompilationUnit(sourceCompilationUnit);
-		}
+		visitCtCompilationUnit(sourceCompilationUnit, types);
+	}
 
 	private boolean hasSameTypes(CtCompilationUnit compilationUnit, List<CtType<?>> types) {
 		List<CtTypeReference<?>> cuTypes = compilationUnit.getDeclaredTypeReferences();

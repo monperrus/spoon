@@ -17,6 +17,8 @@ public class CompilationUnitPrintTest {
     @Test
     public void test() {
 
+        // contract: pretty-printing a cloned type to disk prints the clone (and not the original class)
+
         /*
             Build a model with a class
             Clone this class
@@ -28,6 +30,7 @@ public class CompilationUnitPrintTest {
 
         // build original class
         Launcher launcher = new Launcher();
+        // we spoon this test class, a little bit meta but elegant
         launcher.addInputResource("src/test/java/spoon/CompilationUnitPrintTest.java");
         launcher.getEnvironment().setNoClasspath(true);
         launcher.buildModel();
@@ -44,7 +47,11 @@ public class CompilationUnitPrintTest {
         CtMethod<?> cloneMethod = ((CtMethod<?>) clone.getMethodsByName("test").get(0)).clone();
         cloneMethod.setSimpleName("cloneTest");
         clone.addMethod(cloneMethod);
+
+        // the clone has 2 methods
         assertEquals(2 , clone.getMethods().size());
+
+        // the original class still has 1
         assertEquals(1 , compilationUnitPrintTest.getMethods().size());
 
         // print modified class

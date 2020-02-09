@@ -1951,9 +1951,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 
 	@Override
 	public String printCompilationUnit(CtCompilationUnit compilationUnit) {
-		reset();
-		applyPreProcessors(compilationUnit);
-		scanCompilationUnit(compilationUnit);
+		calculate(compilationUnit, compilationUnit.getDeclaredTypes());
 		return getResult();
 	}
 
@@ -1998,6 +1996,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 
 	@Override
 	public void calculate(CtCompilationUnit sourceCompilationUnit, List<CtType<?>> types) {
+		reset();
 		if (types.isEmpty()) {
 			return;
 		}

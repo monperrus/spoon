@@ -48,7 +48,7 @@ public class CompilationUnitPrintTest {
         clone.addMethod(cloneMethod);
 
         // note that a cloned class is in no package
-        // we add it to the default package
+        // we add it to a package
         compilationUnitPrintTest.getPackage().addType(clone);
 
         // the clone has 2 methods

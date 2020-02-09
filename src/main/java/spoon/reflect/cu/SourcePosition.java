@@ -7,6 +7,7 @@ package spoon.reflect.cu;
 
 import spoon.compiler.Environment;
 import spoon.reflect.cu.position.NoSourcePosition;
+import spoon.reflect.declaration.CtCompilationUnit;
 
 import java.io.File;
 import java.io.Serializable;
@@ -38,7 +39,7 @@ public interface SourcePosition extends Serializable {
 	/**
 	 * Gets the compilation unit for this position.
 	 */
-	CompilationUnit getCompilationUnit();
+	CtCompilationUnit getCompilationUnit();
 
 	/**
 	 * Gets the line in the source file (1 indexed). Prefer using

@@ -11,6 +11,7 @@ import spoon.reflect.cu.SourcePosition;
 import spoon.reflect.cu.position.BodyHolderSourcePosition;
 import spoon.reflect.cu.position.DeclarationSourcePosition;
 import spoon.reflect.cu.position.NoSourcePosition;
+import spoon.reflect.declaration.CtCompilationUnit;
 
 import java.io.File;
 import java.io.Serializable;
@@ -101,7 +102,7 @@ public class SourcePositionImpl implements SourcePosition, Serializable {
 	 */
 	private int sourceStartline = -1;
 
-	public SourcePositionImpl(CompilationUnit compilationUnit, int sourceStart, int sourceEnd, int[] lineSeparatorPositions) {
+	public SourcePositionImpl(CtCompilationUnit compilationUnit, int sourceStart, int sourceEnd, int[] lineSeparatorPositions) {
 		checkArgsAreAscending(sourceStart, sourceEnd + 1);
 		if (compilationUnit == null) {
 			throw new SpoonException("Mandatory parameter compilationUnit is null");
@@ -193,10 +194,10 @@ public class SourcePositionImpl implements SourcePosition, Serializable {
 		return result;
 	}
 
-	private final CompilationUnit compilationUnit;
+	private final CtCompilationUnit compilationUnit;
 
 	@Override
-	public CompilationUnit getCompilationUnit() {
+	public CtCompilationUnit getCompilationUnit() {
 		return compilationUnit;
 	}
 

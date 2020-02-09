@@ -21,6 +21,7 @@ import org.junit.Test;
 import spoon.reflect.code.CtInvocation;
 import spoon.reflect.cu.CompilationUnit;
 import spoon.reflect.cu.SourcePosition;
+import spoon.reflect.declaration.CtCompilationUnit;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.factory.Factory;
@@ -28,10 +29,10 @@ import spoon.reflect.reference.CtExecutableReference;
 import spoon.reflect.reference.CtTypeReference;
 import spoon.reflect.visitor.Filter;
 import spoon.reflect.visitor.filter.TypeFilter;
-import spoon.support.reflect.cu.CompilationUnitImpl;
 import spoon.support.reflect.cu.position.BodyHolderSourcePositionImpl;
 import spoon.support.reflect.cu.position.DeclarationSourcePositionImpl;
 import spoon.support.reflect.cu.position.SourcePositionImpl;
+import spoon.support.reflect.declaration.CtCompilationUnitImpl;
 import spoon.test.sourcePosition.testclasses.Brambora;
 import spoon.testing.utils.ModelUtils;
 
@@ -92,7 +93,7 @@ public class SourcePositionTest {
 
 	@Test
 	public void testSourcePositionStringFragment() {
-		CompilationUnit cu = new CompilationUnitImpl() {
+		CtCompilationUnit cu = new CtCompilationUnitImpl() {
 			@Override
 			public String getOriginalSourceCode() {
 				return "0123456789";

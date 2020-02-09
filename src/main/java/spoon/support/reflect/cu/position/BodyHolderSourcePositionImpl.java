@@ -7,6 +7,7 @@ package spoon.support.reflect.cu.position;
 
 import spoon.reflect.cu.CompilationUnit;
 import spoon.reflect.cu.position.BodyHolderSourcePosition;
+import spoon.reflect.declaration.CtCompilationUnit;
 
 import java.io.Serializable;
 
@@ -22,7 +23,7 @@ public class BodyHolderSourcePositionImpl extends DeclarationSourcePositionImpl
 	private int bodyEnd;
 
 	public BodyHolderSourcePositionImpl(
-			CompilationUnit compilationUnit,
+			CtCompilationUnit compilationUnit,
 			int sourceStart, int sourceEnd,
 			int modifierSourceStart, int modifierSourceEnd,
 			int declarationSourceStart, int declarationSourceEnd,

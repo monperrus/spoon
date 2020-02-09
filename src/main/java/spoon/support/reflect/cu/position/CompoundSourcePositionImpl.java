@@ -7,6 +7,7 @@ package spoon.support.reflect.cu.position;
 
 import spoon.reflect.cu.CompilationUnit;
 import spoon.reflect.cu.position.CompoundSourcePosition;
+import spoon.reflect.declaration.CtCompilationUnit;
 
 import java.io.Serializable;
 
@@ -21,9 +22,9 @@ public class CompoundSourcePositionImpl extends SourcePositionImpl
 	private int declarationSourceStart;
 	private int declarationSourceEnd;
 
-	public CompoundSourcePositionImpl(CompilationUnit compilationUnit, int sourceStart, int sourceEnd,
-			int declarationSourceStart, int declarationSourceEnd,
-			int[] lineSeparatorPositions) {
+	public CompoundSourcePositionImpl(CtCompilationUnit compilationUnit, int sourceStart, int sourceEnd,
+									  int declarationSourceStart, int declarationSourceEnd,
+									  int[] lineSeparatorPositions) {
 		super(compilationUnit,
 				sourceStart, sourceEnd,
 				lineSeparatorPositions);

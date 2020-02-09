@@ -63,6 +63,7 @@ import spoon.reflect.declaration.CtAnnotationMethod;
 import spoon.reflect.declaration.CtAnnotationType;
 import spoon.reflect.declaration.CtAnonymousExecutable;
 import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtCompilationUnit;
 import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtEnum;
@@ -554,7 +555,7 @@ public interface CoreFactory {
 	/**
 	 * Creates a compilation unit.
 	 */
-	CompilationUnit createCompilationUnit();
+	CtCompilationUnit createCompilationUnit();
 
 	/**
 	 * Create an access to annotation value

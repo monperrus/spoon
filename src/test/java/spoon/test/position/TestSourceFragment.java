@@ -37,7 +37,6 @@ import spoon.reflect.code.CtFieldRead;
 import spoon.reflect.code.CtFieldWrite;
 import spoon.reflect.code.CtLocalVariable;
 import spoon.reflect.code.CtNewClass;
-import spoon.reflect.cu.CompilationUnit;
 import spoon.reflect.cu.SourcePosition;
 import spoon.reflect.declaration.CtClass;
 import spoon.reflect.declaration.CtCompilationUnit;
@@ -45,10 +44,10 @@ import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.reference.CtFieldReference;
+import spoon.support.reflect.declaration.CtCompilationUnitImpl;
 import spoon.support.sniper.internal.SourceFragment;
 import spoon.support.sniper.internal.CollectionSourceFragment;
 import spoon.support.sniper.internal.ElementSourceFragment;
-import spoon.support.reflect.cu.CompilationUnitImpl;
 import spoon.support.reflect.cu.position.SourcePositionImpl;
 import spoon.test.position.testclasses.AnnonymousClassNewIface;
 import spoon.test.position.testclasses.FooField;
@@ -164,7 +163,7 @@ public class TestSourceFragment {
 		assertSame(rootFragment.getFirstChild().getNextSibling(), rootFragment.getSourceFragmentOf(null, 60, 70));
 	}
 
-	private static final CompilationUnit DUMMY_COMPILATION_UNIT = new CompilationUnitImpl();
+	private static final CtCompilationUnit DUMMY_COMPILATION_UNIT = new CtCompilationUnitImpl();
 	
 	private ElementSourceFragment createFragment(int start, int end) {
 		SourcePosition sp = new SourcePositionImpl(DUMMY_COMPILATION_UNIT, start, end - 1, null);

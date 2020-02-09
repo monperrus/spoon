@@ -212,7 +212,7 @@ public class SniperJavaPrettyPrinter extends DefaultJavaPrettyPrinter {
 	public String printElement(CtElement element) {
 		applyPreProcessors(element);
 		if (element != null && !hasImplicitAncestor(element)) {
-			CompilationUnit compilationUnit = element.getPosition().getCompilationUnit();
+			CtCompilationUnit compilationUnit = element.getPosition().getCompilationUnit();
 			if (compilationUnit != null
 					&& !(compilationUnit instanceof NoSourcePosition.NullCompilationUnit)) {
 

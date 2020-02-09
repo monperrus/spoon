@@ -65,6 +65,7 @@ import spoon.reflect.declaration.CtAnnotationMethod;
 import spoon.reflect.declaration.CtAnnotationType;
 import spoon.reflect.declaration.CtAnonymousExecutable;
 import spoon.reflect.declaration.CtClass;
+import spoon.reflect.declaration.CtCompilationUnit;
 import spoon.reflect.declaration.CtConstructor;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtEnum;
@@ -147,7 +148,6 @@ import spoon.support.reflect.code.CtUnaryOperatorImpl;
 import spoon.support.reflect.code.CtVariableReadImpl;
 import spoon.support.reflect.code.CtVariableWriteImpl;
 import spoon.support.reflect.code.CtWhileImpl;
-import spoon.support.reflect.cu.CompilationUnitImpl;
 import spoon.support.reflect.cu.position.BodyHolderSourcePositionImpl;
 import spoon.support.reflect.cu.position.CompoundSourcePositionImpl;
 import spoon.support.reflect.cu.position.DeclarationSourcePositionImpl;
@@ -157,6 +157,7 @@ import spoon.support.reflect.declaration.CtAnnotationMethodImpl;
 import spoon.support.reflect.declaration.CtAnnotationTypeImpl;
 import spoon.support.reflect.declaration.CtAnonymousExecutableImpl;
 import spoon.support.reflect.declaration.CtClassImpl;
+import spoon.support.reflect.declaration.CtCompilationUnitImpl;
 import spoon.support.reflect.declaration.CtConstructorImpl;
 import spoon.support.reflect.declaration.CtEnumImpl;
 import spoon.support.reflect.declaration.CtEnumValueImpl;
@@ -761,7 +762,7 @@ public class DefaultCoreFactory extends SubFactory implements CoreFactory {
 
 	@Override
 	public SourcePosition createPartialSourcePosition(CompilationUnit compilationUnit) {
-		return ((CompilationUnitImpl) compilationUnit).getOrCreatePartialSourcePosition();
+		return ((CtCompilationUnitImpl) compilationUnit).getOrCreatePartialSourcePosition();
 	}
 
 	@Override
@@ -785,8 +786,8 @@ public class DefaultCoreFactory extends SubFactory implements CoreFactory {
 	}
 
 	@Override
-	public CompilationUnit createCompilationUnit() {
-		CompilationUnit cu = new CompilationUnitImpl();
+	public CtCompilationUnit createCompilationUnit() {
+		CtCompilationUnit cu = new CtCompilationUnitImpl();
 		cu.setFactory(getMainFactory());
 		return cu;
 	}

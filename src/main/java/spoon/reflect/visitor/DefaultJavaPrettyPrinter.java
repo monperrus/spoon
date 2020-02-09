@@ -2002,9 +2002,8 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 			return;
 		}
 		CtType<?> type = types.get(0);
-		// reset the importsContext to avoid errors with multiple CU
 		if (sourceCompilationUnit == null) {
-			sourceCompilationUnit = type.getFactory().CompilationUnit().getOrCreate(type);
+			throw new SpoonException("sourceCompilationUnit cannot be null");
 		}
 		if (type.getPackage() == null) {
 			type.setParent(type.getFactory().Package().getRootPackage());

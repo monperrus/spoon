@@ -1051,11 +1051,6 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 
 	@Override
 	public void visitCtCompilationUnit(CtCompilationUnit compilationUnit) {
-		visitCtCompilationUnit(compilationUnit, compilationUnit.getDeclaredTypes());
-	}
-
-	//
-	private void visitCtCompilationUnit(CtCompilationUnit compilationUnit, List<CtType<?>> types) {
 		CtCompilationUnit outerCompilationUnit = this.sourceCompilationUnit;
 		try {
 			this.sourceCompilationUnit = compilationUnit;
@@ -1076,7 +1071,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 					scan(imprt);
 					printer.writeln();
 				}
-				for (CtType<?> t : types) {
+				for (CtType<?> t : compilationUnit.getDeclaredTypes()) {
 					scan(t);
 				}
 			break;

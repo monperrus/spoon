@@ -49,7 +49,7 @@ public class CompilationUnitPrintTest {
 
         // note that a cloned class is in no package
         // we add it to the default package
-        factory.getModel().getRootPackage().addType(clone);
+        compilationUnitPrintTest.getPackage().addType(clone);
 
         // the clone has 2 methods
         assertEquals(2 , clone.getMethods().size());
@@ -71,14 +71,14 @@ public class CompilationUnitPrintTest {
 
         // building now a new model from the java file outputted just before
         launcher = new Launcher();
-        launcher.addInputResource("target/CompilationUnitPrintTest.java");
+        launcher.addInputResource("target/spoon/CompilationUnitPrintTest.java");
         launcher.getEnvironment().setNoClasspath(true);
         launcher.buildModel();
 
         // compare the number of methods in the printed class and the clone, should be the same (2)
         assertEquals(
                 clone.getMethods().size(),
-                launcher.getFactory().Class().get("CompilationUnitPrintTest").getMethods().size()
+                launcher.getFactory().Class().get("spoon.CompilationUnitPrintTest").getMethods().size()
         );
     }
 

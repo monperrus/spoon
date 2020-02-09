@@ -2020,6 +2020,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 			//the type was cloned and moved to different package. Adapt package reference of compilation unit too
 			sourceCompilationUnit.getPackageDeclaration().setReference(packRef);
 		}
+		applyPreProcessors(sourceCompilationUnit);
 		visitCtCompilationUnit(sourceCompilationUnit, types);
 	}
 

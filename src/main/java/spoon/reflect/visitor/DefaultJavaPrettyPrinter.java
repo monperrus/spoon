@@ -1962,10 +1962,6 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 		}
 	}
 
-	protected void scanCompilationUnit(CtCompilationUnit compilationUnit) {
-		scan(compilationUnit);
-		}
-
 	@Override
 	public String printPackageInfo(CtPackage pack) {
 		CtCompilationUnit cu = pack.getFactory().CompilationUnit().getOrCreate(pack);
@@ -2002,7 +1998,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 		}
 		CtType<?> type = types.get(0);
 		if (sourceCompilationUnit == null) {
-			throw new SpoonException("sourceCompilationUnit cannot be null");
+			sourceCompilationUnit = type.getFactory().CompilationUnit().getOrCreate(type);
 		}
 		if (type.getPackage() == null) {
 			type.setParent(type.getFactory().Package().getRootPackage());
@@ -2019,7 +2015,7 @@ public class DefaultJavaPrettyPrinter implements CtVisitor, PrettyPrinter {
 			sourceCompilationUnit.getPackageDeclaration().setReference(packRef);
 		}
 		applyPreProcessors(sourceCompilationUnit);
-		visitCtCompilationUnit(sourceCompilationUnit, types);
+		scan(sourceCompilationUnit);
 	}
 
 	private boolean hasSameTypes(CtCompilationUnit compilationUnit, List<CtType<?>> types) {

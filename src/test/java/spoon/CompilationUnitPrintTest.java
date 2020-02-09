@@ -39,7 +39,6 @@ public class CompilationUnitPrintTest {
         // clone
         final CtClass<?> compilationUnitPrintTest = factory.Class().get("spoon.CompilationUnitPrintTest");
         final CtClass<?> clone = compilationUnitPrintTest.clone();
-        compilationUnitPrintTest.getPackage().addType(clone);
         assertEquals(1 , clone.getMethods().size());
         assertEquals(1 , compilationUnitPrintTest.getMethods().size());
 

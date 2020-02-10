@@ -30,31 +30,12 @@ abstract class AbstractSourceFragmentContextCollection extends AbstractSourceFra
 
 	@Override
 	public boolean knowsHowToPrint(PrinterEvent event) {
+		CtRole role = event.getRole();
 		if (!hasNextChildToken()) {
 			//there are no more tokens to process. Leave this context
 			return false;
 		}
-
-		if (event instanceof TokenPrinterEvent) {
-			TokenPrinterEvent tpe = (TokenPrinterEvent) event;
-			if (tpe.isWhitespace()) {
-				return true;
-			}
-			if (TokenType.KEYWORD.equals(tpe.getTokenType())) {
-// we must have its fragment
-				for (SourceFragment f : childFragments) {
-					if (f.getSourceCode().contains(tpe.getToken())) {
-						return true;
-					}
-				}
-				return false;
-			} else if (tpe.getType() == TokenType.IDENTIFIER) {
-				return findIndexOfNextChildTokenByType(TokenType.IDENTIFIER) >= 0;
-			}
-			return findIndexOfNextChildTokenByValue(tpe.getToken()) >= 0;
-		}
-		CtRole role = event.getRole();
-		if (role == CtRole.COMMENT) {
+		if (event.isWhitespace() || role == CtRole.COMMENT) {
 			return true;
 		}
 		if (role != null) {
@@ -63,7 +44,15 @@ abstract class AbstractSourceFragmentContextCollection extends AbstractSourceFra
 		} else if (event.getElement() instanceof CtCompilationUnit) {
 			return findIndexOfNextChildTokenOfElement(event.getElement()) >= 0;
 		}
-		throw new SpoonException("Unexpected PrintEvent: " + event.getClass());
+		if (event instanceof TokenPrinterEvent) {
+			TokenPrinterEvent tpe = (TokenPrinterEvent) event;
+			if (tpe.getType() == TokenType.IDENTIFIER) {
+				return findIndexOfNextChildTokenByType(TokenType.IDENTIFIER) >= 0;
+			}
+			return findIndexOfNextChildTokenByValue(event.getToken()) >= 0;
+		} else {
+			throw new SpoonException("Unexpected PrintEvent: " + event.getClass());
+		}
 	}
 
 	@Override

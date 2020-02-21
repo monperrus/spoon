@@ -3,11 +3,14 @@ package spoon.getExecutableDeclarationBugTest;
 import org.junit.Test;
 import spoon.Launcher;
 import spoon.reflect.code.CtAbstractInvocation;
+import spoon.reflect.code.CtInvocation;
 import spoon.reflect.declaration.CtExecutable;
 import spoon.reflect.declaration.CtType;
 import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 
@@ -45,16 +48,22 @@ public class getExecutableDeclarationBugTest {
         List<CtAbstractInvocation> calleeMethods = changePasswordMethod.getElements(new TypeFilter<CtAbstractInvocation>(CtAbstractInvocation.class));
 
         // get the "validator.validate(form, formBinding);" call of line 37 in file UserController.java
-        CtAbstractInvocation validateCall = null;
+        CtInvocation validateCall = null;
         for (CtAbstractInvocation invocation : calleeMethods) {
             if (invocation.getExecutable().getSimpleName().equals("validate")) {
-                validateCall = invocation;
+                validateCall = (CtInvocation) invocation;
                 break;
             }
         }
 
+
         // Try to reach the method that is being called and that belongs to a class known by the Launcher
         CtExecutable executableDeclaration = validateCall.getExecutable().getExecutableDeclaration();
+
+        System.out.println(validateCall.getType());
+        assertEquals("pt.ist.socialsoftware.edition.ldod.validator.ChangePasswordValidator", validateCall.getExecutable().getDeclaringType().toString());
+
+        assertEquals("pt.ist.socialsoftware.edition.ldod.validator.ChangePasswordValidator", validateCall.getExecutable().getDeclaringType().getDeclaration().getQualifiedName());
 
         // should be != null
         assertNotEquals(null, executableDeclaration);

@@ -38,6 +38,7 @@ import spoon.reflect.visitor.DefaultJavaPrettyPrinter;
 import spoon.reflect.visitor.filter.TypeFilter;
 import spoon.support.DerivedProperty;
 import spoon.support.UnsettableProperty;
+import spoon.support.comparator.CtLineElementComparator;
 import spoon.support.reflect.cu.position.PartialSourcePositionImpl;
 import spoon.support.sniper.internal.ElementSourceFragment;
 import spoon.support.util.ModelList;

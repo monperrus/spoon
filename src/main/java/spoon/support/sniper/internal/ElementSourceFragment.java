@@ -16,6 +16,7 @@ import spoon.reflect.cu.SourcePositionHolder;
 import spoon.reflect.cu.position.NoSourcePosition;
 import spoon.reflect.declaration.CtCompilationUnit;
 import spoon.reflect.declaration.CtElement;
+import spoon.reflect.declaration.CtImport;
 import spoon.reflect.declaration.CtModifiable;
 import spoon.reflect.meta.ContainerKind;
 import spoon.reflect.meta.RoleHandler;
@@ -23,6 +24,7 @@ import spoon.reflect.meta.impl.RoleHandlerHelper;
 import spoon.reflect.path.CtRole;
 import spoon.reflect.reference.CtFieldReference;
 import spoon.reflect.reference.CtLocalVariableReference;
+import spoon.reflect.reference.CtPackageReference;
 import spoon.reflect.visitor.EarlyTerminatingScanner;
 import spoon.support.Experimental;
 import spoon.support.reflect.CtExtendedModifier;
@@ -174,14 +176,15 @@ public class ElementSourceFragment implements SourceFragment {
 				if (e instanceof CtCompilationUnit) {
 					return;
 				}
-				ElementSourceFragment currentFragment = parents.peek().addChild(scannedRole, e);
+				ElementSourceFragment currentFragment = null;
+				parents.peek().addChild1(new ElementSourceFragment(e, getRoleHandler(scannedRole, e)));
 				if (currentFragment != null) {
 					parents.push(currentFragment);
 					if (e instanceof CtModifiable) {
 						CtModifiable modifiable = (CtModifiable) e;
 						Set<CtExtendedModifier> modifiers = modifiable.getExtendedModifiers();
 						for (CtExtendedModifier ctExtendedModifier : modifiers) {
-							currentFragment.addChild(CtRole.MODIFIER, ctExtendedModifier);
+							currentFragment.addChild1(new ElementSourceFragment(ctExtendedModifier, getRoleHandler(CtRole.MODIFIER, ctExtendedModifier)));
 						}
 					}
 				} else {
@@ -210,11 +213,11 @@ public class ElementSourceFragment implements SourceFragment {
 	 * @param otherElement {@link SourcePositionHolder} whose {@link ElementSourceFragment} has to be added to `parentFragment`
 	 * @return new {@link ElementSourceFragment} created for `otherElement` or null if `otherElement` has no source position or doesn't belong to the same compilation unit
 	 */
-	private ElementSourceFragment addChild(CtRole roleInParent, SourcePositionHolder otherElement) {
+	private ElementSourceFragment addChild1(ElementSourceFragment otherFragment) {
+		SourcePositionHolder otherElement = otherFragment.getElement();
 		SourcePosition otherSourcePosition = otherElement.getPosition();
 		if (otherSourcePosition instanceof SourcePositionImpl && !(otherSourcePosition.getCompilationUnit() instanceof NoSourcePosition.NullCompilationUnit)) {
 			if (this.isFromSameSource(otherSourcePosition)) {
-				ElementSourceFragment otherFragment = new ElementSourceFragment(otherElement, this.getRoleHandler(roleInParent, otherElement));
 				//parent and child are from the same file. So we can connect their positions into one tree
 				CMP cmp = this.compare(otherFragment);
 				if (cmp == CMP.OTHER_IS_CHILD) {
@@ -275,7 +278,7 @@ public class ElementSourceFragment implements SourceFragment {
 				parent = ((CtElement) otherElement).getParent();
 			}
 		}
-		if (parent instanceof CtElement) {
+		if (parent instanceof CtElement && ! (parent instanceof CtCompilationUnit)) {
 			CtElement ele = (CtElement) parent;
 			return RoleHandlerHelper.getRoleHandler(ele.getClass(), roleInParent);
 		}

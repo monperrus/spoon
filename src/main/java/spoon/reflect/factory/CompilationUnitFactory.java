@@ -36,9 +36,9 @@ public class CompilationUnitFactory extends SubFactory {
 
 	/**
 	 *
-	 * A map file path -&gt unit.
+	 * A map file qualified name of top-level type -&gt unit.
 	 *
-	 * Core contract: key == unit.getFile().getPath()
+	 * Core contract: key == unit.getTopLevelType().getQualifiedName()
 	 *
 	 * contract maintained by method addType.
 	 */
@@ -79,7 +79,9 @@ public class CompilationUnitFactory extends SubFactory {
 			File file = this.factory.getEnvironment().getOutputDestinationHandler().getOutputPath(module, ctPackage, null).toFile();
 			try {
 				String path = file.getCanonicalPath();
-				CompilationUnit result = this.getOrCreate(path);
+				CompilationUnit result = this.createCompilationUnit(path);
+				cachedCompilationUnits.put(ctPackage.getQualifiedName(), result);
+
 				result.setDeclaredPackage(ctPackage);
 				ctPackage.setPosition(this.factory.createPartialSourcePosition(result));
 				return result;
@@ -87,6 +89,13 @@ public class CompilationUnitFactory extends SubFactory {
 				throw new SpoonException("Cannot get path for file: " + file.getAbsolutePath(), e);
 			}
 		}
+	}
+
+	/**
+	 * remove a type from the list of types to be pretty-printed
+	 */
+	public void removeType(CtType type) {
+		cachedCompilationUnits.remove(type.getPosition().getCompilationUnit().getFile().getAbsolutePath());
 	}
 
 	/**
@@ -103,7 +112,9 @@ public class CompilationUnitFactory extends SubFactory {
 			File file = this.factory.getEnvironment().getOutputDestinationHandler().getOutputPath(module, type.getPackage(), type).toFile();
 			try {
 				String path = file.getCanonicalPath();
-				CompilationUnit result = this._create(path);
+				CompilationUnit result = this.createCompilationUnit(path);
+				cachedCompilationUnits.put(type.getQualifiedName(), result);
+
 				result.addDeclaredType(type);
 				type.setPosition(this.factory.createPartialSourcePosition(result));
 				return result;
@@ -136,7 +147,9 @@ public class CompilationUnitFactory extends SubFactory {
 			File file = this.factory.getEnvironment().getOutputDestinationHandler().getOutputPath(module, null, null).toFile();
 			try {
 				String path = file.getCanonicalPath();
-				CompilationUnit result = this.getOrCreate(path);
+				CompilationUnit result = this.createCompilationUnit(path);
+				cachedCompilationUnits.put(module.getSimpleName(), result);
+
 				result.setDeclaredModule(module);
 				module.setPosition(this.factory.createPartialSourcePosition(result));
 				return result;
@@ -149,20 +162,11 @@ public class CompilationUnitFactory extends SubFactory {
 	/**
 	 * Creates or gets a compilation unit for a given file path.
 	 */
-	public CompilationUnit getOrCreate(String filePath) {
-		CompilationUnit cu = cachedCompilationUnits.get(filePath);
-		if (cu != null) {
-			return cu;
-		}
-		return _create(filePath);
-	}
-
-	private CompilationUnit _create(String filePath) {
+	public CompilationUnit createCompilationUnit(String filePath) {
 		CompilationUnit cu;
 		if (filePath.startsWith(JDTSnippetCompiler.SNIPPET_FILENAME_PREFIX)) {
 			cu = factory.Core().createCompilationUnit();
 			//put the virtual compilation unit of code snippet into cache too, so the JDTCommentBuilder can found it
-			cachedCompilationUnits.put(filePath, cu);
 			return cu;
 		}
 		cu = factory.Core().createCompilationUnit();
@@ -171,7 +175,6 @@ public class CompilationUnitFactory extends SubFactory {
 			cu.setFile(new File(filePath));
 		}
 
-		cachedCompilationUnits.put(filePath, cu);
 		return cu;
 	}
 

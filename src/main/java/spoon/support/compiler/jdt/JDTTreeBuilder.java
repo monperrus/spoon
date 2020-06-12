@@ -803,7 +803,7 @@ public class JDTTreeBuilder extends ASTVisitor {
 	}
 
 	static CompilationUnit getOrCreateCompilationUnit(CompilationUnitDeclaration compilationUnitDeclaration, Factory factory) {
-		CompilationUnit compilationUnitSpoon = factory.CompilationUnit().getOrCreate(new String(compilationUnitDeclaration.getFileName()));
+		CompilationUnit compilationUnitSpoon = factory.CompilationUnit().createCompilationUnit(new String(compilationUnitDeclaration.getFileName()));
 		if (compilationUnitSpoon.getLineSeparatorPositions() == null) {
 			compilationUnitSpoon.setLineSeparatorPositions(compilationUnitDeclaration.compilationResult.lineSeparatorPositions);
 		} else if (compilationUnitSpoon.getLineSeparatorPositions() != compilationUnitDeclaration.compilationResult.lineSeparatorPositions) {

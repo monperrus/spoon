@@ -9,6 +9,8 @@ package spoon.support.sniper.internal;
 
 import spoon.support.Experimental;
 
+import java.util.function.Predicate;
+
 /**
  * Represents a part of source code.
  *
@@ -20,4 +22,6 @@ public interface SourceFragment  {
 	 * @return origin source code of whole fragment represented by this instance
 	 */
 	String getSourceCode();
+
+	boolean test(Predicate<SourceFragment> predicate);
 }

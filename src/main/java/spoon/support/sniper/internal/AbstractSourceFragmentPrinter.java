@@ -19,7 +19,6 @@ import spoon.reflect.path.CtRole;
 
 import static spoon.support.sniper.internal.ElementSourceFragment.findIndexOfNextFragment;
 import static spoon.support.sniper.internal.ElementSourceFragment.filter;
-import static spoon.support.sniper.internal.ElementSourceFragment.checkCollectionItems;
 import static spoon.support.sniper.internal.ElementSourceFragment.isCommentFragment;
 import static spoon.support.sniper.internal.ElementSourceFragment.isSpaceFragment;
 
@@ -248,7 +247,9 @@ abstract class AbstractSourceFragmentPrinter implements SourceFragmentPrinter {
 	 * @return index of first token with same role or -1 if not found
 	 */
 	protected int findIndexOfNextChildTokenOfRole(int start, CtRole role) {
-		return findIndexOfNextFragment(childFragments, start, checkCollectionItems(filter(ElementSourceFragment.class, elementFragment -> elementFragment.getRoleInParent() == role)));
+		int indexOfNextFragment = findIndexOfNextFragment(childFragments, start, (SourceFragment fragment) ->
+				fragment.test(filter(ElementSourceFragment.class, elementFragment -> elementFragment.getRoleInParent() == role)));
+		return indexOfNextFragment;
 	}
 
 	/**
@@ -257,7 +258,8 @@ abstract class AbstractSourceFragmentPrinter implements SourceFragmentPrinter {
 	 * @return index of first token with same element or -1 if not found
 	 */
 	protected int findIndexOfNextChildTokenOfElement(SourcePositionHolder element) {
-		return findIndexOfNextFragment(childFragments, childFragmentIdx + 1, checkCollectionItems(filter(ElementSourceFragment.class, elementFragment -> elementFragment.getElement() == element)));
+		return findIndexOfNextFragment(childFragments, childFragmentIdx + 1, (SourceFragment fragment) ->
+				fragment.test(filter(ElementSourceFragment.class, elementFragment -> elementFragment.getElement() == element)));
 	}
 
 	/**

@@ -9,6 +9,8 @@ package spoon.support.sniper.internal;
 
 import spoon.support.Experimental;
 
+import java.util.function.Predicate;
+
 /**
  * a {@link SourceFragment} of some primitive String token,
  * like separator, operator, whitespace, ...
@@ -27,6 +29,11 @@ public class TokenSourceFragment implements SourceFragment {
 	@Override
 	public String getSourceCode() {
 		return source;
+	}
+
+	@Override
+	public boolean test(Predicate<SourceFragment> predicate) {
+		return predicate.test(this);
 	}
 
 	/**

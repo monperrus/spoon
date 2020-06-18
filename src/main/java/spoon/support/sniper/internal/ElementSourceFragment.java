@@ -845,27 +845,6 @@ public class ElementSourceFragment implements SourceFragment {
 	}
 
 	/**
-	 * @param predicate the {@link Predicate}, which has to be checkd for each item of {@link CollectionSourceFragment}
-	 * @return {@link Predicate} which calls `predicate` for each item of {@link CollectionSourceFragment}
-	 * Returned {@link Predicate} returns true only if `predicate` returns true on at least one item
-	 */
-	static Predicate<SourceFragment> checkCollectionItems(Predicate<SourceFragment> predicate) {
-		return (SourceFragment fragment) -> {
-			if (fragment instanceof CollectionSourceFragment) {
-				CollectionSourceFragment collectionFragment = (CollectionSourceFragment) fragment;
-				for (SourceFragment itemFragment : collectionFragment.getItems()) {
-					if (predicate.test(itemFragment)) {
-						return true;
-					}
-				}
-				return false;
-			} else {
-				return predicate.test(fragment);
-			}
-		};
-	}
-
-	/**
 	 * @param predicate to be called {@link Predicate}
 	 * @return {@link Predicate} which calls `predicate` only for {@link SourceFragment}s of of type `clazz` and returns false for others
 	 */
@@ -890,6 +869,11 @@ public class ElementSourceFragment implements SourceFragment {
 	 */
 	static boolean isCommentFragment(SourceFragment fragment) {
 		return fragment instanceof ElementSourceFragment && ((ElementSourceFragment) fragment).getElement() instanceof CtComment;
+	}
+
+	@Override
+	public boolean test(Predicate<SourceFragment> predicate) {
+		return predicate.test(this);
 	}
 
 }

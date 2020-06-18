@@ -10,6 +10,7 @@ package spoon.support.sniper.internal;
 import spoon.support.Experimental;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * {@link SourceFragment} of List or Set of {@link ElementSourceFragment}s which belong to collection role.
@@ -44,6 +45,16 @@ public class CollectionSourceFragment implements SourceFragment {
 	@Override
 	public String toString() {
 		return items.toString();
+	}
+
+	@Override
+	public boolean test(Predicate<SourceFragment> predicate) {
+		for (SourceFragment itemFragment : this.getItems()) {
+			if (predicate.test(itemFragment)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

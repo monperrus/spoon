@@ -8,12 +8,15 @@
 # ./create-spoon-book.sh
 
 # created with git shortlog -n -s -- doc
-AUTHORS="Martin Monperrus\and Gerard Paligot\and Simon Urli\and Nicolas Harrand\and Pavel Vojtechovsky\and Gérard Paligot\and Thomas Durieux\and Egor Bredikhin\and Martin Witt\and Alexander Shopov\and Benjamin Danglot"
+AUTHORS="Martin Monperrus\and Gerard Paligot\and Simon Urli\and Nicolas Harrand\and Pavel Vojtechovsky\and Gérard Paligot\and Thomas Durieux\and Egor Bredikhin\and Martin Witt\and Alexander Shopov\and Benjamin Danglot\and et. al."
+
+VERSION="version of "`date "+%Y-%m-%d"`", commit "`git rev-parse HEAD`
 
 cat <<EOF > spoon-user-manual.md
 ---
 title: "Spoon User Manual"
 author: $AUTHORS
+date: $VERSION
 geometry: a4paper,margin=2.5cm
 output: pdf_document
 colorlinks: true
@@ -41,7 +44,7 @@ This PDF is generated from the markdown files that are in <https://github.com/IN
 
 If you notice an error, it would be great if you can do a pull-request on the corresponding files.
 
-An update of this PDF is done regularly\footnote{with \texttt{create-spoon-book.sh} at \url{}}.
+An update of this PDF is done regularly\footnote{with \texttt{create-spoon-book.sh} at \url{https://github.com/monperrus/spoon/blob/create-spoon-book.sh/doc/create-spoon-book.sh}}.
 
 If you need professional support (training, consultancy) on Spoon, post a comment on <https://github.com/INRIA/spoon/issues/3251>
 

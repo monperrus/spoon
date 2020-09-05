@@ -86,11 +86,16 @@ public class JavaReflectionTreeBuilder extends JavaReflectionVisitorImpl {
 	/** transforms a java.lang.Class into a CtType (ie a shadow type in Spoon's parlance) */
 	public <T, R extends CtType<T>> R scan(Class<T> clazz) {
 		CtPackage ctPackage;
-		CtType<?> ctEnclosingClass;
+		/*CtType<?> ctEnclosingClass;
 		if (clazz.getEnclosingClass() != null) {
 			ctEnclosingClass = scan(clazz.getEnclosingClass());
-			return ctEnclosingClass.getNestedType(clazz.getSimpleName());
-		} else {
+			R nestedType = ctEnclosingClass.getNestedType(clazz.getSimpleName());
+			if (nestedType == null) {
+				System.out.println();
+			}
+			return nestedType;
+		} else */
+			{
 			if (clazz.getPackage() == null) {
 				ctPackage = factory.Package().getRootPackage();
 			} else {

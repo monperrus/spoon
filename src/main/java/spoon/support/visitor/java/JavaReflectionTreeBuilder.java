@@ -86,15 +86,7 @@ public class JavaReflectionTreeBuilder extends JavaReflectionVisitorImpl {
 	/** transforms a java.lang.Class into a CtType (ie a shadow type in Spoon's parlance) */
 	public <T, R extends CtType<T>> R scan(Class<T> clazz) {
 		CtPackage ctPackage;
-		/*CtType<?> ctEnclosingClass;
-		if (clazz.getEnclosingClass() != null) {
-			ctEnclosingClass = scan(clazz.getEnclosingClass());
-			R nestedType = ctEnclosingClass.getNestedType(clazz.getSimpleName());
-			if (nestedType == null) {
-				System.out.println();
-			}
-			return nestedType;
-		} else */
+		CtType<?> ctEnclosingClass;
 			{
 			if (clazz.getPackage() == null) {
 				ctPackage = factory.Package().getRootPackage();
@@ -117,6 +109,10 @@ public class JavaReflectionTreeBuilder extends JavaReflectionVisitorImpl {
 			final R type = ctPackage.getType(clazz.getSimpleName());
 			if (clazz.isPrimitive() && type.getParent() instanceof CtPackage) {
 				type.setParent(null); // primitive type isn't in a package.
+			}
+			if (clazz.getEnclosingClass() != null && !"".equals(clazz.getSimpleName())) {
+				// this is a named internal class
+				type.setParent(new JavaReflectionTreeBuilder(factory).scan(clazz.getEnclosingClass()));
 			}
 			return type;
 		}

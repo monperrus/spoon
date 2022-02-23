@@ -426,11 +426,11 @@ public class TryCatchTest {
 				"java.lang.AutoCloseable resource = null;" +
 				"try(resource){}"
 			).compile();
-        List<CtResource<?>> resources = tryStmt.getResources();
+        List<CtResource> resources = tryStmt.getResources();
         assertEquals(1, resources.size());
-		final CtResource<?> ctResource = resources.get(0);
-		assertTrue(ctResource instanceof CtVariable);
-        assertEquals("resource", ((CtVariable<?>) ctResource).getSimpleName());
+		final CtResource ctResource = resources.get(0);
+		assertTrue(ctResource instanceof CtResource);
+        assertEquals("resource", ctResource.getVariable().getSimpleName());
 
 		// contract: removeResource does remove the resource
 		tryStmt.removeResource(ctResource);

@@ -7,12 +7,19 @@
  */
 package spoon.reflect.code;
 
+import spoon.reflect.declaration.CtTypedElement;
 import spoon.reflect.declaration.CtVariable;
+
+import java.io.Closeable;
 
 /**
  * This code element defines a resource used in the try-with-resource statement.
  * @param <T>
  *     The type of the resource.
  */
-public interface CtResource<T> extends CtVariable<T> {
+public interface CtResource extends CtTypedElement<Closeable> {
+	/**
+	 * @return the variable declaration of the resource
+	 */
+	public CtVariable getVariable();
 }

@@ -34,26 +34,26 @@ public interface CtTryWithResource extends CtTry {
 	 * The returned list is immutable for sake of proper encapsulation.
 	 */
 	@PropertyGetter(role = TRY_RESOURCE)
-	List<CtResource<?>> getResources();
+	List<CtResource> getResources();
 
 	/**
 	 * Sets the auto-closeable resources of this <code>try</code>. Available
 	 * from Java 7 with the <i>try-with-resource</i> statement.
 	 */
 	@PropertySetter(role = TRY_RESOURCE)
-	<T extends CtTryWithResource> T setResources(List<? extends CtResource<?>> resources);
+	<T extends CtTryWithResource> T setResources(List<? extends CtResource> resources);
 
 	/**
 	 * Adds a resource.
 	 */
 	@PropertySetter(role = TRY_RESOURCE)
-	<T extends CtTryWithResource> T addResource(CtResource<?> resource);
+	<T extends CtTryWithResource> T addResource(CtResource resource);
 
 	/**
 	 * Removes a resource.
 	 */
 	@PropertySetter(role = TRY_RESOURCE)
-	boolean removeResource(CtResource<?> resource);
+	boolean removeResource(CtResource resource);
 
 	@Override
 	CtTryWithResource clone();

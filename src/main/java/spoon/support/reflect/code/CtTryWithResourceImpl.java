@@ -23,7 +23,7 @@ public class CtTryWithResourceImpl extends CtTryImpl implements CtTryWithResourc
 	private static final long serialVersionUID = 1L;
 
 	// that's not structural, the resource is comprised in the parent block
-	List<CtResource<?>> resources = emptyList();
+	List<CtResource> resources = emptyList();
 
 	@Override
 	public void accept(CtVisitor visitor) {
@@ -31,30 +31,30 @@ public class CtTryWithResourceImpl extends CtTryImpl implements CtTryWithResourc
 	}
 
 	@Override
-	public List<CtResource<?>> getResources() {
+	public List<CtResource> getResources() {
 		return Collections.unmodifiableList(resources);
 	}
 
 	@Override
-	public <T extends CtTryWithResource> T setResources(List<? extends CtResource<?>> resources) {
+	public <T extends CtTryWithResource> T setResources(List<? extends CtResource> resources) {
 		if (resources == null || resources.isEmpty()) {
 			this.resources = CtElementImpl.emptyList();
 			return (T) this;
 		}
 		getFactory().getEnvironment().getModelChangeListener().onListDeleteAll(this, TRY_RESOURCE, this.resources, new ArrayList<>(this.resources));
 		this.resources.clear();
-		for (CtResource<?> l : resources) {
+		for (CtResource l : resources) {
 			addResource(l);
 		}
 		return (T) this;
 	}
 
 	@Override
-	public <T extends CtTryWithResource> T addResource(CtResource<?> resource) {
+	public <T extends CtTryWithResource> T addResource(CtResource resource) {
 		if (resource == null) {
 			return (T) this;
 		}
-		if (resources == CtElementImpl.<CtResource<?>>emptyList()) {
+		if (resources == CtElementImpl.<CtResource>emptyList()) {
 			resources = new ArrayList<>(RESOURCES_CONTAINER_DEFAULT_CAPACITY);
 		}
 		resource.setParent(this);
@@ -64,7 +64,7 @@ public class CtTryWithResourceImpl extends CtTryImpl implements CtTryWithResourc
 	}
 
 	@Override
-	public boolean removeResource(CtResource<?> resource) {
+	public boolean removeResource(CtResource resource) {
 		if (resources.isEmpty()) {
 			return false;
 		}

@@ -100,9 +100,9 @@ public class AccessibleVariablesFinder {
 
 			@Override
 			public void visitCtTryWithResource(CtTryWithResource e) {
-				for (CtResource<?> resource: e.getResources()) {
+				for (CtResource resource: e.getResources()) {
 					if (resource instanceof CtLocalVariable) {
-						variables.add((CtLocalVariable<?>) resource);
+						variables.add((CtLocalVariable<?>) resource.getVariable());
 					}
 				}
 				super.visitCtTryWithResource(e);
